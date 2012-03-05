@@ -10,9 +10,9 @@ log = logging.getLogger("zen.GenericComponentInfo")
 from Products.Zuul.infos import ProxyProperty
 
 
-class OvirtGenericComponentInfo(object):
+class OVirtGenericComponentInfo(object):
 
     def __init__(self, obj):
-        super(OvirtGenericComponentInfo, self).__init__()
+        super(OVirtGenericComponentInfo, self).__init__()
         self._object = obj
 

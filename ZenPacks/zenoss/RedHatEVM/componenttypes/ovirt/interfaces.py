@@ -9,6 +9,6 @@ from Products.Zuul.form import schema
 from Products.Zuul.utils import ZuulMessageFactory as _t
 
 
-class IOvirtGenericComponentInfo(Interface):
+class IOVirtGenericComponentInfo(Interface):
     pass
 

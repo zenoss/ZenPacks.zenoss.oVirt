@@ -4,7 +4,7 @@
         factory=".ComponentDefinition.ComponentDefinition"
         provides="ZenPacks.zenoss.Liberator.interfaces.IGenericComponentDefinition"
         for="*"
-        name="snmp"/>
+        name="ovirt"/>
 
     <adapter
         factory=".ModelerPlugin.ModelerPlugin"
@@ -27,9 +27,9 @@
         factory=".DeviceProxyConfig.DeviceProxyConfig"
         for="Products.ZenModel.Device.Device"/>
 
-    <adapter provides=".interfaces.IOvirtGenericComponentInfo"
+    <adapter provides=".interfaces.IOVirtGenericComponentInfo"
              for="ZenPacks.zenoss.Liberator.GenericComponent.GenericComponent"
-             factory=".info.OvirtGenericComponentInfo"
+             factory=".info.OVirtGenericComponentInfo"
              />
 
 </configure>

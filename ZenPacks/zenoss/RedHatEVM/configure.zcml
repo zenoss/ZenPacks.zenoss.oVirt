@@ -187,5 +187,8 @@
     </configure>
     -->
 
+    <include package=".componenttypes"/>
+
+
 </configure>
 
