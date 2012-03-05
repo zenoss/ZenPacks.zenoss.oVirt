@@ -63,7 +63,7 @@ class CollectionTask(object):
         d = self._collect()
         return d
 
-    def _collect(self, result):
+    def _collect(self):
         self._parent.state = GenericModelerCollectionTask.STATE_FETCH_MODEL
         deferreds = []
         for plugin in self._plugins:
