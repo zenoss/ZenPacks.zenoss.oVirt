@@ -35,8 +35,8 @@ class CollectionTask(object):
         self._device = device
         self._manageIp = self._device.manageIp
 
-        self._serverName = device.zOvirtServerName
-        self._port = int(device.zOvirtPort)
+        self._serverName = device.zOVirtServerName
+        self._port = int(device.zOVirtPort)
 
         creds = '%s@%s:%s' % (device.zOVirtUser, device.zOVirtDomain, device.zOVirtPassword)
         creds = creds.encode('Base64').strip('\r\n')

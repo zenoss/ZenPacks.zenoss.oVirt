@@ -15,7 +15,7 @@ unused(Globals)
 class ZenPack(ZenPackBase):
 
      packZProperties = [
-         ('zOvirtServerName', '', 'string'),
+         ('zOVirtServerName', '', 'string'),
          ('zOVirtUser', 'admin', 'string'),
          ('zOVirtPassword', '', 'password'),
          ('zOVirtDomain', 'internal', 'string'),

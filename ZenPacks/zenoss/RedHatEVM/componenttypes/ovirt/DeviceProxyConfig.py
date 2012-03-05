@@ -15,16 +15,16 @@ from ZenPacks.zenoss.Liberator.interfaces import IDeviceProxyConfig
 class DeviceProxyConfig(DeviceProxyConfig):
     implements(IDeviceProxyConfig)
 
-    attributes = ATTRIBUTES + (
-      'zOvirtServerName', 'zOVirtPort',
+    attributes = (
+      'zOVirtServerName', 'zOVirtPort',
       'zOVirtUser', 'zOVirtDomain', 'zOVirtPassword',
     )
 
     def filter(self, device):
         include = True
 
-        if not getattr(device, 'zOvirtServerName', '').strip():
-            self.log.debug("Device %s skipped by Liberator (ovirt) because zOvirtServerName is not set.",
+        if not getattr(device, 'zOVirtServerName', '').strip():
+            self.log.debug("Device %s skipped by Liberator (ovirt) because zOVirtServerName is not set.",
                           device.id)
             include = False
 

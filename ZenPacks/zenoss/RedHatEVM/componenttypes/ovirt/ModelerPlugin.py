@@ -26,6 +26,7 @@ class ModelerPlugin(GenericModelerPlugin, PythonPlugin):
     def process(self, device, results, log):
         log.debug("Results for %s/%s: %s", self.name(), device.id, results)
 
+        import pdb;pdb.set_trace()
         doc = ElementTree.fromstring(results)
 
         tables = TableSet(tabledata)

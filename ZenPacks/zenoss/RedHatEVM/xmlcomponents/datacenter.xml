@@ -1,19 +1,20 @@
 <?xml version="1.0" ?>
-<component type="ovirt" id="datacenter" label="Data Center" pluralLabel="Data Centers" virtualElement="datacenters" idField="datacenter">
+<component type="ovirt" id="datacenter" label="Data Center" pluralLabel="Data Centers" primaryTable="datacenter" idField="guid" >
+
     <table id="datacenter">
+        <column id="guid"/>
         <column id="name"/>
         <column id="description"/>
         <column id="storage_type"/>
-        <column id="version"/>
-        <column id="supported_versions"/>
-        <column id="status"/>
     </table>
 
+    <atribute name="guid"  />
     <atribute name="name"  />
     <atribute name="description"  />
     <atribute name="storage_type" />
 
 <!--
+    <atribute name="supported_versions" />
     <atribute name="status" />
     <atribute name="objid"  />
     <atribute name="major_version" />
