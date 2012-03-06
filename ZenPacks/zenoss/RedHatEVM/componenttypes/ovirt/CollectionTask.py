@@ -87,11 +87,10 @@ class CollectionTask(object):
         conn.request('GET', self._baseUrl + url, headers=self._headers)
         resp = conn.getresponse()
         body = resp.read()
-        log.debug("Got response for %s: %s", url, body)
         return body
 
     def _processResponse(self, result, plugin):
-        log.debug("Processing response for %s: %s", plugin.compdef.virtualElement, result)
+        log.debug("Processing response for %s", plugin.compdef.virtualElement)
         self._tabledata[plugin] = result
 
     def _getError(self, result, plugin):

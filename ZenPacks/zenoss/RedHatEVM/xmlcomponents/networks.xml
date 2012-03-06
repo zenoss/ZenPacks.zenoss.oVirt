@@ -1,0 +1,19 @@
+<?xml version="1.0" ?>
+<component type="ovirt" id="networks" label="Network" pluralLabel="Networks" virtualElement="networks" idField="name" >
+
+    <documentation>ovirt REST API modeler plugin</documentation>
+
+    <attribute name="name" valueQuery='here.find("name").text' label="Name" />
+    <attribute name="guid" valueQuery='here.attrib["id"]' display="none" />
+    <attribute name="href" valueQuery='here.attrib["href"]' display="none" />
+    <attribute name="description" valueQuery='here.find("description").text' label="Description" width='80' />
+
+    <attribute name="network_status" valueQuery='here.find("status").find("state").text' label='Status' width='40' />
+
+    <attribute name="stp" valueQuery='here.find("stp").text' label='STP' width='40' />
+
+    <attribute name="datacenter_href" valueQuery='here.find("data_center").attrib["href"]' label="Datacenter URL" />
+    <attribute name="datacenter_guid" valueQuery='here.find("data_center").attrib["id"]' label="Datacenter GUID" />
+
+</component>
+

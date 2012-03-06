@@ -18,8 +18,8 @@
 
     <attribute name="cluster_href" valueQuery='here.find("cluster").attrib["href"]' label="Cluster URL" />
     <attribute name="cluster_guid" valueQuery='here.find("cluster").attrib["id"]' label="Cluster GUID" />
-    <attribute name="high_availability" valueQuery='here.find("high_availability").find["enabled"].text' label="HA" />
-    <attribute name="high_availability_priority" valueQuery='here.find("high_availability").find["priority"].text' label="HA Priority" />
+    <attribute name="high_availability" valueQuery='here.find("high_availability").find("enabled").text' label="HA" />
+    <attribute name="high_availability_priority" valueQuery='here.find("high_availability").find("priority").text' label="HA Priority" />
 
 </component>
 
