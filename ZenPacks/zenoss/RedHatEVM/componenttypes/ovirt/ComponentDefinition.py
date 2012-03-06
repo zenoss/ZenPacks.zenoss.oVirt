@@ -12,7 +12,9 @@ from Products.ZenModel.ZenModelRM import ZenModelRM
 
 from Products.ZenModel.BasicDataSource import BasicDataSource
 from ZenPacks.zenoss.Liberator.GenericComponentManager import (
-    GenericComponentDefinition, BadXmlDefinitionFileException)
+    GenericComponentDefinition, BadXmlDefinitionFileException,
+    GenericComponentAttributeDefinition,
+)
 from ZenPacks.zenoss.Liberator.interfaces import IGenericComponentDefinition
 from .interfaces import IOVirtGenericComponentInfo
  
@@ -39,13 +41,14 @@ class ComponentDefinition(GenericComponentDefinition):
             self.documentation = docNode.text
             self.documentationType = docNode.get('type', '')
 
-        for tableNode in componentNode.findall("table"):
-            tableId = tableNode.get("id")
-            if not tableId:
-                msg = "The id attribute is not defined on table element (line %d)" % tableNode.lineno
-                raise BadXmlDefinitionFileException(msg)
-            table = self.getOrAdd(self, GenericComponentTableDefinition, tableId)
-            table.parseNode(tableNode)
+        log.critical("Inside of the parser")
+        for attributeNode in componentNode.findall("attribute"):
+            attributeId = attributeNode.get("name")
+            if not attributeId:
+                raise BadXmlDefinitionFileException("name attribute not defined on attribute element (line %d)" % attributeNode.lineno);
+            attribute = self.getOrAdd(self, OVirtComponentAttributeDefinition, attributeId)
+            attribute._parseNode(attributeNode)
+            log.critical("Parsed %s", attributeId)
 
     def addDataPoint(self, template, perfNode):
         perfId = perfNode.get("name")
@@ -80,16 +83,15 @@ class ComponentDefinition(GenericComponentDefinition):
         super(ComponentDefinition, self).validate(componentNode)
 
 
-class GenericComponentTableDefinition(ZenModelRM):
-    meta_type = "GenericComponentTableDefinition"
-    columns = []
+class OVirtComponentAttributeDefinition(GenericComponentAttributeDefinition):
+    xpath = ''
 
-    def parseNode(self, tableNode):
-        self.columns = []
-        for column in tableNode.findall("column"):
-            self.columns.append(column.get("id"))
+    _properties = GenericComponentAttributeDefinition._properties + (
+        {'id':'xpath', 'type':'string', 'mode':'rw'},
+    )
 
-    def getTableMap(self):
-        columns = {}
-        return self.id, columns
+    def _parseNode(self, attributeNode):
+        GenericComponentAttributeDefinition._parseNode(self, attributeNode)
+        self.xpath = attributeNode.get('xpath')
+        import pdb;pdb.set_trace()
 

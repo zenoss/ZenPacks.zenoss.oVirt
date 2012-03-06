@@ -1,0 +1,20 @@
+<?xml version="1.0" ?>
+<component type="ovirt" id="datacenters" label="Data Center" pluralLabel="Data Centers" virtualElement="datacenters" idField="guid" >
+
+    <attribute name="guid" valueQuery='here.attrib["id"]' />
+    <attribute name="href" valueQuery='here.attrib["href"]' />
+    <attribute name="description" valueQuery='here.find("description").text' />
+
+<!--
+    <attribute name="title" valueQuery='./name'/>
+    <attribute name="name"  />
+    <attribute name="description"  />
+    <attribute name="storage_type" />
+    <attribute name="supported_versions" />
+    <attribute name="status" />
+    <attribute name="major_version" />
+    <attribute name="minor_version" />
+-->
+
+</component>
+

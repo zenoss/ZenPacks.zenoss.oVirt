@@ -18,6 +18,7 @@ class ServiceConfig(pb.Copyable, pb.RemoteCopy, ComponentConfig):
     def __init__(self, component):
         ComponentConfig.__init__(self, component)
         self.virtualElement = component.virtualElement
+        self.attributes = component.getAttributes()
 
 pb.setUnjellyableForClass(ServiceConfig, ServiceConfig)
 

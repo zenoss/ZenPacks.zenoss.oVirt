@@ -26,31 +26,69 @@ class ModelerPlugin(GenericModelerPlugin, PythonPlugin):
     def process(self, device, results, log):
         log.debug("Results for %s/%s: %s", self.name(), device.id, results)
 
-        import pdb;pdb.set_trace()
-        doc = ElementTree.fromstring(results)
-
-        tables = TableSet(tabledata)
-
-        relmaps = self.processComponent(tables, self.compdef, log)
+        resultXml = results[1]
+        doc = ElementTree.fromstring(resultXml)
+        relmaps = self.processComponent(doc, self.compdef, log, resultXml)
 
         log.debug(repr(relmaps))
+        #return None
         return relmaps
 
-    def processComponent(self, tables, compdef, log):
+    def processComponent(self, xmldoc, compdef, log, resultXml):
         def makeId(row):
-            return compdef.id + "_" + self.prepId(row[compdef.idField])
-        rm = self.relMap()
+            # The id field in the resulting XML is a guid
+            return compdef.id + "_" + self.prepId(row.attrib['id'])
 
-        # Iterate over each row in the primary table
-        for row in tables.query("/" + compdef.primaryTable + "/snmpindex").values():
+        #import pdb;pdb.set_trace()
+
+        rm = self.relMap()
+        for virtualElement in xmldoc:
             # Setup the object map
             om = self.objectMap()
-            om.snmpindex = row['snmpindex']
-            om.title = str(row[compdef.idField])
-            om.id = makeId(row)
+            om.id = makeId(virtualElement)
+            #om.guid = virtualElement.attrib['id']
+            #om.href = virtualElement.attrib['href']
+            om.title = virtualElement.find('name').text
+
             om.meta_type = "GenericComponent_" + compdef.id
             om.component_type = compdef.id
+
+            # These are the attribute tags defined in the component XML
             om.setAttributes = {}
+            for attribute in compdef.attributes:
+                xpath = attribute.get("xpath", None)
+                query = attribute.get("valueQuery", None)
+                value = None
+                node = virtualElement.find(xpath) if xpath else virtualElement
+                if node is None:
+                    log.warn("Unable to find xpath %s in %s", xpath, resultXml)
+                    continue
+
+                if query:
+                    try:
+                        value = eval(query, { 'here':node, } )
+                    except Exception, ex:
+                        log.error("Unable to evaluate XML node %s with statement: %s", 
+                                  resultXml, query)
+                        import pdb;pdb.set_trace()
+                        continue
+
+                else:
+                    attrib = node.get(attribute['id'])
+                    if attrib is not None:
+                        value = attrib.text
+                    else:
+                        log.warn("Unable to find %s element in %s",
+                                 attribute['id'], resultXml)
+                        import pdb;pdb.set_trace()
+                        continue
+                om.setAttributes[attribute['id']] = value
+            log.info("Found %s: %s", compdef.id,  om.title)
+            rm.append(om)
+        return rm
+
+    def cruft(self, blue):
+        for row in blue:
             if compdef.parentRelation:
                 parentQuery = Template(compdef.parentRelation).substitute(row)
                 parentRow = tables.query(parentQuery)
@@ -60,19 +98,6 @@ class ModelerPlugin(GenericModelerPlugin, PythonPlugin):
                     continue
                 om.parentSnmpindex = parentRow['snmpindex']
                 om.modname = "ZenPacks.zenoss.Liberator.GenericSubcomponent"
-
-            # These are the attribute tags defined in the component XML
-            for attribute in compdef.attributes:
-                query = attribute.get("valueQuery", None)
-                value = None
-                if query:
-                    query = Template(query).substitute(row)
-                    value = tables.query(query)
-                else:
-                    value = row.get(attribute['id'], None)
-                om.setAttributes[attribute['id']] = value
-            log.info("Found %s: %s", compdef.id,  om.title)
-            rm.append(om)
 
         sorted_subcomp_relmaps = {}
         for subcompdef in compdef.subcomponents:
