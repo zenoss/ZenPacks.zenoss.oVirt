@@ -10,7 +10,8 @@
 
     <attribute name="network_status" valueQuery='here.find("status").find("state").text' label='Status' width='40' />
 
-    <attribute name="stp" valueQuery='here.find("stp").text' label='STP' width='40' />
+    <attribute name="vlan" valueQuery='here.find("vlan").attribute["id"]' label='VLAN Id' width='40' />
+    <attribute name="stp" valueQuery='here.find("stp").text' label='Spanning Tree Protocol' width='40' />
 
     <attribute name="datacenter_href" valueQuery='here.find("data_center").attrib["href"]' label="Datacenter URL" />
     <attribute name="datacenter_guid" valueQuery='here.find("data_center").attrib["id"]' label="Datacenter GUID" />

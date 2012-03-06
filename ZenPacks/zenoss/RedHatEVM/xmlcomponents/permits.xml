@@ -1,0 +1,17 @@
+<?xml version="1.0" ?>
+<component type="ovirt" id="permits" label="Permit" pluralLabel="Permits" virtualElement="permits" idField="name" >
+
+    <documentation>ovirt REST API modeler plugin</documentation>
+
+    <attribute name="name" valueQuery='here.find("name").text' label="Name" />
+    <attribute name="guid" valueQuery='here.attrib["id"]' display="none" />
+    <attribute name="href" valueQuery='here.attrib["href"]' display="none" />
+
+    <attribute name="administrative" valueQuery='here.find("administrative").text' label="Administrative Permit?" width='20' />
+
+    <attribute name="role_href" valueQuery='here.find("role").attrib["href"]' label="Role URL" />
+    <attribute name="role_guid" valueQuery='here.find("role").attrib["id"]' label="Role GUID" />
+
+
+</component>
+

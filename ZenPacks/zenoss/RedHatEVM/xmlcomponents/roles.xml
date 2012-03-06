@@ -1,0 +1,14 @@
+<?xml version="1.0" ?>
+<component type="ovirt" id="roles" label="Role" pluralLabel="Roles" virtualElement="roles" idField="name" >
+
+    <documentation>ovirt REST API modeler plugin</documentation>
+
+    <attribute name="name" valueQuery='here.find("name").text' label="Name" />
+    <attribute name="guid" valueQuery='here.attrib["id"]' display="none" />
+    <attribute name="href" valueQuery='here.attrib["href"]' display="none" />
+    <attribute name="description" valueQuery='here.find("description").text' label="Description" width='80' />
+
+    <attribute name="mutable" valueQuery='here.find("mutable").text' label="Mutable?" width='20' />
+    <attribute name="administrative" valueQuery='here.find("administrative").text' label="Administrative User?" width='20' />
+</component>
+
