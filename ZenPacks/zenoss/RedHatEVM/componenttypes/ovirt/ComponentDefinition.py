@@ -37,7 +37,7 @@ class ComponentDefinition(GenericComponentDefinition):
         self.virtualElement = componentNode.get('virtualElement')
 
         docNode = componentNode.find("documentation")
-        if docNode:
+        if docNode is not None:
             self.documentation = docNode.text
             self.documentationType = docNode.get('type', '')
 
@@ -52,7 +52,7 @@ class ComponentDefinition(GenericComponentDefinition):
 
     def addDataPoint(self, template, perfNode):
         perfId = perfNode.get("name")
-        if not perfId:
+        if perfId is not None:
             msg = "The name attribute is not defined on perf element (line %d)" % perfNode.lineno
             raise BadXmlDefinitionFileException(msg)
 
