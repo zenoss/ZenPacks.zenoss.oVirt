@@ -31,7 +31,7 @@
     <attribute name="stateless" valueQuery='here.find("stateless").text' label="Stateless?" />
     <attribute name="origin" valueQuery='here.find("origin").text' label="Stateless?" />
 
-    <attribute name="placement_policy_affinity" valueQuery='here.find("placement_policy").find("affinity").text' type='int' label="Placement Policy Affinity" />
+    <attribute name="placement_policy_affinity" valueQuery='here.find("placement_policy").find("affinity").text' label="Placement Policy Affinity" />
 
 </component>
 
