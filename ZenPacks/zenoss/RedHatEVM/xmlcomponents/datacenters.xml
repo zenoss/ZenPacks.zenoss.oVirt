@@ -1,19 +1,19 @@
 <?xml version="1.0" ?>
-<component type="ovirt" id="datacenters" label="Data Center" pluralLabel="Data Centers" virtualElement="datacenters" idField="guid" >
+<component type="ovirt" id="datacenters" label="Data Center" pluralLabel="Data Centers" virtualElement="datacenters" idField="name" >
 
-    <attribute name="guid" valueQuery='here.attrib["id"]' />
-    <attribute name="href" valueQuery='here.attrib["href"]' />
-    <attribute name="description" valueQuery='here.find("description").text' />
+    <attribute name="name" valueQuery='here.find("name").text' label="Name" />
+    <attribute name="guid" valueQuery='here.attrib["id"]' display="none" />
+    <attribute name="href" valueQuery='here.attrib["href"]' display="none" />
+    <attribute name="description" valueQuery='here.find("description").text' label="Description" />
+    <attribute name="storage_type" valueQuery='here.find("storage_type").text' label="Storage Type" />
+    <attribute name="major_version" valueQuery='here.find("version").attrib["major"]' label="Major Version" display='none' />
+    <attribute name="minor_version" valueQuery='here.find("version").attrib["minor"]' label="Minor Version" display='none' />
 
 <!--
     <attribute name="title" valueQuery='./name'/>
     <attribute name="name"  />
-    <attribute name="description"  />
-    <attribute name="storage_type" />
     <attribute name="supported_versions" />
     <attribute name="status" />
-    <attribute name="major_version" />
-    <attribute name="minor_version" />
 -->
 
 </component>
