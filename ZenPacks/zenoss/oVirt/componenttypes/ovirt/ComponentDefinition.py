@@ -41,14 +41,12 @@ class ComponentDefinition(GenericComponentDefinition):
             self.documentation = docNode.text
             self.documentationType = docNode.get('type', '')
 
-        log.critical("Inside of the parser")
         for attributeNode in componentNode.findall("attribute"):
             attributeId = attributeNode.get("name")
             if not attributeId:
                 raise BadXmlDefinitionFileException("name attribute not defined on attribute element (line %d)" % attributeNode.lineno);
-            attribute = self.getOrAdd(self, OVirtComponentAttributeDefinition, attributeId)
+            attribute = self.getOrAdd(self, GenericComponentAttributeDefinition, attributeId)
             attribute._parseNode(attributeNode)
-            log.critical("Parsed %s", attributeId)
 
     def addDataPoint(self, template, perfNode):
         perfId = perfNode.get("name")
@@ -81,17 +79,4 @@ class ComponentDefinition(GenericComponentDefinition):
 
     def validate(self, componentNode):
         super(ComponentDefinition, self).validate(componentNode)
-
-
-class OVirtComponentAttributeDefinition(GenericComponentAttributeDefinition):
-    xpath = ''
-
-    _properties = GenericComponentAttributeDefinition._properties + (
-        {'id':'xpath', 'type':'string', 'mode':'rw'},
-    )
-
-    def _parseNode(self, attributeNode):
-        GenericComponentAttributeDefinition._parseNode(self, attributeNode)
-        self.xpath = attributeNode.get('xpath')
-        import pdb;pdb.set_trace()
 
