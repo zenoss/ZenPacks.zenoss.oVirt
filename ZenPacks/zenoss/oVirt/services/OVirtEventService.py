@@ -16,7 +16,7 @@ import Globals
 
 from Products.ZenCollector.services.config import CollectorConfigService
 
-from ZenPacks.zenoss.RedHatEVM.componenttypes.ovirt.DeviceProxyConfig import DeviceProxyConfig
+from ZenPacks.zenoss.oVirt.componenttypes.ovirt.DeviceProxyConfig import DeviceProxyConfig
 
 
 class OVirtEventService(CollectorConfigService):

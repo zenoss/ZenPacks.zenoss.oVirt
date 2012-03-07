@@ -2,12 +2,12 @@
 # These variables are overwritten by Zenoss when the ZenPack is exported
 # or saved.  Do not modify them directly here.
 # NB: PACKAGES is deprecated
-NAME = "ZenPacks.zenoss.RedHatEVM"
+NAME = "ZenPacks.zenoss.oVirt"
 VERSION = "1.0.0"
 AUTHOR = ""
 LICENSE = ""
 NAMESPACE_PACKAGES = ['ZenPacks', 'ZenPacks.zenoss']
-PACKAGES = ['ZenPacks', 'ZenPacks.zenoss', 'ZenPacks.zenoss.RedHatEVM']
+PACKAGES = ['ZenPacks', 'ZenPacks.zenoss', 'ZenPacks.zenoss.oVirt']
 INSTALL_REQUIRES = ['ZenPacks.zenoss.Liberator']
 COMPAT_ZENOSS_VERS = ""
 PREV_ZENPACK_NAME = ""
