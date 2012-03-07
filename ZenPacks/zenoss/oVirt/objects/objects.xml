@@ -1,0 +1,12 @@
+<?xml version="1.0"?>
+<objects>
+<!-- ('', 'zport', 'dmd', 'Devices', 'oVirt') -->
+<object id='/zport/dmd/Devices/oVirt' module='Products.ZenModel.DeviceClass' class='DeviceClass'>
+<property id='zendoc' type='string'>
+oVirt Virtual Datacenter Management Platform
+</property>
+<property type="string" id="description" mode="w" >
+oVirt Virtual Datacenter Management Platform
+</property>
+</object>
+</objects>

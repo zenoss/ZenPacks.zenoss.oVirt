@@ -1,0 +1,37 @@
+<?xml version="1.0" ?>
+<component type="ovirt" id="vms" label="Virtual Machine" pluralLabel="Virtual Machines" virtualElement="vms" idField="name" >
+
+    <documentation>ovirt REST API modeler plugin</documentation>
+
+    <attribute name="name" valueQuery='here.find("name").text' label="Name" />
+    <attribute name="guid" valueQuery='here.attrib["id"]' display="none" />
+    <attribute name="href" valueQuery='here.attrib["href"]' display="none" />
+
+    <attribute name="vm_type" valueQuery='here.find("type").text' label="VM Type" />
+
+    <attribute name="element_status" valueQuery='here.find("status").find("state").text' label='Status' width='20' />
+
+    <attribute name="memory" valueQuery='here.find("memory").text' type='int' label="Memory" />
+    <attribute name="memory_policy_guaranteed" valueQuery='here.find("memory_policy").find("guaranteed").text' type='int' label="Memory (Guaranteed)" />
+
+    <attribute name="os_type" valueQuery='here.find("os").attrib["type"]' label="OS Type" />
+
+    <attribute name="high_availability" valueQuery='here.find("high_availability").find("enabled").text' label="HA" />
+    <attribute name="high_availability_priority" valueQuery='here.find("high_availability").find("priority").text' label="HA Priority" />
+
+    <attribute name="cluster_href" valueQuery='here.find("cluster").attrib["href"]' label="Cluster URL" />
+    <attribute name="cluster_guid" valueQuery='here.find("cluster").attrib["id"]' label="Cluster GUID" />
+
+    <attribute name="template_href" valueQuery='here.find("template").attrib["href"]' label="Template URL" />
+    <attribute name="template_guid" valueQuery='here.find("template").attrib["id"]' label="Template GUID" />
+
+    <attribute name="start_time" valueQuery='here.find("start_time").text' label="Start Time" />
+    <attribute name="creation_time" valueQuery='here.find("creation_time").text' label="Creation Time" />
+
+    <attribute name="stateless" valueQuery='here.find("stateless").text' label="Stateless?" />
+    <attribute name="origin" valueQuery='here.find("origin").text' label="Stateless?" />
+
+    <attribute name="placement_policy_affinity" valueQuery='here.find("placement_policy").find("affinity").text' label="Placement Policy Affinity" />
+
+</component>
+

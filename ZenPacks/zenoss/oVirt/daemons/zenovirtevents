@@ -1,0 +1,13 @@
+#! /usr/bin/env bash
+
+DAEMON_NAME="zenovirtevents"
+
+. $ZENHOME/bin/zenfunctions
+
+MYPATH=`python -c "import os.path; print os.path.realpath('$0')"`
+THISDIR=`dirname $MYPATH`
+PRGHOME=`dirname $THISDIR`
+PRGNAME=$DAEMON_NAME.py
+CFGFILE=$CFGDIR/$DAEMON_NAME.conf
+
+generic "$@"
