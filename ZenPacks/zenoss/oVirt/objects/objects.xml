@@ -8,5 +8,8 @@ oVirt Virtual Datacenter Management Platform
 <property type="string" id="description" mode="w" >
 oVirt Virtual Datacenter Management Platform
 </property>
+<property type="string" id="targetPythonClass" mode="w" >
+ZenPacks.zenoss.oVirt.Device
+</property>
 </object>
 </objects>

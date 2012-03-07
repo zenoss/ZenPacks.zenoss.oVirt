@@ -1,0 +1,9 @@
+{
+    "EventDetailItem" : [
+        {
+            "name" : "oVirt Code",
+            "key" : "ovirt_code_text",
+            "type" : 1
+        }
+    ]
+}

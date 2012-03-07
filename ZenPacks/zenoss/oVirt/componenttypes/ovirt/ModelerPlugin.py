@@ -25,7 +25,13 @@ class ModelerPlugin(GenericModelerPlugin, PythonPlugin):
         log.debug("Results for %s/%s: %s", self.name(), device.id, results)
 
         resultXml = results[1]
-        doc = ElementTree.fromstring(resultXml)
+        try:
+            doc = ElementTree.fromstring(resultXml)
+        except Exception:
+            log.error("Received invalid XML from modeler code -- skipping %s",
+                      self.name())
+            return None
+
         relmaps = self.processComponent(doc, self.compdef, log, resultXml)
 
         log.debug(repr(relmaps))

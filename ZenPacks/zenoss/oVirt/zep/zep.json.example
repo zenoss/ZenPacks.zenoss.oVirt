@@ -10,5 +10,10 @@
             "key" : "ovirt_code",
             "type" : 2
         }
+        {
+            "name" : "oVirt Event Id",
+            "key" : "ovirt_event_id",
+            "type" : 2
+        }
     ]
 }

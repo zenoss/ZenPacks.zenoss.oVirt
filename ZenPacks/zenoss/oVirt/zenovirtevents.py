@@ -71,6 +71,11 @@ class ZenOVirtEventTask(ObservableMixin):
         'alert':   5,  # Critical
     }
 
+    extraFields = (
+        'vm', 'vmpool', 'storage_domain', 'network', 'host', 'cluster', 'domain',
+        'template', 'tags', 'data_center',
+    )
+
     def __init__(self, taskName, deviceId, interval, taskConfig):
         super(ZenOVirtEventTask, self).__init__()
         self._taskConfig = taskConfig
@@ -96,6 +101,8 @@ class ZenOVirtEventTask(ObservableMixin):
         }
         self._baseUrl = '/api/'
 
+        self.lastMessageId = 0
+
     def doTask(self):
         d = defer.maybeDeferred(self._httpGet, 'events')
         d.addCallback(self._processEvents)
@@ -112,19 +119,42 @@ class ZenOVirtEventTask(ObservableMixin):
         return body
 
     def _processEvents(self, eventXml):
+        """
+        Convert and send oVirt events as Zenoss events.
+        """
         events = ElementTree.fromstring(eventXml)
         for eventNode in events:
+            msgId = int(eventNode.attrib['id'])
+
+            # Don't send events we've already sent
+            if msgId <= self.lastMessageId:
+                continue
+            self.lastMessageId = msgId
+            
+            # Add in information guaranteed to be in the event
             code = int(eventNode.find('code').text)
             evt = {
-                'oVirtEventId': eventNode.attrib['id'],
+                'ovirt_event_id': msgId,
                 'summary': eventNode.find('description').text,
                 'device': self._serverName,
-                'oVirtCode': code,
-                'oVirtCodeText': codes2msg.get(code, 'Unknown'),
+                'ovirt_code': code,
+                'ovirt_code_text': codes2msg.get(code, 'Unknown'),
             }
             evt['severity'] = self.ovirt2zenSeverity.get(eventNode.find('severity').text, 'error')
+
+            # Add in extra bits...
+            self._updateEventWithExtraData(evt, eventNode)
+
             self._eventService.sendEvent(evt)
-        #import pdb;pdb.set_trace()
+
+    def _updateEventWithExtraData(self, evt, eventNode):
+        """
+        Add in the object ids for the related entities.
+        """
+        for virtualElement in self.extraFields:
+            item = eventNode.find(virtualElement)
+            if item is not None:
+                evt[virtualElement] = item.text
 
     def cleanup(self):
         pass

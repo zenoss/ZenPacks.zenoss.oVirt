@@ -11,3 +11,9 @@ from Products.ZenRelations.RelSchema import ToManyCont, ToOne
 class Device(BaseDevice):
     meta_type = portal_type = 'Device'
 
+    lastEvent = 0
+
+    _properties = BaseDevice.BaseDevice + (
+        {'id':'lastEvent', 'type':'int', 'mode':'w'},
+    )
+
