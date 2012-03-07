@@ -104,7 +104,8 @@ class ZenOVirtEventTask(ObservableMixin):
         self.lastMessageId = 0
 
     def doTask(self):
-        d = defer.maybeDeferred(self._httpGet, 'events')
+        url = 'events?from=%s' % self.lastMessageId
+        d = defer.maybeDeferred(self._httpGet, url)
         d.addCallback(self._processEvents)
         return d
 
@@ -139,6 +140,7 @@ class ZenOVirtEventTask(ObservableMixin):
                 'device': self._serverName,
                 'ovirt_code': code,
                 'ovirt_code_text': codes2msg.get(code, 'Unknown'),
+                'eventClassKey': codes2msg.get(code, 'Unknown'),
             }
             evt['severity'] = self.ovirt2zenSeverity.get(eventNode.find('severity').text, 'error')
 
@@ -155,6 +157,13 @@ class ZenOVirtEventTask(ObservableMixin):
             item = eventNode.find(virtualElement)
             if item is not None:
                 evt[virtualElement] = item.text
+
+        # Guess the most appropriate component
+        for virtualElement in ('vm', 'host', 'cluster', 'network', 'storage_domain', 'data_center'):
+            if virtualElement in evt:
+                # Note: The component is pluralized
+                evt['component'] = '%ss_%s' % (virtualElement, evt[virtualElement])
+                break
 
     def cleanup(self):
         pass

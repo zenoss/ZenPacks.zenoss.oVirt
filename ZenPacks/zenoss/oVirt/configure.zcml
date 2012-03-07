@@ -57,12 +57,7 @@
     <!-- Dynamic View Adapters
 
     Dynamic View adapters are how Zenoss shows relationships between objects in
-    the "Dynamic View" screens in the user interface. This capability was
-    introduced in Zenoss 3.0, but only in the commercial version. It is
-    recommended to enclose all Dynamic View configuration in a conditional as
-    shown below so the ZenPack will work in all Zenoss systems.
-
-    See dynamicview.py for the adapter implementations.
+    the "Dynamic View" screens in the user interface.
 
     <configure zcml:condition="installed ZenPacks.zenoss.DynamicView">
         <include package="ZenPacks.zenoss.DynamicView" file="meta.zcml"/>
@@ -116,9 +111,6 @@
     configure because visualization is built-in and you only need to concern
     yourself with defining edges (or relationships) between objects.
 
-    This section should be wrapped in a conditional so your ZenPack will work
-    whether or not Zenoss Datacenter Impact is installed.
-
     IRelationshipDataProvider works much like the Dynamic View
     IRelationsProvider above. It defines dependency relationships between
     objects.
@@ -133,16 +125,15 @@
     where you'd use this is for port-channel interfaces. You'd likely want to
     create impact edges to all of the member interfaces and setup a redundancy
     policy on the port-channel.
-
-    See impact.py for the subscriber implementations.
+    -->
 
     <configure zcml:condition="installed ZenPacks.zenoss.Impact">
         <include package="ZenPacks.zenoss.Impact" file="meta.zcml"/>
 
         <subscriber
             provides="ZenPacks.zenoss.Impact.impactd.interfaces.IRelationshipDataProvider"
-            for=".ExampleDevice.ExampleDevice"
-            factory=".impact.ExampleDeviceRelationsProvider"
+            for=".Device.Device"
+            factory=".impact.OVirtDeviceRelationsProvider"
             />
 
         <subscriber
@@ -164,7 +155,6 @@
             />
 
     </configure>
-    -->
 
 
     <!-- Analytics Adapters

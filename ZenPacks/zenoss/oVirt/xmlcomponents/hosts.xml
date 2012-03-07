@@ -24,7 +24,7 @@
 
     <attribute name="iscsi_initiator" valueQuery='here.find("iscsi").find("initiator")text' label="iSCSI Initiator" />
 
-    <attribute name="ksm_enabled" valueQuery='here.find("ksm").find("enabled").text' label="KSM" />
+    <attribute name="ksm_enabled" valueQuery='here.find("ksm").find("enabled").text' label="Kernel SamePage Mapping" />
 
     <attribute name="memory_hugepages_enabled" valueQuery='here.find("transparent_hugepages").find("enabled").text' label="Transparent Hugepages" />
 

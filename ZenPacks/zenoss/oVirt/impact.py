@@ -1,3 +1,10 @@
+######################################################################
+#
+# Copyright 2012 Zenoss, Inc.  All Rights Reserved.
+#
+######################################################################
+
+
 from zope.component import adapts
 from zope.interface import implements
 
@@ -9,7 +16,7 @@ from ZenPacks.zenoss.Impact.impactd.relations import ImpactEdge
 from ZenPacks.zenoss.Impact.impactd.interfaces \
     import IRelationshipDataProvider, INodeTriggers
 
-from .ExampleDevice import ExampleDevice
+from .Device import Device
 from .ExampleComponent import ExampleComponent
 
 
@@ -38,9 +45,9 @@ def getRedundancyTriggers(guid, format):
     )
 
 
-class ExampleDeviceRelationsProvider(object):
+class DeviceRelationsProvider(object):
     implements(IRelationshipDataProvider)
-    adapts(ExampleDevice)
+    adapts(Device)
 
     relationship_provider = "ExampleImpact"
 
