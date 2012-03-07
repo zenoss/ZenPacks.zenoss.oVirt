@@ -40,7 +40,7 @@ class ZenExamplePreferences(object):
     def __init__(self):
         self.collectorName = 'zenexample'
         self.configurationService = \
-            "ZenPacks.NAMESPACE.PACKNAME.services.ExampleConfigService"
+            "ZenPacks.zenoss.PACKNAME.services.RHEVEventService"
 
         # How often the daemon will collect each device. Specified in seconds.
         self.cycleInterval = 5 * 60

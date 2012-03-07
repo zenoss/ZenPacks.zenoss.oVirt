@@ -1,12 +1,12 @@
 <?xml version="1.0"?>
 <objects>
-<!-- ('', 'zport', 'dmd', 'Devices', 'EVM') -->
-<object id='/zport/dmd/Devices/EVM' module='Products.ZenModel.DeviceClass' class='DeviceClass'>
+<!-- ('', 'zport', 'dmd', 'Devices', 'oVirt') -->
+<object id='/zport/dmd/Devices/oVirt' module='Products.ZenModel.DeviceClass' class='DeviceClass'>
 <property id='zendoc' type='string'>
-Red Hat Enterprise Virtualization Manager
+oVirt Virtual Datacenter Management Platform
 </property>
 <property type="string" id="description" mode="w" >
-Red Hat Enterprise Virtualization Manager
+oVirt Virtual Datacenter Management Platform
 </property>
 </object>
 </objects>

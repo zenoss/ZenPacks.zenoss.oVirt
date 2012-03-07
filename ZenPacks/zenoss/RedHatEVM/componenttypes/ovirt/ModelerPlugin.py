@@ -36,8 +36,6 @@ class ModelerPlugin(GenericModelerPlugin, PythonPlugin):
             # The id field in the resulting XML is a guid
             return compdef.id + "_" + self.prepId(row.attrib['id'])
 
-        #import pdb;pdb.set_trace()
-
         rm = self.relMap()
         for virtualElement in xmldoc:
             # Setup the object map
@@ -56,15 +54,16 @@ class ModelerPlugin(GenericModelerPlugin, PythonPlugin):
                 value = None
                 node = virtualElement.find(xpath) if xpath else virtualElement
                 if node is None:
-                    log.warn("Unable to find xpath %s in %s", xpath, resultXml)
+                    log.warn("Unable to find xpath %s for %s", xpath, attribute['id'])
                     continue
 
                 if query:
                     try:
                         value = eval(query, { 'here':node, } )
                     except Exception:
-                        log.error("Unable to evaluate XML node %s with statement: %s", 
-                                  resultXml, query)
+                        # Note: The REST API may not fill out all fields
+                        log.debug("Unable to evaluate XML node for %s with statement: %s", 
+                                  attribute['id'], query)
                         continue
 
                 else:
@@ -72,8 +71,9 @@ class ModelerPlugin(GenericModelerPlugin, PythonPlugin):
                     if attrib is not None:
                         value = attrib.text
                     else:
-                        log.warn("Unable to find %s element in %s",
-                                 attribute['id'], resultXml)
+                        # Note: The REST API may not fill out all fields
+                        log.debug("Unable to find %s element for %s",
+                                 attribute['id'], attribute['id'])
                         continue
                 om.setAttributes[attribute['id']] = value
             log.info("Found %s: %s", compdef.id,  om.title)
