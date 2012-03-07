@@ -37,6 +37,7 @@ class OVirtEventService(CollectorConfigService):
         self._deviceProxyAttributes += proxyconfig.attributes
         proxy = CollectorConfigService._createDeviceProxy(self, device)
 
+        proxy.configCycleInterval = 3600
         proxy.datapoints = []
         proxy.thresholds = []
 
