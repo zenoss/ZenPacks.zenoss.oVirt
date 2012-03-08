@@ -12,7 +12,7 @@ class Device(BaseDevice):
 
     lastEvent = 0
 
-    _properties = BaseDevice.BaseDevice + (
+    _properties = BaseDevice._properties + (
         {'id':'lastEvent', 'type':'int', 'mode':'w'},
     )
 
