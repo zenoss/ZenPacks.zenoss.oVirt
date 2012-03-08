@@ -11,6 +11,9 @@ oVirt Virtual Datacenter Management Platform
 <property visible="True" type="string" id="zLinks" >
 &lt;a href="http://${here/zOVirtServerName}:${here/zOVirtPort}"&gt;oVirt Management Portal&lt;/a&gt;
 </property>
+<property visible="True" type="lines" id="zXmlComponents" >
+['clusters', 'datacenters', 'roles', 'domains', 'networks', 'tags', 'groups', 'templates', 'permits', 'hosts', 'vmpools', 'storagedomains', 'users', 'vms']
+</property>
 </object>
 <!-- ('', 'zport', 'dmd', 'Events', 'oVirt') -->
 <object id='/zport/dmd/Events/oVirt' module='Products.ZenEvents.EventClass' class='EventClass'>
