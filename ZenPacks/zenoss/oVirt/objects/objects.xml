@@ -14,6 +14,9 @@ oVirt Virtual Datacenter Management Platform
 <property visible="True" type="lines" id="zXmlComponents" >
 ['clusters', 'datacenters', 'roles', 'domains', 'networks', 'tags', 'groups', 'templates', 'permits', 'hosts', 'vmpools', 'storagedomains', 'users', 'vms']
 </property>
+<property visible="True" type="string" id="zIcon" >
+/++resource++ovirt/img/vDC.png
+</property>
 </object>
 <!-- ('', 'zport', 'dmd', 'Events', 'oVirt') -->
 <object id='/zport/dmd/Events/oVirt' module='Products.ZenEvents.EventClass' class='EventClass'>
