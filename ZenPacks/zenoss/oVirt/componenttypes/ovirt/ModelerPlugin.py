@@ -55,14 +55,9 @@ class ModelerPlugin(GenericModelerPlugin, PythonPlugin):
             # These are the attribute tags defined in the component XML
             om.setAttributes = {}
             for attribute in compdef.attributes:
-                xpath = attribute.get("xpath", None)
                 query = attribute.get("valueQuery", None)
                 value = None
-                node = virtualElement.find(xpath) if xpath else virtualElement
-                if node is None:
-                    log.warn("Unable to find xpath %s for %s", xpath, attribute['id'])
-                    continue
-
+                node = virtualElement
                 if query:
                     try:
                         value = eval(query, { 'here':node, } )
