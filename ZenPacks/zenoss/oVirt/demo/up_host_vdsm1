@@ -1,0 +1,1 @@
+zensendevent -d ovirt.zenosslabs.com -s Clear -o component=hosts_35247b14-4918-11e1-8665-02163e345a13 "I *KNEW* there was another black cable somewhere here!"

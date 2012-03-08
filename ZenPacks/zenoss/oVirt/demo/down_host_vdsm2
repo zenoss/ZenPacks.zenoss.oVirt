@@ -1,0 +1,1 @@
+zensendevent -d ovirt.zenosslabs.com -s Critical -o component=hosts_d18bdf38-4927-11e1-a2a8-02163e345a13 "Another power cord tripped!"
