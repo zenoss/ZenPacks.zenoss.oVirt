@@ -8,6 +8,9 @@ oVirt Virtual Datacenter Management Platform
 <property type="string" id="description" mode="w" >
 oVirt Virtual Datacenter Management Platform
 </property>
+<property visible="True" type="string" id="zLinks" >
+&lt;a href="http://${here/zOVirtServerName}:${here/zOVirtPort}"&gt;oVirt Management Portal&lt;/a&gt;
+</property>
 </object>
 <!-- ('', 'zport', 'dmd', 'Events', 'oVirt') -->
 <object id='/zport/dmd/Events/oVirt' module='Products.ZenEvents.EventClass' class='EventClass'>
