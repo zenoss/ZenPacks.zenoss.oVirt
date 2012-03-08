@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="utf-8"?>
+<configure
+    xmlns="http://namespaces.zope.org/zope"
+    xmlns:zcml="http://namespaces.zope.org/zcml">
+
+    <include package="ZenPacks.zenoss.DynamicView" file="meta.zcml"/>
+
+    <!-- IRelationsProvider subscribers -->
+<!--
+    <subscriber
+        provides="ZenPacks.zenoss.DynamicView.interfaces.IRelationsProvider"
+        for="Products.ZenModel.Device.Device"
+        factory=".dynamicview.DeviceRelationsProvider_ovirt_datacenter"
+        />
+-->
+
+<!--
+    <adapter
+        provides="ZenPacks.zenoss.DynamicView.interfaces.IRelatable"
+        for=".ExampleComponent.ExampleComponent"
+        factory=".dynamicView.ExampleComponentRelatable"
+        />
+
+    <subscriber
+        provides="ZenPacks.zenoss.DynamicView.interfaces.IRelationsProvider"
+        for="..ExampleDevice.ExampleDevice"
+        factory=".dynamicView.ExampleDeviceRelationsProvider"
+        />
+
+    <subscriber
+        provides="ZenPacks.zenoss.DynamicView.interfaces.IRelationsProvider"
+        for="..ExampleComponent.ExampleComponent"
+        factory=".dynamicView.ExampleComponentRelationsProvider"
+        />
+-->
+
+    <!--   Groups  -->
+    <relatableGroup
+        name="Datacenters"
+        groupType="oVirt"
+        icon="/++resource++ovirt/img/vDC.png"
+        weight="10"
+        />
+
+    <relatableGroup
+        name="Clusters"
+        groupType="oVirt"
+        icon="/++resource++ovirt/img/vApp.png"
+        weight="20"
+        />
+
+    <relatableGroup
+        name="Hosts"
+        groupType="oVirt"
+        icon="/++resource++ovirt/img/ProviderVDC.png"
+        weight="30"
+        />
+
+    <relatableGroup
+        name="Virtual Machines"
+        groupType="oVirt"
+        icon="/++resource++ovirt/img/VM.png"
+        weight="40"
+        />
+
+    <!--   Dynamic Views  -->
+    <dynamicViewToGroup
+        view="service_view"
+        group="Datacenters"
+        />
+
+    <dynamicViewToGroup
+        view="component_view"
+        group="Clusters"
+        />
+
+    <dynamicViewToGroup
+        view="component_view"
+        group="Hosts"
+        />
+
+    <dynamicViewToGroup
+        view="component_view"
+        group="VMs"
+        />
+
+</configure>
+

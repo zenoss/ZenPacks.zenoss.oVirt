@@ -1,12 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <configure xmlns="http://namespaces.zope.org/browser">
 
-    <!-- A resource directory contains static web content.
     <resourceDirectory
-        name="example"
+        name="ovirt"
         directory="resources"
         />
-    -->
 
     <!-- Register custom JavaScript for ExampleDevices.
     <viewlet

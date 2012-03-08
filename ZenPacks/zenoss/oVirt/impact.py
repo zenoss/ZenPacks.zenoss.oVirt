@@ -17,14 +17,32 @@ from ZenPacks.zenoss.Impact.impactd.interfaces \
     import IRelationshipDataProvider, INodeTriggers
 
 from .Device import Device
-from .ExampleComponent import ExampleComponent
+
+
+class DeviceRelationsProvider(object):
+    implements(IRelationshipDataProvider)
+    adapts(Device)
+
+    relationship_provider = "oVirtImpact"
+
+    def __init__(self, adapted):
+        self._object = adapted
+
+    def belongsInImpactGraph(self):
+        return True
+
+    def getEdges(self):
+        """
+        oVirt manager has multiple datacenters.
+        """
+        guid = IGlobalIdentifier(self._object).getGUID()
+
+        for exampleComponent in self._object.exampleComponents():
+            c_guid = IGlobalIdentifier(exampleComponent).getGUID()
+            yield ImpactEdge(guid, c_guid, self.relationship_provider)
 
 
 def getRedundancyTriggers(guid, format):
-    """
-    Helper method for generating a good general redunancy set of triggers.
-    """
-
     availability = 'AVAILABILITY'
     percent = 'policyPercentageTrigger'
     threshold = 'policyThresholdTrigger'
@@ -45,95 +63,40 @@ def getRedundancyTriggers(guid, format):
     )
 
 
-class DeviceRelationsProvider(object):
-    implements(IRelationshipDataProvider)
-    adapts(Device)
-
-    relationship_provider = "ExampleImpact"
-
-    def __init__(self, adapted):
-        self._object = adapted
-
-    def belongsInImpactGraph(self):
-        return True
-
-    def getEdges(self):
-        """
-        An ExampleDevice impacts all of its ExampleComponents.
-        """
-        guid = IGlobalIdentifier(self._object).getGUID()
-
-        for exampleComponent in self._object.exampleComponents():
-            c_guid = IGlobalIdentifier(exampleComponent).getGUID()
-            yield ImpactEdge(guid, c_guid, self.relationship_provider)
-
-
-class ExampleComponentRelationsProvider(object):
-    implements(IRelationshipDataProvider)
-    adapts(ExampleComponent)
-
-    relationship_provider = "ExampleImpact"
-
-    def __init__(self, adapted):
-        self._object = adapted
-
-    def belongsInImpactGraph(self):
-        return True
-
-    def getEdges(self):
-        """
-        An ExampleComponent is impacted by its ExampleDevice.
-        """
-        guid = IGlobalIdentifier(self._object).getGUID()
-
-        d_guid = IGlobalIdentifier(self._object.exampleDevice())
-        yield ImpactEdge(d_guid, guid, self.relationship_provider)
-
-
-class ExampleComponentStateProvider(object):
-    implements(IStateProvider)
-
-    def __init__(self, adapted):
-        self._object = adapted
-
-    @property
-    def eventClasses(self):
-        return ('/Status/',)
-
-    @property
-    def excludeClasses(self):
-        return None
-
-    @property
-    def eventHandlerType(self):
-        return "WORST"
-
-    @property
-    def stateType(self):
-        return 'AVAILABILITY'
-
-    def calcState(self, events):
-        status = None
-        if self._object.attributeOne < 1:
-            return 'DOWN'
-        else:
-            return 'UP'
-
-        cause = None
-        if status == 'DOWN' and events:
-            cause = events[0]
-
-        return status, cause
-
-
-class ExampleComponentTriggers(object):
+class OVirtDatacenterTriggers(object):
+    """
+    A datacenter is down if all clusters are down.
+    """
     implements(INodeTriggers)
 
     def __init__(self, adapted):
         self._object = adapted
 
     def get_triggers(self):
+        if self._object.meta_type != 'GenericComponent_datacenters':
+            return ()
+
         return getRedundancyTriggers(
             IGlobalIdentifier(self._object).getGUID(),
-            'DEFAULT_EXAMPLECOMPONENT_TRIGGER_ID_%s',
+            'DEFAULT_OVIRT_DATACENTER_TRIGGER_ID_%s',
         )
+
+
+class OVirtClusterTriggers(object):
+    """ 
+    A cluster is down if all hosts are down.
+    """
+    implements(INodeTriggers)
+
+    def __init__(self, adapted):
+        self._object = adapted
+
+    def get_triggers(self):
+        if self._object.meta_type != 'GenericComponent_clusters':
+            return ()
+
+        return getRedundancyTriggers(
+            IGlobalIdentifier(self._object).getGUID(),
+            'DEFAULT_OVIRT_CLUSTER_TRIGGER_ID_%s',
+        )
+

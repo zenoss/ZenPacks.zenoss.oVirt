@@ -1,24 +1,31 @@
+######################################################################
+#
+# Copyright 2012 Zenoss, Inc.  All Rights Reserved.
+#
+######################################################################
+
 from zope.component import adapts
 
 from ZenPacks.zenoss.DynamicView import TAG_IMPACTED_BY, TAG_IMPACTS, TAG_ALL
 from ZenPacks.zenoss.DynamicView.model.adapters import DeviceComponentRelatable
 from ZenPacks.zenoss.DynamicView.model.adapters import BaseRelationsProvider
 
-from ..ExampleDevice import ExampleDevice
-from ..ExampleComponent import ExampleComponent
+from Products.ZenModel.Device import Device as BaseDevice
+
+from ZenPacks.zenoss.Liberator.GenericComponent import GenericComponent
 
 
 ### IRelatable Adapters
 
 class ExampleComponentRelatable(DeviceComponentRelatable):
-    adapts(ExampleComponent)
+    adapts(GenericComponent)
 
-    group = 'Example Components'
+    group = 'Liberator Components'
 
 
 ### IRelationsProvider Adapters
 
-class ExampleDeviceRelationsProvider(BaseRelationsProvider):
+class DeviceRelationsProvider_ovirt_datacenter(BaseRelationsProvider):
     adapts(ExampleDevice)
 
     def relations(self, type=TAG_ALL):
@@ -31,7 +38,7 @@ class ExampleDeviceRelationsProvider(BaseRelationsProvider):
 
 
 class ExampleComponentRelationsProvider(BaseRelationsProvider):
-    adapts(ExampleComponent)
+    adapts(GenericComponent)
 
     def relations(self, type=TAG_ALL):
         """
