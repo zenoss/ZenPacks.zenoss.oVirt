@@ -23,11 +23,8 @@ class Device(BaseDevice):
         Specifying the meta-type of a component which matches the guid
         returns the component.
         """
-        if not meta_type.startswith('GenericComponent_'):
-            meta_type = 'GenericComponent_' + meta_type
-
         comps = []
-        for comp in self.getDeviceComponents(type=meta_type):
+        for comp in self.getComponents(type=meta_type):
             values = comp.attributes.values()
             if guid in values:
                 comps.append(comp)
@@ -40,4 +37,13 @@ class Device(BaseDevice):
         for comp in self.genericComponents():
             if comp.attributes.get('guid') == guid:
                 return comp
+
+    def getComponents(self, meta_type):
+        """
+        Find all components by that match the meta_type.
+        """
+        if not meta_type.startswith('GenericComponent_'):
+            meta_type = 'GenericComponent_' + meta_type
+
+        return self.getDeviceComponents(type=meta_type)
 
