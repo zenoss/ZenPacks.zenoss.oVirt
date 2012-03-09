@@ -6,33 +6,18 @@
     <include package="ZenPacks.zenoss.DynamicView" file="meta.zcml"/>
 
     <!-- IRelationsProvider subscribers -->
-<!--
     <subscriber
         provides="ZenPacks.zenoss.DynamicView.interfaces.IRelationsProvider"
-        for="Products.ZenModel.Device.Device"
+        for=".Device.Device"
         factory=".dynamicview.DeviceRelationsProvider_ovirt_datacenter"
         />
--->
 
-<!--
     <adapter
-        provides="ZenPacks.zenoss.DynamicView.interfaces.IRelatable"
-        for=".ExampleComponent.ExampleComponent"
-        factory=".dynamicView.ExampleComponentRelatable"
+        provides="ZenPacks.zenoss.DynamicView.interfaces.IRelationsProvider"
+        for="ZenPacks.zenoss.Liberator.GenericComponent.GenericComponent"
+        factory=".dynamicView.OVirtComponentRelationsProvider"
         />
 
-    <subscriber
-        provides="ZenPacks.zenoss.DynamicView.interfaces.IRelationsProvider"
-        for="..ExampleDevice.ExampleDevice"
-        factory=".dynamicView.ExampleDeviceRelationsProvider"
-        />
-
-    <subscriber
-        provides="ZenPacks.zenoss.DynamicView.interfaces.IRelationsProvider"
-        for="..ExampleComponent.ExampleComponent"
-        factory=".dynamicView.ExampleComponentRelationsProvider"
-        />
--->
 
     <!--   Groups  -->
     <relatableGroup
@@ -52,7 +37,7 @@
     <relatableGroup
         name="Hosts"
         groupType="oVirt"
-        icon="/++resource++ovirt/img/ProviderVDC.png"
+        icon="/zport/dmd/img/icons/server.png"
         weight="30"
         />
 
