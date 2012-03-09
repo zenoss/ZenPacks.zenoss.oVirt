@@ -17,6 +17,9 @@ oVirt Virtual Datacenter Management Platform
 <property visible="True" type="string" id="zIcon" >
 /++resource++ovirt/img/vDC.png
 </property>
+<property visible="True" type="string" id="zPythonClass" >
+ZenPacks.zenoss.oVirt.Device
+</property>
 </object>
 <!-- ('', 'zport', 'dmd', 'Events', 'oVirt') -->
 <object id='/zport/dmd/Events/oVirt' module='Products.ZenEvents.EventClass' class='EventClass'>
