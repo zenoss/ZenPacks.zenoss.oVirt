@@ -24,7 +24,7 @@ class Device(BaseDevice):
         returns the component.
         """
         comps = []
-        for comp in self.getComponents(type=meta_type):
+        for comp in self.getComponents(meta_type=meta_type):
             values = comp.attributes.values()
             if guid in values:
                 comps.append(comp)

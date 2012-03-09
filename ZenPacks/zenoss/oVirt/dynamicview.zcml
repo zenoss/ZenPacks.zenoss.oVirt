@@ -5,6 +5,12 @@
 
     <include package="ZenPacks.zenoss.DynamicView" file="meta.zcml"/>
 
+    <!-- IRelatable Adapters -->
+    <adapter provides="ZenPacks.zenoss.DynamicView.interfaces.IRelatable"
+        for="ZenPacks.zenoss.Liberator.GenericComponent.GenericComponent"
+        factory=".dynamicview.OVirtComponentRelatable"
+        />
+
     <!-- IRelationsProvider subscribers -->
     <subscriber
         provides="ZenPacks.zenoss.DynamicView.interfaces.IRelationsProvider"
@@ -12,10 +18,10 @@
         factory=".dynamicview.DeviceRelationsProvider_ovirt_datacenter"
         />
 
-    <adapter
+    <subscriber
         provides="ZenPacks.zenoss.DynamicView.interfaces.IRelationsProvider"
         for="ZenPacks.zenoss.Liberator.GenericComponent.GenericComponent"
-        factory=".dynamicView.OVirtComponentRelationsProvider"
+        factory=".dynamicview.OVirtComponentRelationsProvider"
         />
 
 
@@ -24,49 +30,86 @@
         name="Datacenters"
         groupType="oVirt"
         icon="/++resource++ovirt/img/vDC.png"
-        weight="10"
+        weight="110"
         />
 
     <relatableGroup
         name="Clusters"
         groupType="oVirt"
         icon="/++resource++ovirt/img/vApp.png"
-        weight="20"
+        weight="120"
         />
 
     <relatableGroup
         name="Hosts"
         groupType="oVirt"
         icon="/zport/dmd/img/icons/server.png"
-        weight="30"
+        weight="130"
         />
 
     <relatableGroup
         name="Virtual Machines"
         groupType="oVirt"
         icon="/++resource++ovirt/img/VM.png"
-        weight="40"
+        weight="140"
         />
 
-    <!--   Dynamic Views  -->
+    <!--   Dynamic Service View and Impact  -->
     <dynamicViewToGroup
         view="service_view"
         group="Datacenters"
         />
 
     <dynamicViewToGroup
-        view="component_view"
+        view="service_view"
         group="Clusters"
         />
 
     <dynamicViewToGroup
-        view="component_view"
+        view="service_view"
         group="Hosts"
         />
 
     <dynamicViewToGroup
+        view="service_view"
+        group="Virtual Machines"
+        weight="503"
+        />
+
+    <!--   Dynamic Service View -->
+    <dynamicViewToGroup
         view="component_view"
         group="VMs"
+        weight="200"
+        />
+
+    <!--   oVirt View  -->
+
+    <relatableToGroupView
+        view="ovirt_view"
+        relatable=".dynamicview.OVirtComponentRelatable"
+        weight="500"
+        icon="/++resource++ovirt/img/VM.png"
+        />
+
+    <dynamicViewToGroup
+        view="ovirt_view"
+        group="Datacenters"
+        />
+
+    <dynamicViewToGroup
+        view="ovirt_view"
+        group="Clusters"
+        />
+
+    <dynamicViewToGroup
+        view="ovirt_view"
+        group="Hosts"
+        />
+
+    <dynamicViewToGroup
+        view="ovirt_view"
+        group="Virtual Machines"
         />
 
 </configure>

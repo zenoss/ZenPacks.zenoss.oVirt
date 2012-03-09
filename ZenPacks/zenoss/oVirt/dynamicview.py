@@ -4,29 +4,44 @@
 #
 ######################################################################
 
+import logging
+log = logging.getLogger('zen.oVirt.dynamicview')
+
 from zope.component import adapts
 
 from ZenPacks.zenoss.DynamicView import TAG_IMPACTED_BY, TAG_IMPACTS, TAG_ALL
 from ZenPacks.zenoss.DynamicView.model.adapters import DeviceComponentRelatable
 from ZenPacks.zenoss.DynamicView.model.adapters import BaseRelationsProvider
 
-from Products.ZenModel.Device import Device as BaseDevice
+from ZenPacks.zenoss.oVirt.Device import Device
 
 from ZenPacks.zenoss.Liberator.GenericComponent import GenericComponent
 
 
 ### IRelatable Adapters
 
-class ExampleComponentRelatable(DeviceComponentRelatable):
+class OVirtComponentRelatable(DeviceComponentRelatable):
+    """
+    This maps a generic component class to a group name, which is then
+    linked to a view.
+    """
     adapts(GenericComponent)
 
-    group = 'Liberator Components'
+    @property
+    def group(self):
+        compType = self._adapted.component_type
+        return {
+            'vms': 'Virtual Machines',
+            'clusters': 'Clusters',
+            'datacenters': 'Datacenters',
+            'hosts': 'Hosts',
+        }.get(compType, compType)
 
 
 ### IRelationsProvider Adapters
 
 class DeviceRelationsProvider_ovirt_datacenter(BaseRelationsProvider):
-    adapts(BaseDevice)
+    adapts(Device)
 
     def relations(self, type=TAG_ALL):
         """
@@ -40,16 +55,16 @@ class DeviceRelationsProvider_ovirt_datacenter(BaseRelationsProvider):
 class OVirtComponentRelationsProvider(BaseRelationsProvider):
     adapts(GenericComponent)
 
-    impactedByChain = {
-        'vms': 'hosts',
-        'hosts': 'clusters',
-        'clusters': 'datacenters',
+    impactsChain = {
+        'vms': ['clusters',],
+        'hosts': ['clusters',],
+        'clusters': ['datacenters',],
     }
 
-    impactsChain = {
-        'datacenters': 'clusters',
-        'clusters': 'hosts',
-        'hosts': 'vms',
+    impactedByChain = {
+        'datacenters': ['clusters',],
+        'clusters': ['hosts', 'vms'],
+        'hosts': ['vms',],
     }
 
     def relations(self, type=TAG_ALL):
@@ -60,8 +75,8 @@ class OVirtComponentRelationsProvider(BaseRelationsProvider):
         # FIXME: define a generic way to relate components via XML
         element = self._adapted.component_type
         if element not in (
-            'vm', 'vmpool', 'storage_domain', 'network', 'host', 'cluster', 'domain',
-            'data_center',
+            'vms', 'vmpools', 'storage_domains', 'networks', 'hosts', 'clusters',
+            'datacenters',
         ):
             raise StopIteration
 
@@ -69,25 +84,31 @@ class OVirtComponentRelationsProvider(BaseRelationsProvider):
         guid = self._adapted.attributes.get('guid')
         if guid is None:
             # Model is broken as all components must have a guid
+            log.error("Noticed a broken component %s on device %s -- missing GUID %s",
+                      self._adapted.component_type, dev.id, guid)
             raise StopIteration
 
         # What is this element impacted by?
         if type in (TAG_ALL, TAG_IMPACTED_BY):
-            nextElementType = self.impactedByChain.get(element)
-            try:
-                obj = dev.getRelatedComponents(guid, nextElementType)[0]
-                if obj:
-                    yield self.constructRelationTo(obj, TAG_IMPACTED_BY)
-            except IndexError:
-                pass
+            nextElementTypes = self.impactedByChain.get(element)
+            if nextElementTypes is not None:
+                for nextElementType in nextElementTypes:
+                    for obj in dev.getRelatedComponents(guid, nextElementType):
+                        yield self.constructRelationTo(obj, TAG_IMPACTED_BY)
+            else:
+                log.critical("No mapping from %s to an IMPACTED_BY element -- skipping", element)
 
         # What does this element impact?
         elif type in (TAG_IMPACTS,):
-            nextElementType = self.impactsChain.get(element)
-            try:
-                obj = dev.getRelatedComponents(guid, nextElementType)[0]
-                if obj:
-                    yield self.constructRelationTo(obj, TAG_IMPACTS)
-            except IndexError:
-                pass
+            nextElementTypes = self.impactsChain.get(element)
+            if nextElementTypes is not None:
+                for nextElementType in nextElementTypes:
+                    for obj in dev.getRelatedComponents(guid, nextElementType):
+                        yield self.constructRelationTo(obj, TAG_IMPACTS)
+
+            elif element == 'datacenters':
+                    yield self.constructRelationTo(dev, TAG_IMPACTS)
+
+            else:
+                log.warn("No mapping from %s to an IMPACTS element -- skipping", element)
 
