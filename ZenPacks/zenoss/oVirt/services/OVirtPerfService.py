@@ -41,10 +41,50 @@ class OVirtPerfService(CollectorConfigService):
         proxy.datapoints = []
         proxy.thresholds = []
 
-        # FIXME: this is not set up yet
-        proxy.lastEvent = getattr(device, 'lastEvent', 0)
+        self._getDataPoints(proxy, device, device.id, None, perfServer)
+        proxy.thresholds += device.getThresholdInstances('Example Protocol')
+
+        for component in device.getMonitoredComponents():
+            self._getDataPoints(
+                proxy, component, component.device().id, component.id,
+                perfServer)
+
+            proxy.thresholds += component.getThresholdInstances(
+                'Example Protocol')
+
 
         return proxy
+
+    def _getDataPoints(
+            self, proxy, deviceOrComponent, deviceId, componentId, perfServer
+            ):
+        for template in deviceOrComponent.getRRDTemplates():
+            dataSources = [ds for ds
+                           in template.getRRDDataSources('Example Protocol')
+                           if ds.enabled]
+
+            for ds in dataSources:
+                for dp in ds.datapoints():
+                    path = '/'.join((deviceOrComponent.rrdPath(), dp.name()))
+                    dpInfo = dict(
+                        devId=deviceId,
+                        compId=componentId,
+                        dsId=ds.id,
+                        dpId=dp.id,
+                        path=path,
+                        rrdType=dp.rrdtype,
+                        rrdCmd=dp.getRRDCreateCommand(perfServer),
+                        minv=dp.rrdmin,
+                        maxv=dp.rrdmax,
+                        exampleProperty=ds.exampleProperty,
+                        )
+
+                    if componentId:
+                        dpInfo['componentDn'] = getattr(
+                            deviceOrComponent, 'dn', None)
+
+                    proxy.datapoints.append(dpInfo)
+
 
 
 if __name__ == '__main__':
