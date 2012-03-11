@@ -1,0 +1,10 @@
+TODO
+----
+* Update XML files to specify searchIcon, icon
+* Get better icons for everything
+* Make the oVirt datasource testable
+* Support both HTTP **AND** HTTPS w/ certs
+* Needs better error handling in the modeler code
+* Needs better error handling in the events daemon
+* If possible, abstract out the communications code so that it can be re-used in multiple places (eg modeler, event reader, datasource 'test' method, perf collector)
+
