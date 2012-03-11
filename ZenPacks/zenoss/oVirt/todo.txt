@@ -7,4 +7,8 @@ TODO
 * Needs better error handling in the modeler code
 * Needs better error handling in the events daemon
 * If possible, abstract out the communications code so that it can be re-used in multiple places (eg modeler, event reader, datasource 'test' method, perf collector)
+* Add a custom device loader just like VMware has to hide nasty bits and to force device adds to the correct class
+* Add zenbatchloader hook for device loads
+* Determine the minimum credentials required to get read-only access to the server.
+* Add in event actions to force remodels etc on appropriate events (eg VM migrations)
 
