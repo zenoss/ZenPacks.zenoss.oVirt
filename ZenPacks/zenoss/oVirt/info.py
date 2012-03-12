@@ -6,6 +6,7 @@
 
 from zope.interface import implements
 
+from Products.Zuul.infos import ProxyProperty
 from Products.Zuul.infos.template import RRDDataSourceInfo
 
 from ZenPacks.zenoss.oVirt.interfaces import IOVirtDataSourceInfo
@@ -13,6 +14,8 @@ from ZenPacks.zenoss.oVirt.interfaces import IOVirtDataSourceInfo
 
 class OVirtDataSourceInfo(RRDDataSourceInfo):
     implements(IOVirtDataSourceInfo)
+
+    url = ProxyProperty('url')
 
     @property
     def testable(self):

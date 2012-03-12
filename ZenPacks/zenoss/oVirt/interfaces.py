@@ -11,12 +11,15 @@ from Products.Zuul.utils import ZuulMessageFactory as _t
 
 
 class IOVirtDataSourceInfo(IRRDDataSourceInfo):
-    pass
+    url = schema.TextLine(
+            title=_t(u'URL Location to Metric'),
+            group=_t(u'oVirt Specific Information'),
+        )
 
 
 class IOVirtFacade(IFacade):
 
-    def addOVirtInfrastructure(id, host, port, username, domain, password, collector):
+    def addOVirtEndpoint(id, host, port, username, domain, password, collector):
         """
         @param id: desired id of new oVirt endpoint
         @param host: hostname of oVirt endpoint to add

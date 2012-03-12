@@ -26,3 +26,9 @@ class OVirtDataSource(ZenPackPersistence, RRDDataSource):
     eventClass = '/oVirt'
     component = "${here/href}"
 
+    url = ''
+
+    _properties = RRDDataSource._properties + (
+        {'id': 'url', 'type': 'string'},
+        )
+

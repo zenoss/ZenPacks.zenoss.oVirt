@@ -14,7 +14,12 @@ log = logging.getLogger('zen.OVirtPerfService')
 
 import Globals
 
+from Products.PageTemplates.Expressions import getEngine
+
+from Products.ZenUtils.ZenTales import talesCompile
 from Products.ZenCollector.services.config import CollectorConfigService
+from Products.ZenEvents.ZenEventClasses import Error, Cmd_Fail
+
 
 from ZenPacks.zenoss.oVirt.componenttypes.ovirt.DeviceProxyConfig import DeviceProxyConfig
 
@@ -41,31 +46,34 @@ class OVirtPerfService(CollectorConfigService):
         proxy.datapoints = []
         proxy.thresholds = []
 
+        perfServer = device.getPerformanceServer()
         self._getDataPoints(proxy, device, device.id, None, perfServer)
-        proxy.thresholds += device.getThresholdInstances('Example Protocol')
+        proxy.thresholds += device.getThresholdInstances('oVirt')
 
         for component in device.getMonitoredComponents():
             self._getDataPoints(
                 proxy, component, component.device().id, component.id,
                 perfServer)
 
-            proxy.thresholds += component.getThresholdInstances(
-                'Example Protocol')
-
+            proxy.thresholds += component.getThresholdInstances('oVirt')
 
         return proxy
 
-    def _getDataPoints(
-            self, proxy, deviceOrComponent, deviceId, componentId, perfServer
-            ):
+    def _getDataPoints(self, proxy, deviceOrComponent, deviceId,
+                       componentId, perfServer):
         for template in deviceOrComponent.getRRDTemplates():
             dataSources = [ds for ds
-                           in template.getRRDDataSources('Example Protocol')
+                           in template.getRRDDataSources('oVirt')
                            if ds.enabled]
 
             for ds in dataSources:
                 for dp in ds.datapoints():
                     path = '/'.join((deviceOrComponent.rrdPath(), dp.name()))
+                    
+                    url = self._evalTales(deviceOrComponent, template, ds)
+                    if url is None:
+                        continue
+
                     dpInfo = dict(
                         devId=deviceId,
                         compId=componentId,
@@ -76,14 +84,59 @@ class OVirtPerfService(CollectorConfigService):
                         rrdCmd=dp.getRRDCreateCommand(perfServer),
                         minv=dp.rrdmin,
                         maxv=dp.rrdmax,
-                        exampleProperty=ds.exampleProperty,
+                        url=url
                         )
 
-                    if componentId:
-                        dpInfo['componentDn'] = getattr(
-                            deviceOrComponent, 'dn', None)
-
                     proxy.datapoints.append(dpInfo)
+
+    def _evalTales(self, context, templ, ds):
+        url = ds.url
+        if not url.startswith('string:') and not url.startswith('python:'):
+            url = 'string:%s' % url
+
+        compiled = talesCompile(url)
+        dev = context.device()
+        environ = {'dev' : dev,
+                   'device': dev,
+                   'devname': dev.id,
+                   'ds': ds,
+                   'datasource': ds,
+                   'here' : context,
+                   'nothing' : None,
+                  }
+        try:
+            result = compiled(getEngine().getContext(environ))
+        except Exception:
+            self._sendBadTalesEvent(self, dev, context, templ, ds)
+            return None
+
+        if isinstance(result, Exception):
+            self._sendBadTalesEvent(self, dev, context, templ, ds)
+            return None
+
+        return result
+
+    def _sendBadTalesEvent(self, dev, comp, templ, ds):
+        msg = "TALES error for device %s datasource %s" % (
+                               dev.id, ds.id)
+        evt = dict(
+                  msg=msg,
+                  template=templ.id,
+                  datasource=ds.id,
+                  affected_device=dev.id,
+                  affected_component=comp.id,
+                  resolution='Could not create a command to send to zenovirtperf' \
+                      ' because TALES evaluation failed.  The most likely' \
+                      ' cause is unescaped special characters in the datasource.' \
+                      ' eg $ or %',
+                  device='localhost', # Dedup on the localhost as it will affect everything
+                  eventClass=Cmd_Fail,
+                  severity=Error,
+                  component='zenovirtperf',
+                  summary=msg,
+        )                  
+        self.sendEvent(evt)           
+
 
 
 
@@ -91,9 +144,15 @@ if __name__ == '__main__':
     from Products.ZenHub.ServiceTester import ServiceTester
     tester = ServiceTester(OVirtPerfService)
     def printer(config):
-        proxyconfig = DeviceProxyConfig(config)
-        for attr in proxyconfig.attributes:
-            print '\t', attr, '\t', getattr(config, attr, '')
+        print "%s:%s %s@%s" % (config.zOVirtServerName, config.zOVirtPort,
+                               config.zOVirtUser, config.zOVirtDomain)
+        
+        print '\t'.join(["DS_DP", '\t', "URL"])
+        for dp in config.datapoints:
+            dpId = dp['dsId'] + '_'  + dp['dpId']
+            url = dp['url'] + '/' + dp['dpId']
+            print '\t'.join([dpId, url])
+
     tester.printDeviceProxy = printer
     tester.showDeviceInfo()
 
