@@ -43,7 +43,7 @@ class OVirtPerfService(CollectorConfigService):
         proxy = CollectorConfigService._createDeviceProxy(self, device)
 
         proxy.configCycleInterval = 3600
-        proxy.datapoints = []
+        proxy.datasources = {}
         proxy.thresholds = []
 
         perfServer = device.getPerformanceServer()
@@ -78,16 +78,19 @@ class OVirtPerfService(CollectorConfigService):
                         devId=deviceId,
                         compId=componentId,
                         dsId=ds.id,
+                        cycleTime=ds.cycletime,
                         dpId=dp.id,
                         path=path,
                         rrdType=dp.rrdtype,
                         rrdCmd=dp.getRRDCreateCommand(perfServer),
                         minv=dp.rrdmin,
                         maxv=dp.rrdmax,
-                        url=url
+                        url=url,
+                        eventKey=ds.eventKey,
                         )
 
-                    proxy.datapoints.append(dpInfo)
+                    dpList = proxy.datasources.setdefault(ds.id, [])
+                    dpList.append(dpInfo)
 
     def _evalTales(self, context, templ, ds):
         url = ds.url
@@ -138,8 +141,6 @@ class OVirtPerfService(CollectorConfigService):
         self.sendEvent(evt)           
 
 
-
-
 if __name__ == '__main__':
     from Products.ZenHub.ServiceTester import ServiceTester
     tester = ServiceTester(OVirtPerfService)
@@ -147,11 +148,14 @@ if __name__ == '__main__':
         print "%s:%s %s@%s" % (config.zOVirtServerName, config.zOVirtPort,
                                config.zOVirtUser, config.zOVirtDomain)
         
-        print '\t'.join(["DS_DP", '\t', "URL"])
-        for dp in config.datapoints:
-            dpId = dp['dsId'] + '_'  + dp['dpId']
-            url = dp['url'] + '/' + dp['dpId']
-            print '\t'.join([dpId, url])
+        print '\t'.join(["DS", "URL", '', 'Datapoints'])
+        for dsName, dpList in sorted(config.datasources.items()):
+            dp= dpList[0]
+            url = dp['url']
+            print '\t'.join([ dp['dsId'], url])
+
+            for dp in dpList:
+                print '\t'.join(['\t', '', dp['dpId']])
 
     tester.printDeviceProxy = printer
     tester.showDeviceInfo()

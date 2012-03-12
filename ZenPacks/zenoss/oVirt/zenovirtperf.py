@@ -35,8 +35,6 @@ from Products.ZenUtils.Utils import unused
 
 from Products.ZenCollector.services.config import DeviceProxy
 
-from ZenPacks.zenoss.oVirt.event_codes import codes2msg
-
 unused(Globals)
 unused(DeviceProxy)
 
@@ -64,6 +62,10 @@ class ZenOVirtPerfPreferences(object):
 class ZenOVirtPerfTask(ObservableMixin):
     zope.interface.implements(IScheduledTask)
 
+    STATE_FETCH_DATA = 'FETCH_DATA'
+    STATE_PARSE_DATA = 'PARSING_DATA'
+    STATE_STORE_PERF = 'STORE_PERF_DATA'
+
     def __init__(self, taskName, deviceId, interval, taskConfig):
         super(ZenOVirtPerfTask, self).__init__()
         self._taskConfig = taskConfig
@@ -77,6 +79,7 @@ class ZenOVirtPerfTask(ObservableMixin):
         self.configId = deviceId
         self.interval = interval
         self.state = TaskStates.STATE_IDLE
+        self.config = taskConfig
 
         self._serverName = taskConfig.zOVirtServerName
         self._port = int(taskConfig.zOVirtPort)
@@ -87,71 +90,104 @@ class ZenOVirtPerfTask(ObservableMixin):
             'Authorization': 'Basic %s' % creds,
             'Accept': 'application/xml'
         }
-        self._baseUrl = '/api/'
-
-        self.lastMessageId = 0
 
     def doTask(self):
-        url = 'events?from=%s' % self.lastMessageId
-        d = defer.maybeDeferred(self._httpGet, url)
-        d.addCallback(self._processEvents)
-        return d
+        deferreds = []
+        #import pdb;pdb.set_trace()
+        for dpList in self.config.datasources.values():
+            url = dpList[0]['url']
+            d = defer.maybeDeferred(self._httpGet, url)
+            d.addCallback(self._processResults, dpList)
+            d.addCallback(self._storeResults)
+            d.addErrback(self._getError, url)
+            deferreds.append(d)
+
+        dl = defer.DeferredList(deferreds)
+        dl.addCallback(self.clientFinished)
+        return dl
 
     def _httpGet(self, url):
         """
         Open a HTTP connection to grab the information about a component and return the response.
         """
+        self.state = ZenOVirtPerfTask.STATE_FETCH_DATA
         conn = HTTPConnection(self._serverName, port=self._port)
-        conn.request('GET', self._baseUrl + url, headers=self._headers)
+        conn.request('GET', url, headers=self._headers)
         resp = conn.getresponse()
         body = resp.read()
         return body
 
-    def _processEvents(self, eventXml):
+    def _processResults(self, resultXml, dpList):
         """
-        Convert and send oVirt events as Zenoss events.
-        """
-        events = ElementTree.fromstring(eventXml)
-        for eventNode in events:
-            msgId = int(eventNode.attrib['id'])
+        Convert oVirt statistics into perf metrics.
 
-            # Don't send events we've already sent
-            if msgId <= self.lastMessageId:
+    <statistic href="/api/vms/b890351a-23fb-4a4a-9ed8-98350e828544/statistics/2ec286fe-4bec-32f5-8d63-dba7bed58763" id="2ec286fe-4bec-32f5-8d63-dba7bed58763"> 
+        <name>cpu.current.total</name>
+        <description>Total CPU used</description>
+        <values type="DECIMAL">
+            <value>
+                <datum>0</datum>
+            </value>
+        </values>
+        <type>GAUGE</type>
+        <unit>PERCENT</unit>
+        <vm href="/api/vms/b890351a-23fb-4a4a-9ed8-98350e828544" id="b890351a-23fb-4a4a-9ed8-98350e828544"/>
+    </statistic>
+
+        """
+        self.state = ZenOVirtPerfTask.STATE_PARSE_DATA
+
+        statistics = ElementTree.fromstring(resultXml)
+        if statistics.tag != 'statistics':
+            log.warn("The result from %s was a '%s' element, rather than " \
+                     "the expected 'statistics' element -- skipping",
+                     dpList[0]['url'], statistics.tag)
+            return
+
+        dpByName = dict( (dp['dpId'], dp) for dp in dpList)
+        perfData= []
+        for resultNode in statistics:
+            dpName = resultNode.find('name').text
+            dp = dpByName.get(dpName)
+            if dp is None:
                 continue
-            self.lastMessageId = msgId
-            
-            # Add in information guaranteed to be in the event
-            code = int(eventNode.find('code').text)
-            evt = {
-                'ovirt_event_id': msgId,
-                'summary': eventNode.find('description').text,
-                'device': self._serverName,
-                'ovirt_code': code,
-                'ovirt_code_text': codes2msg.get(code, 'Unknown'),
-                'eventClassKey': codes2msg.get(code, 'Unknown'),
+
+            try:
+                datum = resultNode.find('values').find('value').find('datum')
+                value = float(datum.text)
+            except Exception:
+                continue
+            perfData.append( (dp, value) )
+
+        return perfData
+
+    def _storeResults(self, resultList):
+        """
+        Store the values in RRD files
+
+        @parameter resultList: results of running the commands
+        @type resultList: array of (datasource, dictionary)
+        """
+        self.state = ZenOVirtPerfTask.STATE_STORE_PERF
+        for dp, value in resultList:
+            threshData = {
+                'eventKey': dp['eventKey'],
+                'component': dp['compId'],
             }
-            evt['severity'] = self.ovirt2zenSeverity.get(eventNode.find('severity').text, 'error')
+            self._dataService.writeRRD(
+                    dp['path'], value,
+                    dp['rrdType'], dp['rrdCmd'], dp['cycleTime'],
+                    dp['minv'], dp['maxv'],
+                    threshData)
 
-            # Add in extra bits...
-            self._updateEventWithExtraData(evt, eventNode)
+        return resultList
 
-            self._eventService.sendEvent(evt)
+    def _getError(self, result, url):
+        log.warn("Error requesting URL for %s: %s", url, result)
+        import pdb;pdb.set_trace()
 
-    def _updateEventWithExtraData(self, evt, eventNode):
-        """
-        Add in the object ids for the related entities.
-        """
-        for virtualElement in self.extraFields:
-            item = eventNode.find(virtualElement)
-            if item is not None:
-                evt[virtualElement] = item.text
-
-        # Guess the most appropriate component
-        for virtualElement in ('vm', 'host', 'cluster', 'network', 'storage_domain', 'data_center'):
-            if virtualElement in evt:
-                # Note: The component is pluralized
-                evt['component'] = '%ss_%s' % (virtualElement, evt[virtualElement])
-                break
+    def clientFinished(self, result):
+        log.info("Yay! All done")
 
     def cleanup(self):
         pass

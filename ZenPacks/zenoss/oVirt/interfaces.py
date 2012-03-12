@@ -11,6 +11,8 @@ from Products.Zuul.utils import ZuulMessageFactory as _t
 
 
 class IOVirtDataSourceInfo(IRRDDataSourceInfo):
+    cycletime = schema.Int(title=_t(u'Cycle Time (seconds)'))
+
     url = schema.TextLine(
             title=_t(u'URL Location to Metric'),
             group=_t(u'oVirt Specific Information'),
