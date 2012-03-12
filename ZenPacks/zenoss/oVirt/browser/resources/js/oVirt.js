@@ -39,12 +39,25 @@ var addOVirtInfra = new Zenoss.Action({
                     fieldLabel: _t('Host'),
                     id: "add-ovirt-host",
                     allowBlank: false
+
                 }, {
-                    xtype: 'checkbox',
-                    name: 'useSsl',
-                    fieldLabel: _t('Use SSL'),
-                    id: 'add-ovirt-usessl',
-                    checked: true
+                    xtype: 'textfield',
+                    name: 'port',
+                    id: "add-ovirt-port",
+                    fieldLabel: _t('Port #'),
+                    inputType: 'number',
+                    minValue: '1',
+                    maxValue: '32767',
+                    value: 8080,
+                    allowDecimals: false,
+                    width: 60,
+                    allowBlank: false
+                }, {
+                    xtype: 'textfield',
+                    name: 'domain',
+                    fieldLabel: _t('Authentication Domain'),
+                    id: 'add-ovirt-domain',
+                    allowBlank: false
                 }, {
                     xtype: 'textfield',
                     name: 'username',
