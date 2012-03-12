@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <configure
     xmlns="http://namespaces.zope.org/zope"
+    xmlns:browser="http://namespaces.zope.org/browser"
     xmlns:zcml="http://namespaces.zope.org/zcml">
 
 
@@ -114,7 +115,32 @@
     </configure>
     -->
 
+    <!--  Include Liberator protocol helpers -->
     <include package=".componenttypes"/>
+
+  <!-- defines the direct router directive -->
+  <include package="Products.ZenUtils.extdirect.zope" file="meta.zcml"/>
+
+  <!-- Define the router/facade for this zenpack -->
+  <browser:directRouter
+      name="ovirt_router"
+      for="*"
+      class=".router.OVirtRouter"
+      namespace="Zenoss.remote"
+      permission="zenoss.Common"
+      />
+
+  <adapter factory=".facade.OVirtFacade"
+           provides=".interfaces.IOVirtFacade"
+           name="ovirt"
+           for="*"
+           />
+
+  <!-- Define the device loader -->
+    <utility component=".ovirtloader.OVirtLoader"
+             name="ovirt"
+             provides="Products.ZenModel.interfaces.IDeviceLoader"
+             />
 
 </configure>
 
