@@ -11,4 +11,5 @@ TODO
 * Add zenbatchloader hook for device loads
 * Determine the minimum credentials required to get read-only access to the server.
 * Add in event actions to force remodels etc on appropriate events (eg VM migrations)
-
+* Make the datasource respect cycletime perf collection intervals
+* Need to find a way to throttle perf collection rather than try to get everything all at once
