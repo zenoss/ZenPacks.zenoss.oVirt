@@ -23,7 +23,7 @@ from ZenPacks.zenoss.oVirt.interfaces import IOVirtFacade
 class OVirtFacade(ZuulFacade):
     implements(IOVirtFacade)
 
-    def addOVirtInfrastructure(self, id, host, port,
+    def addOVirtEndpoint(self, id, host, port,
                                 username, domain, password,
                                 collector='localhost'):
 
