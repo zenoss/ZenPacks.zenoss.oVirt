@@ -7,9 +7,18 @@
         />
 
     <!-- Register custom JavaScript for ExampleDevices.
+  <browser:viewlet
+      name="js-ovirt"
+      paths="/++resource++ovirt/oVirt.js"
+      weight="10"
+      manager="Products.ZenUI3.browser.interfaces.IJavaScriptSrcManager"
+      class="Products.ZenUI3.browser.javascript.JavaScriptSrcBundleViewlet"
+      permission="zope2.Public"
+      />
+
     <viewlet
-        name="js-exampledevice"
-        paths="/++resource++example/js/ExampleDevice.js"
+        name="js-ovirt"
+        paths="/++resource++ovirt/js/ExampleDevice.js"
         weight="10"
         for="..ExampleDevice.ExampleDevice"
         manager="Products.ZenUI3.browser.interfaces.IJavaScriptSrcManager"
