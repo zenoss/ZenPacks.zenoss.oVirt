@@ -46,5 +46,16 @@
         <attribute name="network_guid" valueQuery='here.find("network").attrib["id"]' label="Network GUID" />
     </subcomponent>
 
+    <subcomponent id="snapshots" label="Snapshot" plularlLabel="Snapshots" idField="name" virtualElement="snapshots" parentRelation="snapshots" >
+        <attribute name="name" valueQuery='here.find("description").text' label="Name" />
+        <attribute name="guid" valueQuery='here.attrib["id"]' display="none" />
+        <attribute name="href" valueQuery='here.attrib["href"]' display="none" />
+
+        <attribute name="description" valueQuery='here.find("description").text' label="Description" />
+        <attribute name="date" valueQuery='here.find("date").text' label="Date" />
+        <attribute name="disk_href" valueQuery='here.find("disk").attrib["href"]' label="Disk URL" />
+        <attribute name="disk_guid" valueQuery='here.find("disk").attrib["id"]' label="Disk GUID" />
+    </subcomponent>
+
 </component>
 
