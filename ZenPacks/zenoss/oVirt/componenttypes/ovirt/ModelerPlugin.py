@@ -45,7 +45,14 @@ class ModelerPlugin(GenericModelerPlugin, PythonPlugin):
             # Setup the object map
             om = self.objectMap()
             om.id = makeId(virtualElement)
-            om.title = virtualElement.find('name').text
+
+            # Some subcomponents don't have the 'name' field
+            title = virtualElement.find('name')
+            if title is not None:
+                om.title = title.text
+            else:
+                title = virtualElement.find('description')
+                om.title = title.text if title is not None else om.id
 
             om.meta_type = "GenericComponent_" + compdef.id
             om.component_type = compdef.id
