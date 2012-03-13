@@ -33,5 +33,18 @@
 
     <attribute name="placement_policy_affinity" valueQuery='here.find("placement_policy").find("affinity").text' label="Placement Policy Affinity" />
 
+ <!--  Subcomponents -->
+    <subcomponent id="nics" label="NIC" plularlLabel="NICs" idField="name" virtualElement="nics" parentRelation="nics" >
+        <attribute name="name" valueQuery='here.find("name").text' label="Name" />
+        <attribute name="guid" valueQuery='here.attrib["id"]' display="none" />
+        <attribute name="href" valueQuery='here.attrib["href"]' display="none" />
+
+        <attribute name="interface" valueQuery='here.find("interface").text' label="Interface" />
+        <attribute name="mac" valueQuery='here.find("mac").attrib["address"]' label="MAC Address" />
+
+        <attribute name="network_href" valueQuery='here.find("network").attrib["href"]' label="Network URL" />
+        <attribute name="network_guid" valueQuery='here.find("network").attrib["id"]' label="Network GUID" />
+    </subcomponent>
+
 </component>
 

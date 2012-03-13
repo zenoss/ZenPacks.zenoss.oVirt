@@ -12,7 +12,7 @@
         for=".ServiceConfig.ServiceConfig"/>
 
     <adapter
-        factory=".CollectionTask.CollectionTask"
+        factory=".ModelerTask.ModelerTask"
         provides="ZenPacks.zenoss.Liberator.interfaces.IGenericCollectionTask"
         for="Products.ZenCollector.services.config.DeviceProxy"
         name="ovirt"/>

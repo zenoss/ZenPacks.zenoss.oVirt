@@ -13,6 +13,7 @@ from xml.etree import ElementTree
 from zope.interface import implements
 
 from Products.DataCollector.plugins.CollectorPlugin import PythonPlugin
+from Products.DataCollector.plugins.DataMaps import RelationshipMap
 
 from ZenPacks.zenoss.Liberator.GenericModelerPlugin import GenericModelerPlugin
 from ZenPacks.zenoss.Liberator.interfaces import IGenericModelerPlugin
@@ -21,23 +22,15 @@ from ZenPacks.zenoss.Liberator.interfaces import IGenericModelerPlugin
 class ModelerPlugin(GenericModelerPlugin, PythonPlugin):
     implements(IGenericModelerPlugin)
 
-    def process(self, device, results, log):
-        log.debug("Results for %s/%s: %s", self.name(), device.id, results)
+    def process(self, device, xmldoc, log):
+        log.debug("Processing %s/%s", device.id, self.name())
 
-        resultXml = results[1]
-        try:
-            doc = ElementTree.fromstring(resultXml)
-        except Exception:
-            log.error("Received invalid XML from modeler code -- skipping %s",
-                      self.name())
-            return None
-
-        relmaps = self.processComponent(doc, self.compdef, log, resultXml)
+        relmaps = self.processComponent(xmldoc, self.compdef, log)
 
         log.debug(repr(relmaps))
         return [relmaps]
 
-    def processComponent(self, xmldoc, compdef, log, resultXml):
+    def processComponent(self, xmldoc, compdef, log):
         def makeId(row):
             # The id field in the resulting XML is a guid
             return compdef.id + "_" + self.prepId(row.attrib['id'])
@@ -51,6 +44,12 @@ class ModelerPlugin(GenericModelerPlugin, PythonPlugin):
 
             om.meta_type = "GenericComponent_" + compdef.id
             om.component_type = compdef.id
+
+            if compdef.parentRelation:
+                href = virtualElement.attrib['href']
+                parentRow = href.split('/%s' % compdef.parentRelation)[0]
+                om.parentGuid = parentRow.split('_')[-1]
+                om.modname = "ZenPacks.zenoss.Liberator.GenericSubcomponent"
 
             # These are the attribute tags defined in the component XML
             om.setAttributes = {}
@@ -80,4 +79,20 @@ class ModelerPlugin(GenericModelerPlugin, PythonPlugin):
             log.info("Found %s: %s", compdef.id,  om.title)
             rm.append(om)
         return rm
+
+    def processSubComponents(self, xmldoc, subcompdef, log):
+        def makeId(row):
+            # The id field in the resulting XML is a guid
+            return self.compdef.id + "_" + self.prepId(row)
+
+        relmaps = {}
+        subcomp_relmap = self.processComponent(xmldoc, subcompdef, log)
+        for subcomp_objmap in subcomp_relmap:
+            parentRow = subcomp_objmap.parentGuid
+            subcomp_objmap.compname = "genericComponents/" + makeId(parentRow)
+            relmaps.setdefault(subcomp_objmap.compname, RelationshipMap(
+                compname=subcomp_objmap.compname,
+                relname="subcomponents",
+                modname="ZenPacks.zenoss.Liberator.GenericSubcomponent")).append(subcomp_objmap)
+        return [relmaps.values()]
 
