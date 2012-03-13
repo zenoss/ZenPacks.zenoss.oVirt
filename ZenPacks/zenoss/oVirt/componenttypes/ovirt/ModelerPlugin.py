@@ -20,6 +20,11 @@ from ZenPacks.zenoss.Liberator.interfaces import IGenericModelerPlugin
 
 
 class ModelerPlugin(GenericModelerPlugin, PythonPlugin):
+    """
+    Note that this modeler plugin does *NOT* receive all of the information
+    all at once to go through components.  Subcomponents are retrieved
+    after this processing and then are processed separately.
+    """
     implements(IGenericModelerPlugin)
 
     def process(self, device, xmldoc, log):
@@ -48,7 +53,8 @@ class ModelerPlugin(GenericModelerPlugin, PythonPlugin):
             if compdef.parentRelation:
                 href = virtualElement.attrib['href']
                 parentRow = href.split('/%s' % compdef.parentRelation)[0]
-                om.parentGuid = parentRow.split('_')[-1]
+                # Owww.  Yes, we should rename this....
+                om.parentSnmpindex = parentRow.split('/')[-1]
                 om.modname = "ZenPacks.zenoss.Liberator.GenericSubcomponent"
 
             # These are the attribute tags defined in the component XML
@@ -88,7 +94,7 @@ class ModelerPlugin(GenericModelerPlugin, PythonPlugin):
         relmaps = {}
         subcomp_relmap = self.processComponent(xmldoc, subcompdef, log)
         for subcomp_objmap in subcomp_relmap:
-            parentRow = subcomp_objmap.parentGuid
+            parentRow = subcomp_objmap.parentSnmpindex
             subcomp_objmap.compname = "genericComponents/" + makeId(parentRow)
             relmaps.setdefault(subcomp_objmap.compname, RelationshipMap(
                 compname=subcomp_objmap.compname,
