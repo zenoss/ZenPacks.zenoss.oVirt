@@ -135,6 +135,10 @@ class ModelerTask(object):
     def processResults(self, ignoredData):
         allrelmaps = []
         for plugin, results in self._tabledata.items():
+            if len(results) == 0:
+                # Kicked off modeling but not results returned
+                continue
+
             # Process primary components
             try:
                 relmaps = plugin.process(self._parent._device, results[0], log)
