@@ -3,7 +3,7 @@
 
     <documentation>ovirt REST API modeler plugin</documentation>
 
-    <attribute name="name" valueQuery='here.find("name").text' label="Name" />
+    <attribute name="name" valueQuery='here.find("name").text' label="Name" renderExpression="here.getManagedDeviceLink(here)" />
     <attribute name="guid" valueQuery='here.attrib["id"]' display="none" />
     <attribute name="href" valueQuery='here.attrib["href"]' display="none" />
 
@@ -40,7 +40,7 @@
         <attribute name="href" valueQuery='here.attrib["href"]' display="none" />
 
         <attribute name="interface" valueQuery='here.find("interface").text' label="Interface" />
-        <attribute name="mac" valueQuery='here.find("mac").attrib["address"]' label="MAC Address" />
+        <attribute name="mac" valueQuery='here.find("mac").attrib["address"]' type="macaddress" label="MAC Address" renderExpression="here.getMacAddressLink(here.attributes.get('mac'))" />
 
         <attribute name="network_href" valueQuery='here.find("network").attrib["href"]' label="Network URL" />
         <attribute name="network_guid" valueQuery='here.find("network").attrib["id"]' label="Network GUID" />

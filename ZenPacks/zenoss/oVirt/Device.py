@@ -47,3 +47,70 @@ class Device(BaseDevice):
 
         return self.getDeviceComponents(type=meta_type)
 
+    def getManagedDeviceLink(self, comp):
+        if comp.component_type == 'vms':
+            macaddrs = [x.attributes.get('mac') for x in comp.subcomponents() \
+                               if x.component_type == 'vms_nics' ]
+            guest = self.getDeviceByMac(macaddrs)
+            if guest is not None:
+                return """<a href="%s">%s</a>""" % (
+                    guest.absolute_url(),
+                    comp.attributes['name']
+                )
+
+        elif comp.component_type == 'hosts':
+            ipaddrs = [x.attributes.get('ip_address') for x in comp.subcomponents() \
+                               if x.component_type == 'hosts_nics' ]
+            guest = self.getDeviceByIp(ipaddrs)
+            if guest is not None:
+                return """<a href="%s">%s</a>""" % (
+                    guest.absolute_url(),
+                    comp.attributes['name']
+                )
+
+            macaddrs = [x.attributes.get('mac') for x in comp.subcomponents() \
+                               if x.component_type == 'hosts_nics' ]
+            guest = self.getDeviceByMac(macaddrs)
+            if guest is not None:
+                return """<a href="%s">%s</a>""" % (
+                    guest.absolute_url(),
+                    comp.attributes['name']
+                )
+
+        return comp.attributes['name']
+
+    def getMacAddressLink(self, mac=None):
+        if mac is None:
+            return
+ 
+        device = self.getDeviceByMac([mac])
+        if device is not None:
+            return """<a href="%s">%s</a>""" % (
+                    device.absolute_url(),
+                    mac
+                    )
+        return mac
+
+    def getDeviceByMac(self, macaddrs):
+        cat = self.dmd.ZenLinkManager._getCatalog(layer=2)
+        if cat is None:
+            return
+
+        for mac in macaddrs:
+            brains = cat(macaddress=mac)
+            if brains:
+                try:
+                    return brains[0].getObject().device()
+                except Exception:
+                    pass
+
+    def getDeviceByIp(self, ips):
+        for ip in ips:
+            device = self.dmd.Devices.findDeviceByIdOrIp(ip)
+            if device:
+                return device
+            
+            foundip = self.dmd.Networks.findIp(ip)
+            if foundip and foundip.device():
+                return foundip.device()
+
