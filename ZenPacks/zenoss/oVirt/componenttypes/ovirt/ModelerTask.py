@@ -102,7 +102,7 @@ class ModelerTask(object):
         return body
 
     def _processResponse(self, resultXml, plugin):
-        log.debug("Storing response for %s", plugin.compdef.virtualElement)
+        log.debug("Converting response for %s into XML doc", plugin.compdef.virtualElement)
         doc = None
         try:
             doc = ElementTree.fromstring(resultXml)
@@ -123,7 +123,7 @@ class ModelerTask(object):
             baseUrl = item.attrib['href']
             deferreds = []
             for subcompdef in plugin.compdef.subcomponents:
-                url = baseUrl + '/' + subcompdef.virtualElement
+                url = baseUrl + '/' + subcompdef.parentRelation
                 log.debug("Collecting %s from %s", url, self._device.id)
                 d = defer.maybeDeferred(self._httpGet, url)
                 d.addCallback(self._processResponse, plugin)
