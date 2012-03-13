@@ -12,7 +12,7 @@ oVirt Virtual Datacenter Management Platform
 &lt;a href="http://${here/zOVirtServerName}:${here/zOVirtPort}"&gt;oVirt Management Portal&lt;/a&gt;
 </property>
 <property visible="True" type="lines" id="zXmlComponents" >
-['clusters', 'datacenters', 'roles', 'domains', 'networks', 'tags', 'groups', 'templates', 'permits', 'hosts', 'vmpools', 'storagedomains', 'users', 'vms']
+['clusters', 'datacenters', 'roles', 'domains', 'networks', 'tags', 'groups', 'templates', 'hosts', 'vmpools', 'storagedomains', 'users', 'vms']
 </property>
 <property visible="True" type="string" id="zIcon" >
 /++resource++ovirt/img/vDC.png
