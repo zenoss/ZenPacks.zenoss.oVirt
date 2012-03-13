@@ -107,7 +107,7 @@ var addOVirtInfra = new Zenoss.Action({
                         var form = b.ownerCt.ownerCt.getForm();
                         var opts = form.getFieldValues();
 
-                        Zenoss.remote.OVirtRouter.addOVirtInfrastructure(opts,
+                        Zenoss.remote.OVirtRouter.addOVirtEndpoint(opts,
                         function(response) {
                             if (response.success) {
                                 Zenoss.message.success(_t('Add oVirt Infrastructure job submitted. <a href="/zport/dmd/JobManager/jobs/{0}/viewlog">View Job Log</a>'),
