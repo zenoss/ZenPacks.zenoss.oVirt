@@ -95,6 +95,11 @@ class OVirtComponentRelationsProvider(BaseRelationsProvider):
                 for nextElementType in nextElementTypes:
                     for obj in dev.getRelatedComponents(guid, nextElementType):
                         yield self.constructRelationTo(obj, TAG_IMPACTED_BY)
+
+            #elif element == 'vms':
+                #guest = self.getGuest(dev)
+                #if guest is not None:
+                    #yield self.constructRelationTo(guest, TAG_IMPACTED_BY)
             else:
                 log.critical("No mapping from %s to an IMPACTED_BY element -- skipping", element)
 
@@ -111,4 +116,14 @@ class OVirtComponentRelationsProvider(BaseRelationsProvider):
 
             else:
                 log.warn("No mapping from %s to an IMPACTS element -- skipping", element)
+
+            if element == 'vms':
+                guest = self.getGuest(dev)
+                if guest is not None:
+                    yield self.constructRelationTo(guest, TAG_IMPACTS)
+
+    def getGuest(self, dev):
+        mac = self._adapted.attributes.get('mac')
+        if mac is not None:
+            return dev.getDeviceByMac([mac])
 

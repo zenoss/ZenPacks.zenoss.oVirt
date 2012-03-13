@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<configure
+    xmlns="http://namespaces.zope.org/zope"
+    xmlns:zcml="http://namespaces.zope.org/zcml">
+
+
+    <!-- Impact Adapters
+
+    Impact adapters are much like the Dynamic View adapters above in that they
+    define relationships between objects. However, they are specifically for
+    controlling the "Zenoss Datacenter Impact" product and can be simpler to
+    configure because visualization is built-in and you only need to concern
+    yourself with defining edges (or relationships) between objects.
+
+    IRelationshipDataProvider works much like the Dynamic View
+    IRelationsProvider above. It defines dependency relationships between
+    objects.
+
+    IStateProvider providers allow you to change how state is calculated for
+    certain types of objects. Normally only the events impacting an object are
+    used to calculate its state. IStateProvider allows you to bring in
+    information from other sources such as the model.
+
+    INodeTrigger providers allow you to define what triggers should be
+    configured for certain types of objects automatically. A good example of
+    where you'd use this is for port-channel interfaces. You'd likely want to
+    create impact edges to all of the member interfaces and setup a redundancy
+    policy on the port-channel.
+-->
+
+    <include package="ZenPacks.zenoss.Impact" file="meta.zcml"/>
+
+    <subscriber
+        provides="ZenPacks.zenoss.Impact.impactd.interfaces.IRelationshipDataProvider"
+        for="Products.ZenModel.Device.Device"
+        factory=".impact.GuestRelationsProvider"
+        />
+
+        <subscriber
+            provides="ZenPacks.zenoss.Impact.impactd.interfaces.INodeTriggers"
+            for="ZenPacks.zenoss.Liberator.GenericComponent.GenericComponent"
+            factory=".impact.OVirtDatacenterTriggers"
+            />
+
+        <subscriber
+            provides="ZenPacks.zenoss.Impact.impactd.interfaces.INodeTriggers"
+            for="ZenPacks.zenoss.Liberator.GenericComponent.GenericComponent"
+            factory=".impact.OVirtClusterTriggers"
+            />
+<!--
+-->
+
+</configure>
+

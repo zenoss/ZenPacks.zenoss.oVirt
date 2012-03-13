@@ -48,8 +48,9 @@ def getMacsIpsFromInterfaces(self):
     macaddrs = []
     ips = []
     for iface in self.os.interfaces():
-        mac = iface.getInterfaceMacaddress().lower()
-        macaddrs.append(mac)
+        mac = iface.getInterfaceMacaddress()
+        if mac is not None:
+            macaddrs.append(mac.lower())
 
         ifips = [ip.split('/')[0] for ip in iface.getIpAddresses()]
         ips.extend(ifips)
