@@ -155,7 +155,7 @@ class ModelerTask(object):
 
                 try:
                     subrelmaps = plugin.processSubComponents(xmldoc, compdef, log)
-                    relmaps.extend(subrelmaps)
+                    relmaps.maps.extend(subrelmaps)
                 except Exception, ex:
                     self._parent.pluginFailure(plugin.name(), ex)
 
@@ -181,6 +181,7 @@ class ModelerTask(object):
                 else:
                     maps[key] = relmap
 
+        log.debug(repr(maps))
         return maps
 
     def _failure(self, fail):

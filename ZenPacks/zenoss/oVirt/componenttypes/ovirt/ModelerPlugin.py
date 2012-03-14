@@ -32,7 +32,6 @@ class ModelerPlugin(GenericModelerPlugin, PythonPlugin):
 
         relmaps = self.processComponent(xmldoc, self.compdef, log)
 
-        log.debug(repr(relmaps))
         return [relmaps]
 
     def processComponent(self, xmldoc, compdef, log):
