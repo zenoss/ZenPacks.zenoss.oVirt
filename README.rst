@@ -47,19 +47,23 @@ Add an oVirt Server
 ++++++++++++++++++++++++++++++++
 
 #. Navigate to the ``Infrastructure`` page
-#. Click on the ``Add Device`` menu item and select ``Add a Singe Device...`` option.
-#. Add the name or IP address of the oVrit server and set the ``Device Class`` to be ``/oVrit``.
+#. Click on the ``Add Device`` menu item and select ``Add oVirt Infrastructure...`` option.
+#. Fill in the appropriate fields in the dialog box:
+    * Name or ID: name by which the oVirt service will be created as a device under
+    * Host: name or IP address of the oVirt server as known by the oVirt server.
+    * Port #: Port number where the oVirt server can be reached.
+    * Authentication Domain: Domain in which the user credentials are valid.
+    * Username: User name
+    * Password: Password for the user
+    * Collector: Name of the remote collector which this should run.
 #. Click on the ``Add`` button.
 #. Wait for the device to be modeled.
 #. Navigate to the new device.
-#. Click on the ``Configuration Properties`` item.
-#. Update the following zProperties:
-    * zOvirtServerName: name of the oVirt server as known by the oVirt server.
-    * zOvirtPort: Port number where the oVirt server can be reached.
-    * zOvirtUser: User name
-    * zOvirtDomain: Domain in which the user credentials are valid.
-    * zOvirtPassword: Password for the user
-#. Run the ``zengenericmodeler`` daemon by click on the ``Commands`` item and selecting ``Liberator Modeler`` command.
+
+Remodel an oVirt Server
+++++++++++++++++++++++++++++++++
+#. Navigate to the device.
+#. Run the ``zengenericmodeler`` daemon by clicking on the ``Commands`` item and select the  ``Liberator Modeler`` command.
 
 
 Installing
