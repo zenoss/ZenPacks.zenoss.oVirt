@@ -96,10 +96,10 @@ class OVirtComponentRelationsProvider(BaseRelationsProvider):
                     for obj in dev.getRelatedComponents(guid, nextElementType):
                         yield self.constructRelationTo(obj, TAG_IMPACTED_BY)
 
-            #elif element == 'vms':
-                #guest = self.getGuest(dev)
-                #if guest is not None:
-                    #yield self.constructRelationTo(guest, TAG_IMPACTED_BY)
+            elif element == 'vms':
+                guest = self.getGuest(dev)
+                if guest is not None:
+                    yield self.constructRelationTo(guest, TAG_IMPACTED_BY)
             else:
                 log.critical("No mapping from %s to an IMPACTED_BY element -- skipping", element)
 

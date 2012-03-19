@@ -7,19 +7,21 @@
 import logging
 log = logging.getLogger('zen.ovirt.impact')
 
-from zope.component import adapts
+from zope.component import adapts, subscribers
 from zope.interface import implements
 
 from Products.ZenUtils.guid.interfaces import IGlobalIdentifier
 
 from ZenPacks.zenoss.Impact.impactd import Trigger
-from ZenPacks.zenoss.Impact.stated.interfaces import IStateProvider
+#from ZenPacks.zenoss.Impact.stated.interfaces import IStateProvider
 from ZenPacks.zenoss.Impact.impactd.relations import ImpactEdge
 from ZenPacks.zenoss.Impact.impactd.interfaces \
     import IRelationshipDataProvider, INodeTriggers
 
 from Products.ZenModel.Device import Device as CoreDevice
 from .Device import Device
+
+from ZenPacks.zenoss.Liberator.GenericComponent import GenericComponent
 
 
 class GuestRelationsProvider(object):
@@ -36,6 +38,8 @@ class GuestRelationsProvider(object):
 
     def getEdges(self):
 
+        # For ImpactEdges, the second argument depends upon the first argument
+        devguid = IGlobalIdentifier(self._object).getGUID()
         comp = self._object.getOVirtComponentOnHost()
         if comp:
             # we are a device monitored thru SNMP or ssh that is an oVirt VM. The
@@ -43,12 +47,14 @@ class GuestRelationsProvider(object):
             # us underneath it. We are now going to say that we *are* the component, from
             # the VM device's perspective. We depend on it, and it depends on us:
 
-            log.critical("KABOOM")
-            e1 = IGlobalIdentifier(comp).getGUID()
-            e2 = IGlobalIdentifier(self._object.device()).getGUID()
+            component = IGlobalIdentifier(comp).getGUID()
+        #    device = IGlobalIdentifier(self._object.device()).getGUID()
 
-            yield ImpactEdge( e1, e2, self.relationship_provider )
-            yield ImpactEdge( e2, e1, self.relationship_provider )
+            # Device impacted by component
+            yield ImpactEdge( component, devguid, self.relationship_provider )
+            #yield ImpactEdge( component, device, self.relationship_provider )
+            # Component impacted by device
+            #yield ImpactEdge( device, component, self.relationship_provider )
 
 
 class DeviceRelationsProvider(object):
@@ -68,10 +74,70 @@ class DeviceRelationsProvider(object):
         oVirt manager has multiple datacenters.
         """
         guid = IGlobalIdentifier(self._object).getGUID()
+        for dc in self._object.getComponents(meta_type='datacenters'):
+            dc_guid = IGlobalIdentifier(dc).getGUID()
+            # For ImpactEdges, the second argument depends upon the first argument
+            yield ImpactEdge(guid, dc_guid, self.relationship_provider)
 
-        for exampleComponent in self._object.exampleComponents():
-            c_guid = IGlobalIdentifier(exampleComponent).getGUID()
-            yield ImpactEdge(guid, c_guid, self.relationship_provider)
+
+class LiberatorComponentRelationsProvider(object):
+    implements(IRelationshipDataProvider)
+    adapts(GenericComponent)
+
+    relationship_provider = "oVirt"
+
+    impactedByChain = {
+        'vms': ['clusters',],
+        'hosts': ['clusters',],
+        'clusters': ['datacenters',],
+    }
+
+    typeToAttribute = {
+        'clusters': 'cluster_guid',
+        'datacenters': 'datacenter_guid',
+    }
+
+    def __init__(self, adapted):
+        self._object = adapted
+
+    def belongsInImpactGraph(self):
+        return True
+
+    def getEdges(self):
+        element = self._object.component_type
+        nextElementTypes = self.impactedByChain.get(element)
+        if nextElementTypes is not None:
+            guid = IGlobalIdentifier(self._object).getGUID()
+
+            # Search for related component
+            oVirtGuid = self._object.attributes.get('guid')
+            dev = self._object.device()
+            for nextElementType in nextElementTypes:
+                obj = self._getRelatedObjOfType(nextElementType, dev)
+                if obj is None:
+                    continue
+
+                log.critical("Found obj, relating (%s) %s --> %s (%s)", self._object.titleOrId(), element, nextElementType, obj.titleOrId())
+                objGuid = IGlobalIdentifier(obj).getGUID()
+                # For ImpactEdges, the second argument depends upon the first argument
+                yield ImpactEdge(objGuid, guid, self.relationship_provider)
+
+                # Now get the next items in the chain (ie we're self-managed)
+                for adapted in subscribers([obj], IRelationshipDataProvider):
+                    for edge in adapted.getEdges():
+                        if edge is not None:
+                            yield edge
+
+    def _getRelatedObjOfType(self, nextElementType, dev):
+        attr = self.typeToAttribute.get(nextElementType)
+        if attr is None:
+            return
+
+        objOVirtGuid = self._object.attributes.get(attr)
+        if objOVirtGuid is None:
+            return
+
+        return dev.getComponentByGuid(objOVirtGuid)
 
 
 def getRedundancyTriggers(guid, format):

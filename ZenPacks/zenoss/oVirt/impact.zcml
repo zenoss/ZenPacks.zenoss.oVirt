@@ -36,17 +36,31 @@
         factory=".impact.GuestRelationsProvider"
         />
 
-        <subscriber
-            provides="ZenPacks.zenoss.Impact.impactd.interfaces.INodeTriggers"
-            for="ZenPacks.zenoss.Liberator.GenericComponent.GenericComponent"
-            factory=".impact.OVirtDatacenterTriggers"
-            />
+    <subscriber
+        provides="ZenPacks.zenoss.Impact.impactd.interfaces.IRelationshipDataProvider"
+        for="ZenPacks.zenoss.oVirt.Device.Device"
+        factory=".impact.DeviceRelationsProvider"
+        />
 
-        <subscriber
-            provides="ZenPacks.zenoss.Impact.impactd.interfaces.INodeTriggers"
-            for="ZenPacks.zenoss.Liberator.GenericComponent.GenericComponent"
-            factory=".impact.OVirtClusterTriggers"
-            />
+<!--
+-->
+    <subscriber
+        provides="ZenPacks.zenoss.Impact.impactd.interfaces.IRelationshipDataProvider"
+        for="ZenPacks.zenoss.Liberator.GenericComponent.GenericComponent"
+        factory=".impact.LiberatorComponentRelationsProvider"
+        />
+
+    <subscriber
+        provides="ZenPacks.zenoss.Impact.impactd.interfaces.INodeTriggers"
+        for="ZenPacks.zenoss.Liberator.GenericComponent.GenericComponent"
+        factory=".impact.OVirtDatacenterTriggers"
+        />
+
+    <subscriber
+        provides="ZenPacks.zenoss.Impact.impactd.interfaces.INodeTriggers"
+        for="ZenPacks.zenoss.Liberator.GenericComponent.GenericComponent"
+        factory=".impact.OVirtClusterTriggers"
+        />
 <!--
 -->
 
