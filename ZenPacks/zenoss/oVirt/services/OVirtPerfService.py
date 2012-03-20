@@ -110,11 +110,11 @@ class OVirtPerfService(CollectorConfigService):
         try:
             result = compiled(getEngine().getContext(environ))
         except Exception:
-            self._sendBadTalesEvent(self, dev, context, templ, ds)
+            self._sendBadTalesEvent(dev, context, templ, ds)
             return None
 
         if isinstance(result, Exception):
-            self._sendBadTalesEvent(self, dev, context, templ, ds)
+            self._sendBadTalesEvent(dev, context, templ, ds)
             return None
 
         return result
