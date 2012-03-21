@@ -89,7 +89,7 @@ class OVirtPerfService(CollectorConfigService):
                         eventKey=ds.eventKey,
                         )
 
-                    dpList = proxy.datasources.setdefault(ds.id, [])
+                    dpList = proxy.datasources.setdefault(url, [])
                     dpList.append(dpInfo)
 
     def _evalTales(self, context, templ, ds):
@@ -149,9 +149,8 @@ if __name__ == '__main__':
                                config.zOVirtUser, config.zOVirtDomain)
         
         print '\t'.join(["DS", "URL", '', 'Datapoints'])
-        for dsName, dpList in sorted(config.datasources.items()):
+        for url, dpList in sorted(config.datasources.items()):
             dp= dpList[0]
-            url = dp['url']
             print '\t'.join([ dp['dsId'], url])
 
             for dp in dpList:

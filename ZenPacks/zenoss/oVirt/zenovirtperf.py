@@ -93,9 +93,7 @@ class ZenOVirtPerfTask(ObservableMixin):
 
     def doTask(self):
         deferreds = []
-        #import pdb;pdb.set_trace()
-        for dpList in self.config.datasources.values():
-            url = dpList[0]['url']
+        for url, dpList in self.config.datasources.items():
             d = defer.maybeDeferred(self._httpGet, url)
             d.addCallback(self._processResults, dpList)
             d.addCallback(self._storeResults)
