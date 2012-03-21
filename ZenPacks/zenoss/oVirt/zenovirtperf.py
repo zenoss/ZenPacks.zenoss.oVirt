@@ -27,12 +27,10 @@ from Products.ZenCollector.interfaces \
     import ICollectorPreferences, IScheduledTask, IEventService, IDataService
 
 from Products.ZenCollector.tasks \
-    import SimpleTaskFactory, SimpleTaskSplitter, TaskStates
+    import SimpleTaskFactory, SubConfigurationTaskSplitter, TaskStates
 
 from Products.ZenUtils.observable import ObservableMixin
-
-from Products.ZenUtils.Utils import unused
-
+from Products.ZenUtils.Utils import unused 
 from Products.ZenCollector.services.config import DeviceProxy
 
 unused(Globals)
@@ -57,6 +55,18 @@ class ZenOVirtPerfPreferences(object):
 
     def postStartup(self):
         pass
+
+
+class OVirtPerCycletimeTaskSplitter(SubConfigurationTaskSplitter):
+    subconfigName = 'datasources'
+
+    def _splitSubConfiguration(self, config):
+        subconfigs = {}
+        for (url, cycleTime), dpList in config.datasources.items():
+            key = (config.id, cycleTime)
+            subconfigList = subconfigs.setdefault(key, {})
+            subconfigList[url] = dpList
+        return subconfigs
 
 
 class ZenOVirtPerfTask(ObservableMixin):
@@ -174,7 +184,7 @@ class ZenOVirtPerfTask(ObservableMixin):
             }
             self._dataService.writeRRD(
                     dp['path'], value,
-                    dp['rrdType'], dp['rrdCmd'], dp['cycleTime'],
+                    dp['rrdType'], dp['rrdCmd'], dp['cycletime'],
                     dp['minv'], dp['maxv'],
                     threshData)
 
@@ -185,7 +195,7 @@ class ZenOVirtPerfTask(ObservableMixin):
         import pdb;pdb.set_trace()
 
     def clientFinished(self, result):
-        log.info("Yay! All done")
+        return defer.succeed('Completed scan')
 
     def cleanup(self):
         pass
@@ -194,7 +204,7 @@ class ZenOVirtPerfTask(ObservableMixin):
 if __name__ == '__main__':
     myPreferences = ZenOVirtPerfPreferences()
     myTaskFactory = SimpleTaskFactory(ZenOVirtPerfTask)
-    myTaskSplitter = SimpleTaskSplitter(myTaskFactory)
+    myTaskSplitter = OVirtPerCycletimeTaskSplitter(myTaskFactory)
 
     daemon = CollectorDaemon(myPreferences, myTaskSplitter)
     daemon.run()

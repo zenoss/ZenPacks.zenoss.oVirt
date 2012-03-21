@@ -78,7 +78,7 @@ class OVirtPerfService(CollectorConfigService):
                         devId=deviceId,
                         compId=componentId,
                         dsId=ds.id,
-                        cycleTime=ds.cycletime,
+                        cycletime=ds.cycletime,
                         dpId=dp.id,
                         path=path,
                         rrdType=dp.rrdtype,
@@ -89,7 +89,8 @@ class OVirtPerfService(CollectorConfigService):
                         eventKey=ds.eventKey,
                         )
 
-                    dpList = proxy.datasources.setdefault(url, [])
+                    key = (url, ds.cycletime)
+                    dpList = proxy.datasources.setdefault(key, [])
                     dpList.append(dpInfo)
 
     def _evalTales(self, context, templ, ds):
@@ -148,13 +149,14 @@ if __name__ == '__main__':
         print "%s:%s %s@%s" % (config.zOVirtServerName, config.zOVirtPort,
                                config.zOVirtUser, config.zOVirtDomain)
         
-        print '\t'.join(["DS", "URL", '', 'Datapoints'])
-        for url, dpList in sorted(config.datasources.items()):
-            dp= dpList[0]
-            print '\t'.join([ dp['dsId'], url])
+        print '\t'.join(["URL", '', 'Cycle (sec)'])
+        print '\t'.join(["DS", 'Datapoints'])
+        for (url, cycletime), dpList in sorted(config.datasources.items()):
+            print '\n', url
+            print '\t'.join([ '', '', str(cycletime)])
 
             for dp in dpList:
-                print '\t'.join(['\t', '', dp['dpId']])
+                print '\t'.join([dp['dsId'], dp['dpId'] ])
 
     tester.printDeviceProxy = printer
     tester.showDeviceInfo()
