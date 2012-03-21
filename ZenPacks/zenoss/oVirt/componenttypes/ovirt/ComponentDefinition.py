@@ -8,14 +8,12 @@ import logging
 
 from zope.interface import implements
 
-from Products.ZenModel.ZenModelRM import ZenModelRM
-
-from Products.ZenModel.BasicDataSource import BasicDataSource
 from ZenPacks.zenoss.Liberator.GenericComponentManager import (
     GenericComponentDefinition, BadXmlDefinitionFileException,
     GenericComponentAttributeDefinition,
 )
 from ZenPacks.zenoss.Liberator.interfaces import IGenericComponentDefinition
+from ZenPacks.zenoss.oVirt.datasources.OVirtDataSource import OVirtDataSource
 from .interfaces import IOVirtGenericComponentInfo
  
 log = logging.getLogger("zen.liberator.OVirtComponentDefinition")
@@ -55,8 +53,8 @@ class ComponentDefinition(GenericComponentDefinition):
             raise BadXmlDefinitionFileException(msg)
 
         ds = getattr(template.datasources, perfId, None)
-        if ds is None or not isinstance(ds,BasicDataSource):
-            ds = template.manage_addRRDDataSource(perfId, dsOption='BasicDataSource.Command')
+        if ds is None or not isinstance(ds, OVirtDataSource):
+            ds = template.manage_addRRDDataSource(perfId, dsOption='OVirtDataSource.oVirt')
         dp = getattr(ds.datapoints, perfId, None)
         if dp is None:
             dp = ds.manage_addRRDDataPoint(id=perfId)
