@@ -15,7 +15,7 @@ from ZenPacks.zenoss.oVirt.interfaces import IOVirtDataSourceInfo
 class OVirtDataSourceInfo(RRDDataSourceInfo):
     implements(IOVirtDataSourceInfo)
 
-    cycleTime = ProxyProperty('cycletime')
+    cycletime = ProxyProperty('cycletime')
     url = ProxyProperty('url')
 
     @property
