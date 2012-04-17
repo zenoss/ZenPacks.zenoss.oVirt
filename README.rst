@@ -5,7 +5,7 @@ ZenPacks.zenoss.oVirt
 
 About
 ------
-This ZenPack models, collects events, and collects performance information from an oVirt server ( http://http://www.ovirt.org/ ) for data centers, clusters, hosts and virtual machines.
+This ZenPack models, collects events, and collects performance information from an oVirt server ( http://www.ovirt.org/ ) for data centers, clusters, hosts and virtual machines.
 
 
 Features
