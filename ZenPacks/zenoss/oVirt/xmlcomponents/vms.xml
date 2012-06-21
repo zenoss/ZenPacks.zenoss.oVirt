@@ -11,8 +11,8 @@
 
     <attribute name="element_status" valueQuery='here.find("status").find("state").text' label='Status' />
 
-    <attribute name="memory" valueQuery='here.find("memory").text' type='int' label="Memory" renderExpression="units(value)"/>
-    <attribute name="memory_policy_guaranteed" valueQuery='here.find("memory_policy").find("guaranteed").text' type='int' label="Memory (Guaranteed)" />
+    <attribute name="memory" valueQuery='here.find("memory").text' type='int' label="Memory" renderExpression="units(value)" width='15'/>
+    <attribute name="memory_policy_guaranteed" valueQuery='here.find("memory_policy").find("guaranteed").text' type='int' label="Memory (Guaranteed)" renderExpression="units(value)" width='15' />
 
     <attribute name="os_type" valueQuery='here.find("os").attrib["type"]' label="OS Type" display='none'/>
 
@@ -40,10 +40,10 @@
         <attribute name="href" valueQuery='here.attrib["href"]' display="none" />
 
         <attribute name="interface" valueQuery='here.find("interface").text' label="Interface" />
-        <attribute name="mac" valueQuery='here.find("mac").attrib["address"]' label="MAC Address" renderExpression="here.getMacAddressLink(here.attributes.get('mac'))" />
+        <attribute name="mac" valueQuery='here.find("mac").attrib["address"]' label="MAC Address" renderExpression="here.getMacAddressLink(here.attributes.get('mac'))" width='25'/>
 
-        <attribute name="network_href" valueQuery='here.find("network").attrib["href"]' label="Network URL" />
-        <attribute name="network_guid" valueQuery='here.find("network").attrib["id"]' label="Network GUID" />
+        <attribute name="network_href" valueQuery='here.find("network").attrib["href"]' label="Network URL" width='40'/>
+        <attribute name="network_guid" valueQuery='here.find("network").attrib["id"]' label="Network GUID" width='30'/>
     </subcomponent>
 
     <subcomponent id="snapshots" label="Snapshot" plularlLabel="Snapshots" idField="name" virtualElement="snapshots" parentRelation="snapshots" >
@@ -51,10 +51,10 @@
         <attribute name="guid" valueQuery='here.attrib["id"]' display="none" />
         <attribute name="href" valueQuery='here.attrib["href"]' display="none" />
 
-        <attribute name="description" valueQuery='here.find("description").text' label="Description" />
-        <attribute name="date" valueQuery='here.find("date").text' label="Date" />
-        <attribute name="disk_href" valueQuery='here.find("disk").attrib["href"]' label="Disk URL" />
-        <attribute name="disk_guid" valueQuery='here.find("disk").attrib["id"]' label="Disk GUID" />
+        <attribute name="description" valueQuery='here.find("description").text' label="Description" width='40'/>
+        <attribute name="date" valueQuery='here.find("date").text' label="Date" width='25'/>
+        <attribute name="disk_href" valueQuery='here.find("disk").attrib["href"]' label="Disk URL" width='30'/>
+        <attribute name="disk_guid" valueQuery='here.find("disk").attrib["id"]' label="Disk GUID" width='30'/>
     </subcomponent>
 
 </component>

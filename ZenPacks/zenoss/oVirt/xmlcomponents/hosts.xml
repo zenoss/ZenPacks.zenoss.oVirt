@@ -4,8 +4,8 @@
     <documentation>ovirt REST API modeler plugin</documentation>
 
     <attribute name="name" valueQuery='here.find("name").text' label="Name" />
-    <attribute name="guid" valueQuery='here.attrib["id"]' display="column" />
-    <attribute name="href" valueQuery='here.attrib["href"]' display="tabular" />
+    <attribute name="guid" valueQuery='here.attrib["id"]' display="Tabular" />
+    <attribute name="href" valueQuery='here.attrib["href"]' display="tabular" width='20' />
     <attribute name="description" valueQuery='here.find("description").text' label="Description" width='25' />
 
     <attribute name="address" valueQuery='here.find("address").text' label="Address" width='25' />

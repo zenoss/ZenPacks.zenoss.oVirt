@@ -13,8 +13,8 @@
     <attribute name="vlan" valueQuery='here.find("vlan").attribute["id"]' label='VLAN Id' width='10' />
     <attribute name="stp" valueQuery='here.find("stp").text' label='Spanning Tree Protocol' />
 
-    <attribute name="datacenter_href" valueQuery='here.find("data_center").attrib["href"]' label="Datacenter URL" />
-    <attribute name="datacenter_guid" valueQuery='here.find("data_center").attrib["id"]' label="Datacenter GUID" />
+    <attribute name="datacenter_href" valueQuery='here.find("data_center").attrib["href"]' label="Datacenter URL" width='35'/>
+    <attribute name="datacenter_guid" valueQuery='here.find("data_center").attrib["id"]' label="Datacenter GUID" width='30'/>
 
 </component>
 
