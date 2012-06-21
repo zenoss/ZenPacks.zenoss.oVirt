@@ -6,13 +6,13 @@
     <attribute name="name" valueQuery='here.find("name").text' label="Name" />
     <attribute name="guid" valueQuery='here.attrib["id"]' display="none" />
     <attribute name="href" valueQuery='here.attrib["href"]' display="none" />
-    <attribute name="description" valueQuery='here.find("description").text' label="Description" width='80' />
+    <attribute name="description" valueQuery='here.find("description").text' label="Description" width='25' />
 
     <attribute name="user_name" valueQuery='here.find("user_name").text' label="User Name" width='20' />
-    <attribute name="domain" valueQuery='here.find("domain").text' label="Domain" width='20' />
-    <attribute name="logged_in" valueQuery='here.find("logged_in").text' label="Logged In?" width='20' />
+    <attribute name="domain" valueQuery='here.find("domain").text' label="Domain" width='10' />
+    <attribute name="logged_in" valueQuery='here.find("logged_in").text' label="Logged In" />
 
-    <attribute name="mutable" valueQuery='here.find("mutable").text' label="Mutable?" width='20' />
-    <attribute name="administrative" valueQuery='here.find("administrative").text' label="Administrative User?" width='20' />
+    <attribute name="mutable" valueQuery='here.find("mutable").text' label="Mutable" />
+    <attribute name="administrative" valueQuery='here.find("administrative").text' label="Administrative User" />
 </component>
 
