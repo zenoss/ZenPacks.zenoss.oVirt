@@ -47,24 +47,22 @@ class DeviceRelationsProvider_ovirt_datacenter(BaseRelationsProvider):
         """
         oVirt manager relates to data centers
         """
-        if type in (TAG_ALL, TAG_IMPACTED_BY):
+        if type in (TAG_ALL, TAG_IMPACTS):
             for dc in self._adapted.getComponents(meta_type='datacenters'):
-                yield self.constructRelationTo(dc, TAG_IMPACTED_BY)
+                yield self.constructRelationTo(dc, TAG_IMPACTS)
 
 
 class OVirtComponentRelationsProvider(BaseRelationsProvider):
     adapts(GenericComponent)
 
     impactsChain = {
-        'vms': ['clusters',],
-        'hosts': ['clusters',],
-        'clusters': ['datacenters',],
+        'datacenters': ['clusters',],
+        'clusters': ['vms'],
     }
 
     impactedByChain = {
-        'datacenters': ['clusters',],
-        'clusters': ['hosts', 'vms'],
-        'hosts': ['vms',],
+        'vms': ['clusters'],
+        'clusters': ['datacenters',],
     }
 
     def relations(self, type=TAG_ALL):
@@ -110,9 +108,6 @@ class OVirtComponentRelationsProvider(BaseRelationsProvider):
                 for nextElementType in nextElementTypes:
                     for obj in dev.getRelatedComponents(guid, nextElementType):
                         yield self.constructRelationTo(obj, TAG_IMPACTS)
-
-            elif element == 'datacenters':
-                    yield self.constructRelationTo(dev, TAG_IMPACTS)
 
             else:
                 log.warn("No mapping from %s to an IMPACTS element -- skipping", element)

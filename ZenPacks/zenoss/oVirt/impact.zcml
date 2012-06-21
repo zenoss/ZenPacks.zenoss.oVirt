@@ -36,11 +36,13 @@
         factory=".impact.GuestRelationsProvider"
         />
 
+<!--
     <subscriber
         provides="ZenPacks.zenoss.Impact.impactd.interfaces.IRelationshipDataProvider"
         for="ZenPacks.zenoss.oVirt.Device.Device"
         factory=".impact.DeviceRelationsProvider"
         />
+-->
 
 <!--
 -->

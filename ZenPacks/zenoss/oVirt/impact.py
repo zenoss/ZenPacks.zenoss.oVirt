@@ -88,7 +88,6 @@ class LiberatorComponentRelationsProvider(object):
 
     impactedByChain = {
         'vms': ['clusters',],
-        'hosts': ['clusters',],
         'clusters': ['datacenters',],
     }
 
@@ -121,12 +120,6 @@ class LiberatorComponentRelationsProvider(object):
                 objGuid = IGlobalIdentifier(obj).getGUID()
                 # For ImpactEdges, the second argument depends upon the first argument
                 yield ImpactEdge(objGuid, guid, self.relationship_provider)
-
-                # Now get the next items in the chain (ie we're self-managed)
-                for adapted in subscribers([obj], IRelationshipDataProvider):
-                    for edge in adapted.getEdges():
-                        if edge is not None:
-                            yield edge
 
     def _getRelatedObjOfType(self, nextElementType, dev):
         attr = self.typeToAttribute.get(nextElementType)
