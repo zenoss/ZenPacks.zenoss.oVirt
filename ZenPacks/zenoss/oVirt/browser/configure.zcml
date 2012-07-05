@@ -6,14 +6,13 @@
         directory="resources"
         />
 
-    <!-- Register custom JavaScript for oVirt infrastructure -->.
-  <viewlet
-      name="js-ovirt"
-      paths="/++resource++ovirt/js/oVirt.js"
-      weight="10"
-      manager="Products.ZenUI3.browser.interfaces.IJavaScriptSrcManager"
-      class="Products.ZenUI3.browser.javascript.JavaScriptSrcBundleViewlet"
-      permission="zope2.Public"
-      />
+    <viewlet
+        name="js-ovirt"
+        paths="/++resource++ovirt/js/ovirt.js"
+        weight="10"
+        manager="Products.ZenUI3.browser.interfaces.IJavaScriptSrcManager"
+        class="Products.ZenUI3.browser.javascript.JavaScriptSrcBundleViewlet"
+        permission="zope2.Public"
+        />
 
 </configure>

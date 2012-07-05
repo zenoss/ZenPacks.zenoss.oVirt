@@ -3,83 +3,13 @@
 <!-- ('', 'zport', 'dmd', 'Devices', 'oVirt') -->
 <object id='/zport/dmd/Devices/oVirt' module='Products.ZenModel.DeviceClass' class='DeviceClass'>
 <property id='zendoc' type='string'>
-oVirt Virtual Datacenter Management Platform
+oVirt virtualization engine
 </property>
 <property type="string" id="description" mode="w" >
-oVirt Virtual Datacenter Management Platform
-</property>
-<property visible="True" type="string" id="zLinks" >
-&lt;a href="http://${here/zOVirtServerName}:${here/zOVirtPort}"&gt;oVirt Management Portal&lt;/a&gt;
-</property>
-<property visible="True" type="lines" id="zXmlComponents" >
-['clusters', 'datacenters', 'roles', 'domains', 'networks', 'tags', 'groups', 'templates', 'hosts', 'vmpools', 'storagedomains', 'users', 'vms']
-</property>
-<property visible="True" type="string" id="zIcon" >
-/++resource++ovirt/img/oVirt-icon.png
+oVirt virtualization engine
 </property>
 <property visible="True" type="string" id="zPythonClass" >
-ZenPacks.zenoss.oVirt.Device
+ZenPacks.zenoss.oVirt.System
 </property>
-</object>
-<!-- ('', 'zport', 'dmd', 'Events', 'oVirt') -->
-<object id='/zport/dmd/Events/oVirt' module='Products.ZenEvents.EventClass' class='EventClass'>
-<property id='zendoc' type='string'>
-oVirt datacenter virtualization manager
-</property>
-<property type="string" id="description" mode="w" >
-oVirt datacenter virtualization manager
-</property>
-<object id='DataCenter' module='Products.ZenEvents.EventClass' class='EventClass'>
-</object>
-<object id='Host' module='Products.ZenEvents.EventClass' class='EventClass'>
-<object id='Add' module='Products.ZenEvents.EventClass' class='EventClass'>
-</object>
-<object id='Connection' module='Products.ZenEvents.EventClass' class='EventClass'>
-</object>
-<object id='Maintenance' module='Products.ZenEvents.EventClass' class='EventClass'>
-</object>
-<object id='Power' module='Products.ZenEvents.EventClass' class='EventClass'>
-</object>
-<object id='Remove' module='Products.ZenEvents.EventClass' class='EventClass'>
-</object>
-</object>
-<object id='Guest' module='Products.ZenEvents.EventClass' class='EventClass'>
-<object id='Add' module='Products.ZenEvents.EventClass' class='EventClass'>
-</object>
-<object id='Connection' module='Products.ZenEvents.EventClass' class='EventClass'>
-</object>
-<object id='Migration' module='Products.ZenEvents.EventClass' class='EventClass'>
-</object>
-<object id='Power' module='Products.ZenEvents.EventClass' class='EventClass'>
-</object>
-<object id='Remove' module='Products.ZenEvents.EventClass' class='EventClass'>
-</object>
-</object>
-<object id='User' module='Products.ZenEvents.EventClass' class='EventClass'>
-<object id='Login' module='Products.ZenEvents.EventClass' class='EventClass'>
-</object>
-<object id='Logout' module='Products.ZenEvents.EventClass' class='EventClass'>
-</object>
-</object>
-<object id='Pool' module='Products.ZenEvents.EventClass' class='EventClass'>
-</object>
-<object id='Template' module='Products.ZenEvents.EventClass' class='EventClass'>
-</object>
-<object id='Datastore' module='Products.ZenEvents.EventClass' class='EventClass'>
-<property id='zendoc' type='string'>
-Storage-related events.
-</property>
-<property type="string" id="description" mode="w" >
-Storage-related events.
-</property>
-<object id='Add' module='Products.ZenEvents.EventClass' class='EventClass'>
-</object>
-<object id='Destroy' module='Products.ZenEvents.EventClass' class='EventClass'>
-</object>
-<object id='Remove' module='Products.ZenEvents.EventClass' class='EventClass'>
-</object>
-<object id='Extend' module='Products.ZenEvents.EventClass' class='EventClass'>
-</object>
-</object>
 </object>
 </objects>

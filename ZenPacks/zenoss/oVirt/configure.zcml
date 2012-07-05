@@ -4,103 +4,39 @@
     xmlns:browser="http://namespaces.zope.org/browser"
     xmlns:zcml="http://namespaces.zope.org/zcml">
 
+    <!-- Import directRouter Directive -->
+    <include package="Products.ZenUtils.extdirect.zope" file="meta.zcml"/>
 
-    <!-- Includes: Browser Configuration -->
-    <include package=".browser"/>
-
-
-    <!-- DataSource  -->
-
-    <adapter
-        provides=".interfaces.IOVirtDataSourceInfo"
-        for=".datasources.OVirtDataSource.OVirtDataSource"
-        factory=".info.OVirtDataSourceInfo"
+    <!-- Define the router/facade for this zenpack -->
+    <browser:directRouter
+        name="ovirt_router"
+        for="*"
+        class=".routers.oVirtRouter"
+        namespace="Zenoss.remote"
+        permission="zenoss.Common"
         />
 
+    <adapter 
+        name="oVirt"
+        provides=".interfaces.IoVirtFacade"
+        for="*"
+        factory=".facade.oVirtFacade"
+        />
 
-    <!-- Event Plugins
+    <!-- Define Device Loader -->
+    <utility
+        name="oVirt"
+        provides="Products.ZenModel.interfaces.IDeviceLoader"
+        component=".deviceloaders.oVirtLoader"
+        />
 
-    These are useful when you want to manipulate events in a more bullet-proof
-    way than standard transforms allow. Users won't be able to change your
-    plugin code through the user interface like they could with transforms. You
-    can also more easily unit test these plugins than you can test transforms.
+    <!-- Include Browser Code -->
+    <include package=".browser"/>
 
-    You can either register a preEventPlugin or a postEventPlugin.
-    preEventPlugins will be executed before any event processing is done. This
-    means that no tagging or enrichment of the event will be done. This is a
-    useful approach for early-dropping events you don't want to waste time
-    processing.
-
-    postEventPlugins will be executed after all normal event processing is
-    done. This is useful in circumstances where you need access to the tags and
-    other enrichment done during normal event processing in your plugin.
-
-    Using zcml:condition="have eventPlugins" will cause your plugins only to be
-    registered if the installed Zenoss versions supports them. Support
-    for eventPlugins was added in Zenoss 4.
-
-    See events.py for the plugin implementations.
-
-    <configure zcml:condition="have eventPlugins">
-        <preEventPlugin plugin=".events.ExamplePreEventPlugin">
-        <postEventPlugin plugin=".events.ExamplePostEventPlugin">
-    </configure>
-    -->
-
-
-    <include zcml:condition="installed ZenPacks.zenoss.DynamicView"
-             file="dynamicview.zcml" />
-
-    <include zcml:condition="installed ZenPacks.zenoss.Impact"
-             file="impact.zcml" />
-
-
-    <!-- Analytics Adapters
-
-    The analytics subscribers and adapters are used to control the ETL
-    (extract, transform and load) process from Zenoss into the data warehouse
-    of the Zenoss Analytics product. It is recommended to enclose all analytics
-    adapters in a conditional block because Analytics may or may not be
-    installed.
-
-    See analytics.py for the subscriber implementations.
-
-    <configure zcml:condition="installed ZenPacks.zenoss.ZenETL">
-        <adapter
-            provides="Products.Zuul.interfaces.IReportable"
-            for=".ExampleComponent.ExampleComponent"
-            factory=".analytics.ExampleComponentReportable"
-            />
-
-    </configure>
-    -->
-
-    <!--  Include Liberator protocol helpers -->
-    <include package=".componenttypes"/>
-
-  <!-- defines the direct router directive -->
-  <include package="Products.ZenUtils.extdirect.zope" file="meta.zcml"/>
-
-  <!-- Define the router/facade for this zenpack -->
-  <browser:directRouter
-      name="ovirt_router"
-      for="*"
-      class=".router.OVirtRouter"
-      namespace="Zenoss.remote"
-      permission="zenoss.Common"
-      />
-
-  <adapter factory=".facade.OVirtFacade"
-           provides=".interfaces.IOVirtFacade"
-           name="ovirt"
-           for="*"
-           />
-
-  <!-- Define the device loader -->
-    <utility component=".ovirtloader.OVirtLoader"
-             name="ovirt"
-             provides="Products.ZenModel.interfaces.IDeviceLoader"
-             />
+    <!-- Include Dynamic View Adapters -->
+    <include
+        zcml:condition="installed ZenPacks.zenoss.DynamicView"
+        package=".dynamicview"
+        />
 
 </configure>
-

@@ -4,28 +4,18 @@
 # NB: PACKAGES is deprecated
 NAME = "ZenPacks.zenoss.oVirt"
 VERSION = "1.0.3"
-AUTHOR = "Zenoss"
-LICENSE = "GPL"
+AUTHOR = "Zenoss Labs <labs@zenoss.com>"
+LICENSE = "GPLv2"
 NAMESPACE_PACKAGES = ['ZenPacks', 'ZenPacks.zenoss']
 PACKAGES = ['ZenPacks', 'ZenPacks.zenoss', 'ZenPacks.zenoss.oVirt']
 INSTALL_REQUIRES = []
-COMPAT_ZENOSS_VERS = ""
+COMPAT_ZENOSS_VERS = ">=3.2"
 PREV_ZENPACK_NAME = ""
 # STOP_REPLACEMENTS
 ################################
 # Zenoss will not overwrite any changes you make below here.
 
-import os
-from subprocess import Popen, PIPE
 from setuptools import setup, find_packages
-
-# Run "make build" if a GNUmakefile is present.
-if os.path.isfile('GNUmakefile'):
-    print 'GNUmakefile found. Running "make build" ..'
-    p = Popen('make build', stdout=PIPE, stderr=PIPE, shell=True)
-    print p.communicate()[0]
-    if p.returncode != 0:
-        raise Exception('"make build" exited with an error: %s' % p.returncode)
 
 setup(
     # This ZenPack metadata should usually be edited with the Zenoss

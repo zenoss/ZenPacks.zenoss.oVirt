@@ -29,51 +29,37 @@ var addOVirtInfra = new Zenoss.Action({
                 border: false,
                 items: [{
                     xtype: 'textfield',
-                    name: 'id',
-                    fieldLabel: _t('Name or ID'),
-                    id: "add-ovirt-id",
-                    allowBlank: false
-                }, {
-                    xtype: 'textfield',
-                    name: 'host',
-                    fieldLabel: _t('Host'),
-                    id: "add-ovirt-host",
-                    allowBlank: false
-
-                }, {
-                    xtype: 'textfield',
-                    name: 'port',
-                    id: "add-ovirt-port",
-                    fieldLabel: _t('Port #'),
-                    inputType: 'number',
-                    minValue: '1',
-                    maxValue: '32767',
-                    value: 8080,
-                    allowDecimals: false,
-                    width: 60,
+                    name: 'url',
+                    fieldLabel: _t('URL'),
+                    id: "ovirtURLField",
+                    width: 260,
                     allowBlank: false
                 }, {
                     xtype: 'textfield',
                     name: 'domain',
+                    width: 260,
+                    value: 'internal',
                     fieldLabel: _t('Authentication Domain'),
                     id: 'add-ovirt-domain',
                     allowBlank: false
                 }, {
                     xtype: 'textfield',
                     name: 'username',
+                    width: 260,
                     fieldLabel: _t('Username'),
                     id: "add-ovirt-username",
                     allowBlank: false
                 }, {
                     xtype: 'textfield',
                     name: 'password',
+                    width: 260,
                     inputType: 'password',
                     fieldLabel: _t('Password'),
                     id: "add-ovirt-password",
                     allowBlank: false
                 }, {
                     xtype: 'combo',
-                    width: 160,
+                    width: 260,
                     name: 'collector',
                     fieldLabel: _t('Collector'),
                     id: 'add-ovirt-collector',
@@ -88,7 +74,7 @@ var addOVirtInfra = new Zenoss.Action({
                     editable: false,
                     allowBlank: false,
                     triggerAction: 'all',
-                    selectOnFocus: true,
+                    selectOnFocus: false,
                     listeners: {
                         'afterrender': function(component) {
                             var index = component.store.find('name', 'localhost');
@@ -107,7 +93,7 @@ var addOVirtInfra = new Zenoss.Action({
                         var form = b.ownerCt.ownerCt.getForm();
                         var opts = form.getFieldValues();
 
-                        Zenoss.remote.OVirtRouter.addOVirtEndpoint(opts,
+                        Zenoss.remote.oVirtRouter.add_ovirt(opts,
                         function(response) {
                             if (response.success) {
                                 Zenoss.message.success(_t('Add oVirt Infrastructure job submitted. <a href="/zport/dmd/JobManager/jobs/{0}/viewlog">View Job Log</a>'),

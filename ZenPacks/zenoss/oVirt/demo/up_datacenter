@@ -1,1 +1,0 @@
-zensendevent -d ovirt.zenosslabs.com -s Clear -o component=datacenters_e3fc073a-44c0-11e1-9540-02163e345a13 "Nothing to see here..."

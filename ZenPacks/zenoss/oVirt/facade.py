@@ -1,51 +1,53 @@
-######################################################################
+###########################################################################
 #
-# Copyright 2012 Zenoss, Inc.  All Rights Reserved.
+# This program is part of Zenoss Core, an open source monitoring platform.
+# Copyright (C) 2012, Zenoss Inc.
 #
-######################################################################
+# This program is free software; you can redistribute it and/or modify it
+# under the terms of the GNU General Public License version 2 or (at your
+# option) any later version as published by the Free Software Foundation.
+#
+# For complete information please visit: http://www.zenoss.com/oss/
+#
+###########################################################################
 
-import logging
-log = logging.getLogger('zen.oVirtFacade')
+from urlparse import urlparse
 
 from zope.interface import implements
-import transaction
 
 from Products.Zuul.facades import ZuulFacade
 from Products.Zuul.utils import ZuulMessageFactory as _t
-from Products.ZenModel.Exceptions import DeviceExistsError
-from Products.ZenModel.Device import manage_createDevice
-from Products.Jobber.jobs import ShellCommandJob
 
-from ZenPacks.zenoss.oVirt.interfaces import IOVirtFacade
+from ZenPacks.zenoss.oVirt.interfaces import IoVirtFacade
 
 
-class OVirtFacade(ZuulFacade):
-    implements(IOVirtFacade)
+class oVirtFacade(ZuulFacade):
+    implements(IoVirtFacade)
 
-    def addOVirtEndpoint(self, id, host, port,
-                                username, domain, password,
-                                collector='localhost'):
+    def add_ovirt(self, url, username, domain, password, collector='localhost'):
+        """Handles adding a new oVirt environment to the system."""
+        parsed_url = urlparse(url)
+        hostname = parsed_url.hostname
 
-        zProps = dict(zOVirtServerName=host,
-                      zOVirtPort=port,
-                      zOVirtUser=username,
-                      zOVirtDomain=domain,
-                      zOVirtPassword=password)
+        deviceRoot = self._dmd.getDmdRoot("Devices")
+        device = deviceRoot.findDeviceByIdExact(hostname)
 
-        try:
-            manage_createDevice(self._dmd, id, devicePath='/oVirt',
-                                  performanceMonitor=collector,
-                                  zProperties=zProps)
-        except DeviceExistsError:
-            return False, _t("A device named %s already exists.") % id
+        if device:
+            return False, _t("A device named %s already exists." % hostname)
 
-        transaction.commit()
+        zProperties = {
+            'zoVirtURL': url,
+            'zoVirtUserName': username,
+            'zoVirtDomain': domain,
+            'zoVirtPassword': password,
+        }
 
-        perfConf = self._dmd.Monitors.getPerformanceMonitor(collector)
-        cmd = perfConf.getCollectorCommand('zengenericmodeler')
-        cmd.extend(
-            ['run', '-d', id , '--monitor', collector]
-        )
-        jobStatus = self._dmd.JobManager.addJob(ShellCommandJob, cmd=cmd)
+        perfConf = self._dmd.Monitors.getPerformanceMonitor('localhost')
+        jobStatus = perfConf.addDeviceCreationJob(
+            deviceName=hostname,
+            devicePath='/Devices/oVirt',
+            discoverProto='python',
+            performanceMonitor=collector,
+            zProperties=zProperties)
+
         return True, jobStatus.id
-
