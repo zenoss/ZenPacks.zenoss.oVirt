@@ -36,10 +36,10 @@ class oVirtFacade(ZuulFacade):
             return False, _t("A device named %s already exists." % hostname)
 
         zProperties = {
-            'zoVirtURL': url,
-            'zoVirtUserName': username,
-            'zoVirtDomain': domain,
-            'zoVirtPassword': password,
+            'zOVirtUrl': url,
+            'zOVirtUser': username,
+            'zOVirtDomain': domain,
+            'zOVirtPassword': password,
         }
 
         perfConf = self._dmd.Monitors.getPerformanceMonitor('localhost')

@@ -56,12 +56,10 @@ class BaseComponent(DeviceComponent, ManagedEntity):
 
 class ZenPack(ZenPackBase):
     packZProperties = [
-        ('zOVirtServerName', '', 'string'),
+        ('zOVirtUrl', '', 'string'),
         ('zOVirtUser', 'admin', 'string'),
         ('zOVirtPassword', '', 'password'),
         ('zOVirtDomain', 'internal', 'string'),
-        ('zOVirtPort', 8080, 'int')
-        #('zOVirtProtocol', 'http', 'string'),
     ]
 
     # Placeholder for future plugin installation

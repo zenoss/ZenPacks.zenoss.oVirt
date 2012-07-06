@@ -11,5 +11,8 @@ oVirt virtualization engine
 <property visible="True" type="string" id="zPythonClass" >
 ZenPacks.zenoss.oVirt.System
 </property>
+<property visible="True" type="lines" id="zCollectorPlugins" >
+['zenoss.oVirt']
+</property>
 </object>
 </objects>

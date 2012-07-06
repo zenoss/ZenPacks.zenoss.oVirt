@@ -13,8 +13,10 @@
 __all__ = ['Client']
 
 import twisted.web.client
+import sys
 from twisted.internet import defer
 from xml.dom.minidom import parseString
+from twisted.python import log
 
 def getText(element):
     return element.childNodes[0].data
@@ -23,15 +25,16 @@ class Client(object):
     """oVirt Client"""
 
     def __init__(self, base_url, username,domain, password):
+        log.startLogging(sys.stdout)
         self.base_url = base_url
         self.username = username
         self.domain = domain
         self.password = password
-
         #Build the credential string
         creds = '%s@%s:%s' % (self.username, self.domain, self.password)
+        print creds
+        print self.base_url
         creds = creds.encode('Base64').strip('\r\n')
-
         self.headers = {
             'Authorization': 'Basic %s' % creds,
             'Accept': 'application/xml'
