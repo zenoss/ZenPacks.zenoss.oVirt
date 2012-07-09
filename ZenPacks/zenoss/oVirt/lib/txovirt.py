@@ -66,7 +66,7 @@ if __name__ == '__main__':
         reactor.stop()
         for success, result in results:
             if success:
-                print result.toxml()
+                print ElementTree.dump(result)
             else:
                 print result.printTraceback()
 
