@@ -19,7 +19,7 @@ import os
 import Globals
 
 from Products.ZenModel.ZenPack import ZenPack as ZenPackBase
-from Products.ZenUtils.Utils import unused
+from Products.ZenUtils.Utils import zenPath, unused
 
 #Used by the BaseComponent Class
 from Products.ZenModel.DeviceComponent import DeviceComponent
@@ -27,6 +27,7 @@ from Products.ZenModel.ManagedEntity import ManagedEntity
 from Products.ZenModel.ZenossSecurity import ZEN_CHANGE_DEVICE
 
 unused(Globals)
+
 
 class BaseComponent(DeviceComponent, ManagedEntity):
     """

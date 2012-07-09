@@ -13,6 +13,8 @@
 
 from Products.ZenRelations.RelSchema import ToManyCont, ToOne
 
+from ZenPacks.zenoss.oVirt import BaseComponent
+
 
 class Cluster(BaseComponent):
     meta_type = portal_type = "oVirtCluster"
@@ -26,7 +28,6 @@ class Cluster(BaseComponent):
     version_minor = None
     on_error = None
 
-    
     _properties = BaseComponent._properties + (
         {'id': 'cpu', 'type': 'string', 'mode': 'w'},
         {'id': 'memory_overcommit', 'type': 'string', 'mode': 'w'},
@@ -36,19 +37,19 @@ class Cluster(BaseComponent):
         {'id': 'on_error', 'type': 'string', 'mode': 'w'},
         )
 
-    _relations = Device._relations + (
-        ('datacenter', ToManyCont(ToOne, 
-             'ZenPacks.zenoss.oVirt.DataCenter.DataCenter', 
+    _relations = BaseComponent._relations + (
+        ('datacenter', ToManyCont(ToOne,
+             'ZenPacks.zenoss.oVirt.DataCenter.DataCenter',
+             'clusters')
+              ),
+
+        ('hosts', ToOne(ToManyCont,
+             'ZenPacks.zenoss.oVirt.Host.Host',
              'cluster')
               ),
 
-        ('host', ToOne(ToManyCont, 
-             'ZenPacks.zenoss.oVirt.Host.Host', 
-             'cluster')
-              ),
-
-        ('vms', ToOne(ToManyCont, 
-             'ZenPacks.zenoss.oVirt.Vms.Vms', 
+        ('vms', ToOne(ToManyCont,
+             'ZenPacks.zenoss.oVirt.Vms.Vms',
              'cluster')
               ),
 

@@ -13,6 +13,8 @@
 
 from Products.ZenRelations.RelSchema import ToManyCont, ToOne
 
+from ZenPacks.zenoss.oVirt import BaseComponent
+
 
 class Host(BaseComponent):
     meta_type = portal_type = "oVirtHost"
@@ -43,8 +45,8 @@ class Host(BaseComponent):
                 {'id': 'description', 'type': 'string', 'mode': 'w'},
     )
 
-    _relations = Device._relations + (
-        ('cluster', ToManyCont(ToOne, 
+    _relations = BaseComponent._relations + (
+        ('cluster', ToManyCont(ToOne,
              'ZenPacks.zenoss.oVirt.Cluster.Cluster',
              'host')
               ),

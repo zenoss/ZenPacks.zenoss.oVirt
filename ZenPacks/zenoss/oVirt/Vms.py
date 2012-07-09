@@ -13,6 +13,8 @@
 
 from Products.ZenRelations.RelSchema import ToManyCont, ToOne
 
+from ZenPacks.zenoss.oVirt import BaseComponent
+
 
 class Vms(BaseComponent):
     meta_type = portal_type = "oVirtVms"
@@ -43,9 +45,8 @@ class Vms(BaseComponent):
     memory_policy_guaranteed = None
     usb_enabled = None
 
-
-    _relations = Device._relations + (
-        ('cluster', ToManyCont(ToOne, 
+    _relations = BaseComponent._relations + (
+        ('cluster', ToManyCont(ToOne,
              'ZenPacks.zenoss.oVirt.Cluster.Cluster',
              'vms')
               ),

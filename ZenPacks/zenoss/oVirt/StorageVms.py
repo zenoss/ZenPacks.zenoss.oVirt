@@ -13,15 +13,16 @@
 
 from Products.ZenRelations.RelSchema import ToManyCont, ToOne
 
+from ZenPacks.zenoss.oVirt import BaseComponent
+
 
 class StorageVms(BaseComponent):
     """Storage area for VMs"""
     meta_type = portal_type = "oVirtStorageVms"
 
-    _relations = Device._relations + (
-        ('storageDomain', ToManyCont(ToOne, 
-             'ZenPacks.zenoss.oVirt.StorageDomain.StorageDomain', 
+    _relations = BaseComponent._relations + (
+        ('storageDomain', ToManyCont(ToOne,
+             'ZenPacks.zenoss.oVirt.StorageDomain.StorageDomain',
              'storageVms')
               ),
-
         )

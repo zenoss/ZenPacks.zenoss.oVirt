@@ -16,6 +16,7 @@ import twisted.web.client
 import sys
 from twisted.internet import defer
 from xml.dom.minidom import parseString
+from xml.etree import ElementTree
 from twisted.python import log
 
 def getText(element):
@@ -25,7 +26,6 @@ class Client(object):
     """oVirt Client"""
 
     def __init__(self, base_url, username,domain, password):
-        log.startLogging(sys.stdout)
         self.base_url = base_url
         self.username = username
         self.domain = domain
@@ -41,12 +41,9 @@ class Client(object):
         }
 
     def request(self,command,**kwargs):
-        def process_result(resultXml):
-            try:
-                xml = parseString(resultXml)
-                return xml
-            except Exception:
-                log.error("Received invalid XML from remote server -- skipping")
+        def process_result(results):
+            doc = ElementTree.fromstring(results)
+            return doc 
 
         url = '%s/api/%s' % (self.base_url,command)
         print "running %s" % command

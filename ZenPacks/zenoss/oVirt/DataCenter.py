@@ -13,6 +13,8 @@
 
 from Products.ZenRelations.RelSchema import ToManyCont, ToOne
 
+from ZenPacks.zenoss.oVirt import BaseComponent
+
 
 class DataCenter(BaseComponent):
     meta_type = portal_type = "oVirtDataCenter"
@@ -33,19 +35,19 @@ class DataCenter(BaseComponent):
         {'id': 'status', 'type': 'string', 'mode': 'w'},
     )
 
-    _relations = Device._relations + (
-        ('system', ToOne(ToManyCont, 
-             'ZenPacks.zenoss.oVirt.System.System', 
+    _relations = BaseComponent._relations + (
+        ('system', ToOne(ToManyCont,
+             'ZenPacks.zenoss.oVirt.System.System',
              'datacenters')
               ),
 
-        ('cluster', ToManyCont(ToOne, 
-             'ZenPacks.zenoss.oVirt.Cluster.Cluster', 
+        ('clusters', ToManyCont(ToOne,
+             'ZenPacks.zenoss.oVirt.Cluster.Cluster',
              'datacenter')
               ),
 
-        ('storageDomain', ToManyCont(ToOne, 
-             'ZenPacks.zenoss.oVirt.StorageDomain.StorageDomain', 
+        ('storageDomains', ToManyCont(ToOne,
+             'ZenPacks.zenoss.oVirt.StorageDomain.StorageDomain',
              'datacenter')
               ),
 
