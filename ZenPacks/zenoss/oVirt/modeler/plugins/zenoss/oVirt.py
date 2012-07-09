@@ -32,7 +32,7 @@ class oVirt(PythonPlugin):
         'zOVirtPassword',
         'zOVirtDomain',
     )
-    collector_map_order = ['data_centers', 'clusters']
+    collector_map_order = ['data_centers', 'clusters','hosts','vms']
     collector_map = {'data_centers':
                               {'command': 'datacenters',
                                 #'attributes': ['name','guid','href','description','storage_type','major_version','minor_version','element_status'],
@@ -69,7 +69,47 @@ class oVirt(PythonPlugin):
                                 'datacenter_guid': {'default': '',
                                           'lookup': "find('data_center').attrib['id']",
                                         },
-                              }
+                              },
+                      'hosts':
+                            {'command': 'hosts',
+                             'relname': 'hosts',
+                             'modname': 'ZenPacks.zenoss.oVirt.Hosts',
+                             'attributes': ['name', 'guid', 'cluster_guid'],
+                             'compname': '"clusters/%s" % self.prepId(data["cluster_guid"])',
+                             'name': {'default': '',
+                                          'lookup': "find('name').text",
+                                          'prepId': True,
+                                          'name': 'title',
+                                        },
+                             'guid': {'default': '',
+                                          'lookup': "attrib['id']",
+                                          'prepId': True,
+                                          'name': 'id',
+                                        },
+                             'cluster_guid': {'default': '',
+                                          'lookup': "find('cluster').attrib['id']",
+                                        },
+                            },
+                      'vms':
+                            {'command': 'vms',
+                             'relname': 'vms',
+                             'modname': 'ZenPacks.zenoss.oVirt.Vms',
+                             'attributes': ['name', 'guid', 'cluster_guid'],
+                             'compname': '"clusters/%s" % self.prepId(data["cluster_guid"])',
+                             'name': {'default': '',
+                                          'lookup': "find('name').text",
+                                          'prepId': True,
+                                          'name': 'title',
+                                        },
+                             'guid': {'default': '',
+                                          'lookup': "attrib['id']",
+                                          'prepId': True,
+                                          'name': 'id',
+                                        },
+                             'cluster_guid': {'default': '',
+                                          'lookup': "find('cluster').attrib['id']",
+                                        },
+                            },
                      }
 
     def _combine(self, results):
@@ -133,9 +173,10 @@ class oVirt(PythonPlugin):
         for result in results:
             objmaps = {}
             key = result.tag
+
             for entry in result.getchildren():
-                data = {}
                 skey = None
+                data = {}
                 for attribute in self.collector_map[key]['attributes']:
                     if 'name' in self.collector_map[key][attribute].keys():
                         skey = self.collector_map[key][attribute]['name']

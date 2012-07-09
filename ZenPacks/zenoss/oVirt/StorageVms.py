@@ -21,7 +21,7 @@ class StorageVms(BaseComponent):
     meta_type = portal_type = "oVirtStorageVms"
 
     _relations = BaseComponent._relations + (
-        ('storageDomain', ToManyCont(ToOne,
+        ('storageDomain', ToOne(ToManyCont,
              'ZenPacks.zenoss.oVirt.StorageDomain.StorageDomain',
              'storageVms')
               ),

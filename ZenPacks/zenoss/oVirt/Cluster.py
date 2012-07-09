@@ -38,17 +38,17 @@ class Cluster(BaseComponent):
         )
 
     _relations = BaseComponent._relations + (
-        ('datacenter', ToManyCont(ToOne,
+        ('datacenter', ToOne(ToManyCont,
              'ZenPacks.zenoss.oVirt.DataCenter.DataCenter',
              'clusters')
               ),
 
-        ('hosts', ToOne(ToManyCont,
+        ('hosts', ToManyCont(ToOne,
              'ZenPacks.zenoss.oVirt.Host.Host',
              'cluster')
               ),
 
-        ('vms', ToOne(ToManyCont,
+        ('vms', ToManyCont(ToOne,
              'ZenPacks.zenoss.oVirt.Vms.Vms',
              'cluster')
               ),

@@ -46,7 +46,7 @@ class Vms(BaseComponent):
     usb_enabled = None
 
     _relations = BaseComponent._relations + (
-        ('cluster', ToManyCont(ToOne,
+        ('cluster', ToOne(ToManyCont,
              'ZenPacks.zenoss.oVirt.Cluster.Cluster',
              'vms')
               ),
