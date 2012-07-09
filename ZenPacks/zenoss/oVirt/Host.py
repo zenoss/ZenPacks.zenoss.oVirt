@@ -46,9 +46,9 @@ class Host(BaseComponent):
     )
 
     _relations = BaseComponent._relations + (
-        ('cluster', ToManyCont(ToOne,
+        ('cluster', ToOne(ToManyCont,
              'ZenPacks.zenoss.oVirt.Cluster.Cluster',
-             'host')
+             'hosts')
               ),
         )
 
