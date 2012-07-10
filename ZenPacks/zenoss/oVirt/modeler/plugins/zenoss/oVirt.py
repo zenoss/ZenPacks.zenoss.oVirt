@@ -32,13 +32,13 @@ class oVirt(PythonPlugin):
         'zOVirtPassword',
         'zOVirtDomain',
     )
-    collector_map_order = ['data_centers', 'clusters', 'hosts','vms']
+    collector_map_order = ['data_centers', 'clusters', 'hosts', 'vms']
     collector_map = {'data_centers':
                               {'command': 'datacenters',
                                 #'attributes': ['name','guid','href','description','storage_type','major_version','minor_version','element_status'],
                                 'relname': 'datacenters',
                                 'modname': 'ZenPacks.zenoss.oVirt.DataCenter',
-                                'attributes': ['guid', 'name'], # This needs to have the guid first because its the id we are using else where.
+                                'attributes': ['guid', 'name'],  # This needs to have the guid first because its the id we are using else where.
                                 'name': {'default': '',
                                           'lookup': "find('name').text",
                                           'prepId': True,
@@ -111,6 +111,7 @@ class oVirt(PythonPlugin):
                                         },
                             },
                      }
+
     #Helper Method
     def host_compname(self, data, host_id):
         cluster_guid = self.prepId(data["hosts"][host_id]["cluster_guid"])
@@ -168,64 +169,70 @@ class oVirt(PythonPlugin):
     def process(self, device, results, unused):
         relmap = []
         data = {}
-        for result in results:
+        for result in results:  # an array of Elements from the txovirt library.
             key = result.tag
             data.setdefault(key, {})
+
+            # objmaps are a dictionary if we are processing a component
             if 'compname' in self.collector_map[key].keys():
-                objmaps = {} 
+                objmaps = {}
             else:
+                # use an array if we are processing a device
                 objmaps = []
 
             for entry in result.getchildren():
                 skey = None
                 id = None
 
+                # Rewrite the key based on the name in the configuration dictionary above, if it exists.
                 for attribute in self.collector_map[key]['attributes']:
                     if 'name' in self.collector_map[key][attribute].keys():
                         skey = self.collector_map[key][attribute]['name']
                     else:
                         skey = attribute
 
+                    # lookup the value from the results here
                     results = None
                     try:
+                        # run the result through prepid if this field needs to be stored in that manner.
                         if 'prepId' in self.collector_map[key][attribute].keys():
                             results = self.prepId(eval('entry.' + self.collector_map[key][attribute]['lookup']))
                         else:
                             results = eval('entry.' + self.collector_map[key][attribute]['lookup'])
                     except:
+                        # The value couldnt be found, lets fall back to a default value.
                         log.warn("attribute not found, using default")
+                        # run the result through prepid if this field needs to be stored in that manner.
                         if 'prepId' in self.collector_map[key][attribute].keys():
                             results = self.prepId(eval('entry.' + self.collector_map[key][attribute]['default']))
                         else:
                             results = eval('entry.' + self.collector_map[key][attribute]['default'])
 
-                    # Store the id mapping
+                    # Store the id mapping and create the sub-dictionary.
                     if skey == 'id':
                         id = results
                         data[key].setdefault(id, {})
 
-                    # Abort if the id isnt found first. All elements must have an id.
+                    # Abort if the id isn't found first. All devices/components must have an id.
                     if not id:
                         log.error("Modeller Error: No id set for %s", key)
                         return None
 
                     # store the results to the data dict
                     data[key][id][skey] = results
-                
+
+            # Generate the ObjectMaps for each component and group them by compname
             if 'compname' in self.collector_map[key].keys():
                 for id in set(data[key].keys()):
                     compname = eval(self.collector_map[key]['compname'])
-                    print "%s %s %s" % (key,id,compname)
                     objmaps.setdefault(compname, [])
-                    print compname,data[key][id]
                     objmaps[compname].append(ObjectMap(data=data[key][id]))
             else:
+                # Generate the Objectmaps for a Device.
                 for id in set(data[key].keys()):
                     objmaps.append(ObjectMap(data=data[key][id]))
 
-            print 
-            print objmaps
-            print 
+            # Generate the Relationship map based on each compname, this handles components.
             if 'compname' in self.collector_map[key].keys():
                 for compname, objmap in objmaps.items():
                     rm = RelationshipMap(
@@ -236,25 +243,12 @@ class oVirt(PythonPlugin):
                         )
                     relmap.append(rm)
             else:
+                # Generate the Relationship map based on the Device.
                 rm = RelationshipMap(
                     relname=self.collector_map[key]['relname'],
                     modname=self.collector_map[key]['modname'],
                     objmaps=objmaps
                     )
                 relmap.append(rm)
-        
-        from pprint import pprint
-        pprint(data)
-        #pprint(relmap)
+
         return relmap
-
-"""
-(Pdb) result.getchildren()[1].find('name').txt
-*** AttributeError: 'Element' object has no attribute 'txt'
-(Pdb) result.getchildren()[1].find('name').text
-'Default'
-(Pdb) result.getchildren()[0].find('name').text
-
-results[0].tag
-'clusters'
-"""
