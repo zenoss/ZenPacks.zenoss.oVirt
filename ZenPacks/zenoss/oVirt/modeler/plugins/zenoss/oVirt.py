@@ -14,7 +14,7 @@
 import logging
 log = logging.getLogger('zen.oVirt')
 
-from twisted.internet.defer import DeferredList
+from twisted.internet.defer import DeferredList, inlineCallbacks, returnValue
 
 from Products.DataCollector.plugins.CollectorPlugin import PythonPlugin
 from Products.DataCollector.plugins.DataMaps import ObjectMap, RelationshipMap
@@ -32,13 +32,13 @@ class oVirt(PythonPlugin):
         'zOVirtPassword',
         'zOVirtDomain',
     )
-    collector_map_order = ['data_centers', 'clusters', 'hosts', 'vms']
+    collector_map_order = ['data_centers', 'storage_domains', 'clusters', 'hosts', 'vms' ]
     collector_map = {'data_centers':
                               {'command': 'datacenters',
                                 #'attributes': ['name','guid','href','description','storage_type','major_version','minor_version','element_status'],
                                 'relname': 'datacenters',
                                 'modname': 'ZenPacks.zenoss.oVirt.DataCenter',
-                                'attributes': ['guid', 'name'],  # This needs to have the guid first because its the id we are using else where.
+                                'attributes': ['guid', 'name', 'description', 'storage_type', 'storage_format', 'version_major', 'version_minor', 'element_status'],  # This needs to have the guid first because its the id we are using else where.
                                 'name': {'default': '',
                                           'lookup': "find('name').text",
                                           'prepId': True,
@@ -49,12 +49,31 @@ class oVirt(PythonPlugin):
                                           'prepId': True,
                                           'name': 'id',
                                         },
+                                'description': {'default': "",
+                                          'lookup': "find('description').text",
+                                        },
+                                'storage_type': {'default': "",
+                                          'lookup': "find('storage_type').text",
+                                        },
+                                'storage_format': {'default': '',
+                                          'lookup': "find('storage_format').text",
+                                        },
+                                'version_major': {'default': '',
+                                          'lookup': "find('version').attrib['major']",
+                                        },
+                                'version_minor': {'default': '',
+                                          'lookup': "find('version').attrib['minor']",
+                                        },
+                                'element_status': {'default': '',
+                                          'lookup': "find('status').find('state').text",
+                                          'name': 'status'
+                                        },
                               },
                       'clusters':
                                {'command': 'clusters',
                                 'relname': 'clusters',
                                 'modname': 'ZenPacks.zenoss.oVirt.Cluster',
-                                'attributes': ['guid', 'name', 'datacenter_guid'],  # This needs to have the guid first because its the id we are using else where
+                                'attributes': ['guid', 'name', 'datacenter_guid', 'description'],  # This needs to have the guid first because its the id we are using else where
                                 'compname': '"datacenters/%s" % self.prepId(data["clusters"][id]["datacenter_guid"])',
                                 'name': {'default': '',
                                           'lookup': "find('name').text",
@@ -68,13 +87,23 @@ class oVirt(PythonPlugin):
                                         },
                                 'datacenter_guid': {'default': '',
                                           'lookup': "find('data_center').attrib['id']",
+                                          'delete': True,
+                                        },
+                                'description': {'default': '',
+                                          'lookup': "find('description').text",
                                         },
                                },
                       'hosts':
                             {'command': 'hosts',
                              'relname': 'hosts',
                              'modname': 'ZenPacks.zenoss.oVirt.Host',
-                             'attributes': ['guid', 'name', 'cluster_guid'],  # This needs to have the guid first because its the id we are using else where
+                             'attributes': ['guid',  # This needs to have the guid first because its the id we are using else where
+                                            'name',
+                                            'cluster_guid',
+                                            'address',
+                                            'status_state',
+                                            'status_detail',
+                                           ],
                              'compname': '"datacenters/%s/clusters/%s" % self.host_compname(data,id)',
                              'name': {'default': '',
                                           'lookup': "find('name').text",
@@ -88,6 +117,16 @@ class oVirt(PythonPlugin):
                                         },
                              'cluster_guid': {'default': '',
                                           'lookup': "find('cluster').attrib['id']",
+                                          'delete': True,
+                                        },
+                             'address': {'default': '',
+                                          'lookup': "find('address').text",
+                                        },
+                             'status_state': {'default': '',
+                                          'lookup': "find('status').find('state').text",
+                                        },
+                             'status_detail': {'default': '',
+                                          'lookup': "find('status').find('detail').text",
                                         },
                             },
                       'vms':
@@ -108,6 +147,29 @@ class oVirt(PythonPlugin):
                                         },
                              'cluster_guid': {'default': '',
                                           'lookup': "find('cluster').attrib['id']",
+                                          'delete': True,
+                                        },
+                            },
+                      'storage_domains':
+                            {'command': 'storagedomains',
+                             'relname': 'storagedomains',
+                             'modname': 'ZenPacks.zenoss.oVirt.StorageDomain',
+                             'attributes': ['guid', 'name', 'setDatacenterId', 'storage_type' ],  # This needs to have the guid first because its the id we are using else where
+                             'name': {'default': '',
+                                          'lookup': "find('name').text",
+                                          'prepId': True,
+                                          'name': 'title',
+                                        },
+                             'guid': {'default': '',
+                                          'lookup': "attrib['id']",
+                                          'prepId': True,
+                                          'name': 'id',
+                                        },
+                             'setDatacenterId': {'default': '',
+                                          'lookup': "find('data_center').attrib['id']"
+                                        },
+                             'storage_type': {'default': '',
+                                          'lookup': "find('storage').find('type').text"
                                         },
                             },
                      }
@@ -124,35 +186,25 @@ class oVirt(PythonPlugin):
         datacenter_guid = self.prepId(data["clusters"][cluster_guid]["datacenter_guid"])
         return (datacenter_guid, cluster_guid)
 
-    def _combine(self, results):
-        """Combines all responses within results into a single data structure"""
-
-        data = []
-        for success, result in results:
-            if not success:
-                log.error("API Error: %s", result.getErrorMessage())
-                continue
-            data.append(result)
-        return data
-
+    @inlineCallbacks
     def collect(self, device, unused):
         """Collect model-related information using the txovirt library."""
 
         if not device.zOVirtUrl:
             log.error('zOVirtUrl is not set. Not discovering')
-            return None
+            returnValue(None)
 
         if not device.zOVirtUser:
             log.error('zOVirtUser is not set. Not discovering')
-            return None
+            returnValue(None)
 
         if not device.zOVirtDomain:
             log.error('zOVirtDomain is not set. Not discovering')
-            return None
+            returnValue(None)
 
         if not device.zOVirtPassword:
             log.error('zOVirtPassord is not set. Not discovering')
-            return None
+            returnValue(None)
 
         client = txovirt.Client(
              device.zOVirtUrl,
@@ -161,10 +213,32 @@ class oVirt(PythonPlugin):
              device.zOVirtPassword)
 
         deferreds = []
+        data_centers = None
+
         for key in self.collector_map_order:
-            deferreds.append(client.request(self.collector_map[key]['command']))
-        d = DeferredList(deferreds, consumeErrors=True).addCallback(self._combine)
-        return d
+            if key == 'data_centers':
+                data_centers = yield client.request(self.collector_map[key]['command'])
+                for datacenter in data_centers.getchildren():
+                    for link in datacenter.findall('link'):
+                        if 'storage' in link.attrib['href']:
+                            command = link.attrib['href'].rsplit('/api/')[1]
+                            deferreds.append(client.request(command))
+            else:
+                deferreds.append(client.request(self.collector_map[key]['command']))
+
+        results = yield DeferredList(deferreds, consumeErrors=True)
+
+        #  Insert data_centers result at the beginning of the list.
+        results.insert(0, (True, data_centers))
+
+        data = []
+        for success, result in results:
+            if not success:
+                log.error("API Error: %s", result.getErrorMessage())
+
+            data.append(result)
+
+        returnValue(data)
 
     def process(self, device, results, unused):
         relmap = []
@@ -173,17 +247,10 @@ class oVirt(PythonPlugin):
             key = result.tag
             data.setdefault(key, {})
 
-            # objmaps are a dictionary if we are processing a component
-            if 'compname' in self.collector_map[key].keys():
-                objmaps = {}
-            else:
-                # use an array if we are processing a device
-                objmaps = []
-
             for entry in result.getchildren():
                 skey = None
                 id = None
-
+                temp_data = {}
                 # Rewrite the key based on the name in the configuration dictionary above, if it exists.
                 for attribute in self.collector_map[key]['attributes']:
                     if 'name' in self.collector_map[key][attribute].keys():
@@ -199,19 +266,19 @@ class oVirt(PythonPlugin):
                             results = self.prepId(eval('entry.' + self.collector_map[key][attribute]['lookup']))
                         else:
                             results = eval('entry.' + self.collector_map[key][attribute]['lookup'])
-                    except:
+                    except Exception:
                         # The value couldnt be found, lets fall back to a default value.
-                        log.warn("attribute not found, using default")
+                        log.warn("attribute [%s] not found, using default" % attribute)
                         # run the result through prepid if this field needs to be stored in that manner.
                         if 'prepId' in self.collector_map[key][attribute].keys():
-                            results = self.prepId(eval('entry.' + self.collector_map[key][attribute]['default']))
+                            results = self.prepId(self.collector_map[key][attribute]['default'])
                         else:
-                            results = eval('entry.' + self.collector_map[key][attribute]['default'])
+                            results = self.collector_map[key][attribute]['default']
 
                     # Store the id mapping and create the sub-dictionary.
                     if skey == 'id':
                         id = results
-                        data[key].setdefault(id, {})
+                        temp_data.setdefault(id, {})
 
                     # Abort if the id isn't found first. All devices/components must have an id.
                     if not id:
@@ -219,20 +286,53 @@ class oVirt(PythonPlugin):
                         return None
 
                     # store the results to the data dict
-                    data[key][id][skey] = results
+                    temp_data[id][skey] = results
+
+                # Do not store duplicate entries
+                for id in temp_data:
+                    if data[key].has_key(id):
+                        log.debug("Duplicate Key found: skipping id %s", id)
+                        continue
+                    else:
+                        data[key][id]=temp_data[id]
+           
+
+        for key in data.keys():
+            print "Key: %s" % key
+            
+            # objmaps are a dictionary if we are processing a component
+            if 'compname' in self.collector_map[key].keys():
+                objmaps = {}
+            else:
+                # use an array if we are processing a device
+                objmaps = []
 
             # Generate the ObjectMaps for each component and group them by compname
             if 'compname' in self.collector_map[key].keys():
+                temp_data={}
                 for id in set(data[key].keys()):
                     compname = eval(self.collector_map[key]['compname'])
                     objmaps.setdefault(compname, [])
-                    objmaps[compname].append(ObjectMap(data=data[key][id]))
+                    # Delete temporary attributes used to generate the compname
+                    for attribute in data[key][id].keys():
+                        temp_data[attribute] = data[key][id][attribute]
+                    for attribute in self.collector_map[key]['attributes']:
+                        if 'delete' in self.collector_map[key][attribute].keys():
+                            del(temp_data[attribute])
+                    objmaps[compname].append(ObjectMap(data=temp_data))
             else:
                 # Generate the Objectmaps for a Device.
+                temp_data={}
                 for id in set(data[key].keys()):
-                    objmaps.append(ObjectMap(data=data[key][id]))
+                    # Delete temporary attributes used to generate the compname
+                    for attribute in data[key][id].keys():
+                        temp_data[attribute] = data[key][id][attribute]
+                    for attribute in self.collector_map[key]['attributes']:
+                        if 'delete' in self.collector_map[key][attribute].keys():
+                            del(temp_data[attribute])
+                    objmaps.append(ObjectMap(data=temp_data))
 
-            # Generate the Relationship map based on each compname, this handles components.
+           # Generate the Relationship map based on each compname, this handles components.
             if 'compname' in self.collector_map[key].keys():
                 for compname, objmap in objmaps.items():
                     rm = RelationshipMap(
@@ -244,11 +344,11 @@ class oVirt(PythonPlugin):
                     relmap.append(rm)
             else:
                 # Generate the Relationship map based on the Device.
-                rm = RelationshipMap(
-                    relname=self.collector_map[key]['relname'],
-                    modname=self.collector_map[key]['modname'],
-                    objmaps=objmaps
-                    )
-                relmap.append(rm)
-
+                if len(objmaps) > 0:
+                    rm = RelationshipMap(
+                        relname=self.collector_map[key]['relname'],
+                        modname=self.collector_map[key]['modname'],
+                        objmaps=objmaps
+                        )
+                    relmap.append(rm)
         return relmap

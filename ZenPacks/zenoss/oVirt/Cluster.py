@@ -27,8 +27,10 @@ class Cluster(BaseComponent):
     version_major = None
     version_minor = None
     on_error = None
+    description = None
 
     _properties = BaseComponent._properties + (
+        {'id': 'description', 'type': 'string', 'mode': 'w'},
         {'id': 'cpu', 'type': 'string', 'mode': 'w'},
         {'id': 'memory_overcommit', 'type': 'string', 'mode': 'w'},
         {'id': 'transparent_hugepages', 'type': 'string', 'mode': 'w'},

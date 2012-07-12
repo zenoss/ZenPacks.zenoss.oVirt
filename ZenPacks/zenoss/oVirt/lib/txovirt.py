@@ -43,6 +43,7 @@ class Client(object):
     def request(self,command,**kwargs):
         def process_result(results):
             doc = ElementTree.fromstring(results)
+            print "Returning data"
             return doc 
 
         url = '%s/api/%s' % (self.base_url,command)

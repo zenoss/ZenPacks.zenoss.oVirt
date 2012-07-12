@@ -20,4 +20,5 @@ class System(Device):
 
     _relations = Device._relations + (
         ('datacenters', ToManyCont(ToOne, 'ZenPacks.zenoss.oVirt.DataCenter.DataCenter', 'system')),
+        ('storagedomains', ToManyCont(ToOne, 'ZenPacks.zenoss.oVirt.StorageDomain.StorageDomain', 'system')),
         )

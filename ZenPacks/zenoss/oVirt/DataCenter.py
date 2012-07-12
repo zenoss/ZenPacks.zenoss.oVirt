@@ -11,7 +11,7 @@
 #
 ###########################################################################
 
-from Products.ZenRelations.RelSchema import ToManyCont, ToOne
+from Products.ZenRelations.RelSchema import ToManyCont, ToOne, ToMany
 
 from ZenPacks.zenoss.oVirt import BaseComponent
 
@@ -46,11 +46,10 @@ class DataCenter(BaseComponent):
              'datacenter')
               ),
 
-        ('storageDomains', ToManyCont(ToOne,
+        ('storagedomains', ToMany(ToOne,
              'ZenPacks.zenoss.oVirt.StorageDomain.StorageDomain',
              'datacenter')
               ),
-
         )
 
     def device(self):

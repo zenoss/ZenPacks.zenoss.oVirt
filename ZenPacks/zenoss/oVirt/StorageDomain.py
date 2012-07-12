@@ -11,30 +11,54 @@
 #
 ###########################################################################
 
-from Products.ZenRelations.RelSchema import ToManyCont, ToOne
-
+from zope.event import notify
+from Products.Zuul.catalog.events import IndexingEvent
+from Products.ZenRelations.RelSchema import ToManyCont, ToOne, ToMany
 from ZenPacks.zenoss.oVirt import BaseComponent
 
 
 class StorageDomain(BaseComponent):
     meta_type = portal_type = "oVirtStorageDomain"
 
+    storage_type = None
+
+    _properties = BaseComponent._properties + (
+        {'id': 'storage_type', 'type': 'string', 'mode': 'w'},
+        )
+
     _relations = BaseComponent._relations + (
-        ('datacenter', ToOne(ToManyCont,
+        ('system', ToOne(ToManyCont,
+             'ZenPacks.zenoss.oVirt.System.System',
+             'storagedomains')
+              ),
+
+        ('datacenter', ToOne(ToMany,
              'ZenPacks.zenoss.oVirt.DataCenter.DataCenter',
-             'storageDomain')
+             'storagedomains')
               ),
 
-        ('storageIso', ToManyCont(ToOne,
-             'ZenPacks.zenoss.oVirt.StorageIso.StorageIso',
-             'storageDomain')
-              ),
-
-        ('storageVms', ToManyCont(ToOne,
-             'ZenPacks.zenoss.oVirt.StorageVms.Storagevms',
-             'storageDomain')
-              ),
         )
 
     def device(self):
-        return self.datacenter().device()
+        return self.system().device()
+
+    def setDatacenterId(self, datacenter_id):
+        print "Setting datacenter %s for %s" % (datacenter_id, self)
+        datacenter = self.system().datacenters._getOb(datacenter_id, None)
+        if not datacenter:
+            return
+
+        # Check if the relationship already exists.
+        if self.id in datacenter.storagedomains.objectIds():
+            return
+
+        self.datacenter.addRelation(datacenter)
+        
+        # We assume we cannot move a storage domain from one datacenter to another.
+        # Since we assume that we are making a simplification by not removing the relation.
+
+    def getDatacenterId(self):
+        if self.datacenter():
+            return self.datacenter().id
+        else:
+            return ''

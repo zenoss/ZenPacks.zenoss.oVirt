@@ -21,28 +21,12 @@ class Host(BaseComponent):
 
     address = None
     status_state = None
-    status_storage_detail = None
-    port = None
-    host_type = None
-    storage_manager = None
-    storage_manager_priority = None
-    power_management_enabled = None
-    power_management_port = None
-    power_management_secure = None
-    ksm = None
-    transparent_hugepages = None
-    iscsi_initiator = None
-    cpu_cores = None
-    cpu_sockets = None
-    cpu_name = None
-    cpu_speed = None
-    memory = None
-    summary_active = None
-    summary_migrating = None
-    summary_total = None
+    status_detail = None
 
     _properties = BaseComponent._properties + (
-                {'id': 'description', 'type': 'string', 'mode': 'w'},
+                {'id': 'address', 'type': 'string', 'mode': 'w'},
+                {'id': 'status_state', 'type': 'string', 'mode': 'w'},
+                {'id': 'status_detail', 'type': 'string', 'mode': 'w'},
     )
 
     _relations = BaseComponent._relations + (
@@ -51,6 +35,7 @@ class Host(BaseComponent):
              'hosts')
               ),
         )
+        #storage
 
     def device(self):
         return self.cluster().device()
