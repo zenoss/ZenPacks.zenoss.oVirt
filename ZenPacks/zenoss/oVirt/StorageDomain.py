@@ -11,8 +11,6 @@
 #
 ###########################################################################
 
-from zope.event import notify
-from Products.Zuul.catalog.events import IndexingEvent
 from Products.ZenRelations.RelSchema import ToManyCont, ToOne, ToMany
 from ZenPacks.zenoss.oVirt import BaseComponent
 
@@ -29,6 +27,11 @@ class StorageDomain(BaseComponent):
     _relations = BaseComponent._relations + (
         ('system', ToOne(ToManyCont,
              'ZenPacks.zenoss.oVirt.System.System',
+             'storagedomains')
+              ),
+
+       ('disks', ToManyCont(ToOne,
+             'ZenPacks.zenoss.oVirt.Disk.Disk',
              'storagedomains')
               ),
 
@@ -53,7 +56,7 @@ class StorageDomain(BaseComponent):
             return
 
         self.datacenter.addRelation(datacenter)
-        
+
         # We assume we cannot move a storage domain from one datacenter to another.
         # Since we assume that we are making a simplification by not removing the relation.
 

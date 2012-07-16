@@ -11,7 +11,7 @@
 #
 ###########################################################################
 
-from Products.ZenRelations.RelSchema import ToManyCont, ToOne
+from Products.ZenRelations.RelSchema import ToManyCont, ToMany, ToOne
 
 from ZenPacks.zenoss.oVirt import BaseComponent
 
@@ -50,9 +50,14 @@ class Vms(BaseComponent):
              'ZenPacks.zenoss.oVirt.Cluster.Cluster',
              'vms')
               ),
+
+        ('disks', ToMany(ToOne,
+             'ZenPacks.zenoss.oVirt.Disk.Disk',
+             'vm')
+              ),
+        
         #nics
         #snapshots
-        #disks
         #cdroms
         #statistics
         )

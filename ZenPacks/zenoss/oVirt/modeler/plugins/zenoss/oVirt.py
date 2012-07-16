@@ -32,7 +32,7 @@ class oVirt(PythonPlugin):
         'zOVirtPassword',
         'zOVirtDomain',
     )
-    collector_map_order = ['data_centers', 'storage_domains', 'clusters', 'hosts', 'vms' ]
+    collector_map_order = ['data_centers', 'storage_domains', 'clusters', 'hosts', 'vms']
     collector_map = {'data_centers':
                               {'command': 'datacenters',
                                 #'attributes': ['name','guid','href','description','storage_type','major_version','minor_version','element_status'],
@@ -150,11 +150,41 @@ class oVirt(PythonPlugin):
                                           'delete': True,
                                         },
                             },
+                      'disks':
+                            {'command': 'disks',
+                             'relname': 'disks',
+                             'modname': 'ZenPacks.zenoss.oVirt.Disk',
+                             'attributes': ['guid', 'name',
+                                            'vm_guid', 'storagedomain_guid',
+                                            'setVmId'],  # This needs to have the guid first because its the id we are using else where
+                             'compname': '"storagedomains/%s" % self.disk_compname(data,id)',
+                             'name': {'default': '',
+                                          'lookup': "find('name').text",
+                                          'prepId': True,
+                                          'name': 'title',
+                                        },
+                             'guid': {'default': '',
+                                          'lookup': "attrib['id']",
+                                          'prepId': True,
+                                          'name': 'id',
+                                        },
+                             'setVmId': {'default': '',
+                                          'lookup': "find('vm').attrib['id']",
+                                        },
+                             'vm_guid': {'default': '',
+                                          'lookup': "find('vm').attrib['id']",
+                                          'delete': True,
+                                        },
+                             'storagedomain_guid': {'default': '',
+                                          'lookup': "find('storage_domains').find('storage_domain').attrib['id']",
+                                          'delete': True,
+                                        },
+                            },
                       'storage_domains':
                             {'command': 'storagedomains',
                              'relname': 'storagedomains',
                              'modname': 'ZenPacks.zenoss.oVirt.StorageDomain',
-                             'attributes': ['guid', 'name', 'setDatacenterId', 'storage_type' ],  # This needs to have the guid first because its the id we are using else where
+                             'attributes': ['guid', 'name', 'setDatacenterId', 'datacenter_guid', 'storage_type'],  # This needs to have the guid first because its the id we are using else where
                              'name': {'default': '',
                                           'lookup': "find('name').text",
                                           'prepId': True,
@@ -167,6 +197,10 @@ class oVirt(PythonPlugin):
                                         },
                              'setDatacenterId': {'default': '',
                                           'lookup': "find('data_center').attrib['id']"
+                                        },
+                             'datacenter_guid': {'default': '',  # This one is used temporarily to build the compname
+                                          'lookup': "find('data_center').attrib['id']",
+                                          'delete': True,
                                         },
                              'storage_type': {'default': '',
                                           'lookup': "find('storage').find('type').text"
@@ -185,6 +219,12 @@ class oVirt(PythonPlugin):
         cluster_guid = self.prepId(data["vms"][vm_id]["cluster_guid"])
         datacenter_guid = self.prepId(data["clusters"][cluster_guid]["datacenter_guid"])
         return (datacenter_guid, cluster_guid)
+
+    #Helper Method
+    def disk_compname(self, data, disk_id):
+        storagedomain_guid = self.prepId(data["disks"][disk_id]["storagedomain_guid"])
+        #datacenter_guid = self.prepId(data["storage_domains"][storagedomain_guid]["datacenter_guid"])
+        return (storagedomain_guid)
 
     @inlineCallbacks
     def collect(self, device, unused):
@@ -223,6 +263,14 @@ class oVirt(PythonPlugin):
                         if 'storage' in link.attrib['href']:
                             command = link.attrib['href'].rsplit('/api/')[1]
                             deferreds.append(client.request(command))
+
+            elif key == 'vms':
+                vms = yield client.request(self.collector_map[key]['command'])
+                for vm in vms.getchildren():
+                    for link in vm.findall('link'):
+                        if 'disks' in link.attrib['href']:
+                            command = link.attrib['href'].rsplit('/api/')[1]
+                            deferreds.append(client.request(command))
             else:
                 deferreds.append(client.request(self.collector_map[key]['command']))
 
@@ -230,6 +278,9 @@ class oVirt(PythonPlugin):
 
         #  Insert data_centers result at the beginning of the list.
         results.insert(0, (True, data_centers))
+
+        # append the vms to the list
+        results.append((True, vms))
 
         data = []
         for success, result in results:
@@ -246,7 +297,6 @@ class oVirt(PythonPlugin):
         for result in results:  # an array of Elements from the txovirt library.
             key = result.tag
             data.setdefault(key, {})
-
             for entry in result.getchildren():
                 skey = None
                 id = None
@@ -290,16 +340,14 @@ class oVirt(PythonPlugin):
 
                 # Do not store duplicate entries
                 for id in temp_data:
-                    if data[key].has_key(id):
+                    if id in data[key]:
                         log.debug("Duplicate Key found: skipping id %s", id)
                         continue
                     else:
-                        data[key][id]=temp_data[id]
-           
+                        data[key][id] = temp_data[id]
 
+        print "Results processed into data dictionary"
         for key in data.keys():
-            print "Key: %s" % key
-            
             # objmaps are a dictionary if we are processing a component
             if 'compname' in self.collector_map[key].keys():
                 objmaps = {}
@@ -309,7 +357,7 @@ class oVirt(PythonPlugin):
 
             # Generate the ObjectMaps for each component and group them by compname
             if 'compname' in self.collector_map[key].keys():
-                temp_data={}
+                temp_data = {}
                 for id in set(data[key].keys()):
                     compname = eval(self.collector_map[key]['compname'])
                     objmaps.setdefault(compname, [])
@@ -322,7 +370,7 @@ class oVirt(PythonPlugin):
                     objmaps[compname].append(ObjectMap(data=temp_data))
             else:
                 # Generate the Objectmaps for a Device.
-                temp_data={}
+                temp_data = {}
                 for id in set(data[key].keys()):
                     # Delete temporary attributes used to generate the compname
                     for attribute in data[key][id].keys():

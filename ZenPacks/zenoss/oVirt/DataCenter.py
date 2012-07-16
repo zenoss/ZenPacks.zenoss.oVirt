@@ -22,16 +22,12 @@ class DataCenter(BaseComponent):
     description = None
     storage_type = None
     storage_format = None
-    version_major = None
-    version_minor = None
     status = None
 
     _properties = BaseComponent._properties + (
         {'id': 'description', 'type': 'string', 'mode': 'w'},
         {'id': 'storage_type', 'type': 'string', 'mode': 'w'},
         {'id': 'storage_format', 'type': 'string', 'mode': 'w'},
-        {'id': 'version_major', 'type': 'string', 'mode': 'w'},
-        {'id': 'version_minor', 'type': 'string', 'mode': 'w'},
         {'id': 'status', 'type': 'string', 'mode': 'w'},
     )
 
