@@ -13,6 +13,8 @@
 
 from Products.ZenRelations.RelSchema import ToManyCont, ToOne, ToMany
 from ZenPacks.zenoss.oVirt import BaseComponent
+from Products.Zuul.catalog.events import IndexingEvent
+from zope.event import notify
 
 
 class StorageDomain(BaseComponent):
@@ -56,9 +58,7 @@ class StorageDomain(BaseComponent):
             return
 
         self.datacenter.addRelation(datacenter)
-
-        # We assume we cannot move a storage domain from one datacenter to another.
-        # Since we assume that we are making a simplification by not removing the relation.
+        notify(IndexingEvent(datacenter, 'path', False))
 
     def getDatacenterId(self):
         if self.datacenter():

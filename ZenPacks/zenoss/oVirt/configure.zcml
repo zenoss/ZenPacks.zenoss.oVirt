@@ -80,6 +80,12 @@
         provides="Products.Zuul.catalog.interfaces.IPathReporter"
         />
 
+    <adapter
+        factory=".catalog.paths.StorageDomainPathReporter"
+        for=".StorageDomain.StorageDomain"
+        provides="Products.Zuul.catalog.interfaces.IPathReporter"
+        />
+
     <!-- Include Browser Code -->
     <include package=".browser"/>
 

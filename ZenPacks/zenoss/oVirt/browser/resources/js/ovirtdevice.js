@@ -228,6 +228,7 @@ ZC.oVirtStorageDomainPanel = Ext.extend(ZC.oVirtComponentGridPanel, {
                 {name: 'title'},
                 {name: 'severity'},
                 {name: 'entity'},
+                {name: 'datacenter'},
                 {name: 'status'},
                 {name: 'monitor'},
                 {name: 'monitored'},
@@ -248,6 +249,12 @@ ZC.oVirtStorageDomainPanel = Ext.extend(ZC.oVirtComponentGridPanel, {
                 id: 'entity',
                 dataIndex: 'entity',
                 header: _t('Storage Domain'),
+                renderer: Zenoss.render.oVirt_entityLinkFromGrid,
+                width: 70
+            },{
+                id: 'datacenter',
+                dataIndex: 'datacenter',
+                header: _t('Datacenter'),
                 renderer: Zenoss.render.oVirt_entityLinkFromGrid,
                 width: 70
             },{
@@ -483,6 +490,24 @@ Zenoss.nav.appendTo('Component', [{
     },
     setContext: function(uid) {
         ZC.oVirtClusterPanel.superclass.setContext.apply(this, [uid]);
+    }
+}]);
+
+//Add Storage Domain dropdown to the DataCenter Component.
+Zenoss.nav.appendTo('Component', [{
+    id: 'component_storagedomain',
+    text: _t('Related StorageDomains'),
+    xtype: 'oVirtStorageDomainPanel',
+    subComponentGridPanel: true,
+    filterNav: function(navpanel) {
+        if (navpanel.refOwner.componentType == 'oVirtDataCenter') {
+            return true;
+        } else {
+            return false;
+        }
+    },
+    setContext: function(uid) {
+        ZC.oVirtStorageDomainPanel.superclass.setContext.apply(this, [uid]);
     }
 }]);
 

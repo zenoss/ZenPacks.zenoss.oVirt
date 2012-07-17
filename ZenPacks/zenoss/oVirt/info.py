@@ -99,6 +99,11 @@ class StorageDomainInfo(BaseComponentInfo):
 
     implements(IStorageDomainInfo)
 
+    @property
+    @info
+    def datacenter(self):
+        return self._object.datacenter()
+
 class DiskInfo(BaseComponentInfo):
     """Disk API (Info) adapter factory."""
 
