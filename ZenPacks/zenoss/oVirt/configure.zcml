@@ -73,6 +73,13 @@
         factory=".info.DiskInfo"
         />
 
+    <!-- Custom Path Reporters -->
+    <adapter
+        factory=".catalog.paths.DiskPathReporter"
+        for=".Disk.Disk"
+        provides="Products.Zuul.catalog.interfaces.IPathReporter"
+        />
+
     <!-- Include Browser Code -->
     <include package=".browser"/>
 

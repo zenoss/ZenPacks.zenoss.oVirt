@@ -14,6 +14,8 @@
 from Products.ZenRelations.RelSchema import ToManyCont, ToMany, ToOne
 
 from ZenPacks.zenoss.oVirt import BaseComponent
+from Products.Zuul.catalog.events import IndexingEvent
+from zope.event import notify
 
 
 class Disk(BaseComponent):
@@ -47,6 +49,7 @@ class Disk(BaseComponent):
                     return
 
                 self.vm.addRelation(vm)
+                notify(IndexingEvent(vm, 'path', False))
 
                # Do we need to remove this relation?
 

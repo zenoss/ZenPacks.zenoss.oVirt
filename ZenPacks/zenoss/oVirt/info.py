@@ -79,12 +79,20 @@ class HostInfo(BaseComponentInfo):
 
     implements(IHostInfo)
 
+    @property
+    @info
+    def cluster(self):
+        return self._object.cluster()
 
 class VmInfo(BaseComponentInfo):
     """VM API (Info) adapter factory."""
 
     implements(IVmInfo)
 
+    @property
+    @info
+    def cluster(self):
+        return self._object.cluster()
 
 class StorageDomainInfo(BaseComponentInfo):
     """Storage Domain API (Info) adapter factory."""
@@ -95,3 +103,13 @@ class DiskInfo(BaseComponentInfo):
     """Disk API (Info) adapter factory."""
 
     implements(IDiskInfo)
+
+    @property
+    @info
+    def storagedomain(self):
+        return self._object.storagedomains()
+
+    @property
+    @info
+    def vm(self):
+        return self._object.vm()

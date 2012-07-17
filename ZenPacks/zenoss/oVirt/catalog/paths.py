@@ -6,14 +6,14 @@
 
 from Products.Zuul.catalog.paths import (
     DefaultPathReporter,
-    InterfacePathReporter as BaseInterfacePathReporter,
     relPath,
     )
 
-#class StorageDomainPathReporter(BaseInterfacePathReporter):
-#    def getPaths(self):
-#        paths = super(InterfacePathReporter, self).getPaths()
-#
-#        datacenter = self.context.datacenter()
-#        if datacenter:
-#            paths.extend(relPath(datacenter, 'system'))
+
+class DiskPathReporter(DefaultPathReporter):
+    def getPaths(self):
+        paths = super(DiskPathReporter, self).getPaths()
+        vm = self.context.vm()
+        if vm:
+            paths.extend(relPath(vm, 'cluster'))
+        return paths

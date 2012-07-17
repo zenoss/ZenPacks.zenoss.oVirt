@@ -98,6 +98,10 @@ ZC.oVirtDataCenterPanel = Ext.extend(ZC.oVirtComponentGridPanel, {
                 {name: 'monitored'},
                 {name: 'locking'}
             ],
+            sortInfo: {
+                field: 'entity',
+                direction: 'ASC'
+            },
             columns: [{
                 id: 'severity',
                 dataIndex: 'severity',
@@ -167,6 +171,10 @@ ZC.oVirtClusterPanel = Ext.extend(ZC.oVirtComponentGridPanel, {
                 {name: 'monitored'},
                 {name: 'locking'}
             ],
+            sortInfo: {
+                field: 'entity',
+                direction: 'ASC'
+            },
             columns: [{
                 id: 'severity',
                 dataIndex: 'severity',
@@ -175,18 +183,18 @@ ZC.oVirtClusterPanel = Ext.extend(ZC.oVirtComponentGridPanel, {
                 sortable: true,
                 width: 50
             },{
+                id: 'entity',
+                dataIndex: 'entity',
+                header: _t('Cluster'),
+                renderer: Zenoss.render.oVirt_entityLinkFromGrid,
+                width: 70
+            },{
                 id: 'datacenter',
                 dataIndex: 'datacenter',
                 header: _t('Datacenter'),
                 renderer: Zenoss.render.oVirt_entityLinkFromGrid,
                 sortable: true,
                 width: 100
-            },{
-                id: 'entity',
-                dataIndex: 'entity',
-                header: _t('Cluster'),
-                renderer: Zenoss.render.oVirt_entityLinkFromGrid,
-                width: 70
             },{
                 id: 'monitored',
                 dataIndex: 'monitored',
@@ -225,6 +233,10 @@ ZC.oVirtStorageDomainPanel = Ext.extend(ZC.oVirtComponentGridPanel, {
                 {name: 'monitored'},
                 {name: 'locking'}
             ],
+            sortInfo: {
+                field: 'entity',
+                direction: 'ASC'
+            },
             columns: [{
                 id: 'severity',
                 dataIndex: 'severity',
@@ -271,11 +283,16 @@ ZC.oVirtVmsPanel = Ext.extend(ZC.oVirtComponentGridPanel, {
                 {name: 'title'},
                 {name: 'severity'},
                 {name: 'entity'},
+                {name: 'cluster'},
                 {name: 'status'},
                 {name: 'monitor'},
                 {name: 'monitored'},
                 {name: 'locking'}
             ],
+            sortInfo: {
+                field: 'entity',
+                direction: 'ASC'
+            },
             columns: [{
                 id: 'severity',
                 dataIndex: 'severity',
@@ -289,6 +306,13 @@ ZC.oVirtVmsPanel = Ext.extend(ZC.oVirtComponentGridPanel, {
                 header: _t('Virtual Machine'),
                 renderer: Zenoss.render.oVirt_entityLinkFromGrid,
                 width: 70
+            },{
+                id: 'cluster',
+                dataIndex: 'cluster',
+                header: _t('Cluster'),
+                renderer: Zenoss.render.oVirt_entityLinkFromGrid,
+                sortable: true,
+                width: 100
             },{
                 id: 'monitored',
                 dataIndex: 'monitored',
@@ -322,11 +346,16 @@ ZC.oVirtHostPanel = Ext.extend(ZC.oVirtComponentGridPanel, {
                 {name: 'title'},
                 {name: 'severity'},
                 {name: 'entity'},
+                {name: 'cluster'},
                 {name: 'status'},
                 {name: 'monitor'},
                 {name: 'monitored'},
                 {name: 'locking'}
             ],
+            sortInfo: {
+                field: 'entity',
+                direction: 'ASC'
+            },
             columns: [{
                 id: 'severity',
                 dataIndex: 'severity',
@@ -340,6 +369,13 @@ ZC.oVirtHostPanel = Ext.extend(ZC.oVirtComponentGridPanel, {
                 header: _t('Host'),
                 renderer: Zenoss.render.oVirt_entityLinkFromGrid,
                 width: 70
+            },{
+                id: 'cluster',
+                dataIndex: 'cluster',
+                header: _t('Cluster'),
+                renderer: Zenoss.render.oVirt_entityLinkFromGrid,
+                sortable: true,
+                width: 100
             },{
                 id: 'monitored',
                 dataIndex: 'monitored',
@@ -373,11 +409,17 @@ ZC.oVirtVmDiskPanel = Ext.extend(ZC.oVirtComponentGridPanel, {
                 {name: 'title'},
                 {name: 'severity'},
                 {name: 'entity'},
+                {name: 'vm'},
+                {name: 'storagedomain'},
                 {name: 'status'},
                 {name: 'monitor'},
                 {name: 'monitored'},
                 {name: 'locking'}
             ],
+            sortInfo: {
+                field: 'entity',
+                direction: 'ASC'
+            },
             columns: [{
                 id: 'severity',
                 dataIndex: 'severity',
@@ -391,6 +433,20 @@ ZC.oVirtVmDiskPanel = Ext.extend(ZC.oVirtComponentGridPanel, {
                 header: _t('Disk'),
                 renderer: Zenoss.render.oVirt_entityLinkFromGrid,
                 width: 70
+            },{
+                id: 'vm',
+                dataIndex: 'vm',
+                header: _t('Virtual Machine'),
+                renderer: Zenoss.render.oVirt_entityLinkFromGrid,
+                sortable: true,
+                width: 100
+            },{
+                id: 'storagedomain',
+                dataIndex: 'storagedomain',
+                header: _t('Storage Domain'),
+                renderer: Zenoss.render.oVirt_entityLinkFromGrid,
+                sortable: true,
+                width: 100
             },{
                 id: 'monitored',
                 dataIndex: 'monitored',
@@ -412,6 +468,7 @@ ZC.oVirtVmDiskPanel = Ext.extend(ZC.oVirtComponentGridPanel, {
 
 Ext.reg('oVirtVmDiskPanel', ZC.oVirtVmDiskPanel);
 
+//Add cluster dropdown to the DataCenter Component.
 Zenoss.nav.appendTo('Component', [{
     id: 'component_clusters',
     text: _t('Related Clusters'),
@@ -428,5 +485,63 @@ Zenoss.nav.appendTo('Component', [{
         ZC.oVirtClusterPanel.superclass.setContext.apply(this, [uid]);
     }
 }]);
+
+//Add host dropdown to the cluster component
+Zenoss.nav.appendTo('Component', [{
+    id: 'component_hosts',
+    text: _t('Related Hosts'),
+    xtype: 'oVirtHostPanel',
+    subComponentGridPanel: true,
+    filterNav: function(navpanel) {
+        if (navpanel.refOwner.componentType == 'oVirtCluster') {
+            return true;
+        } else {
+            return false;
+        }
+    },
+    setContext: function(uid) {
+        ZC.oVirtHostPanel.superclass.setContext.apply(this, [uid]);
+    }
+}]);
+
+//Add vms dropdown to the cluster component
+Zenoss.nav.appendTo('Component', [{
+    id: 'component_vms',
+    text: _t('Related Vms'),
+    xtype: 'oVirtVmsPanel',
+    subComponentGridPanel: true,
+    filterNav: function(navpanel) {
+        if (navpanel.refOwner.componentType == 'oVirtCluster') {
+            return true;
+        } else {
+            return false;
+        }
+    },
+    setContext: function(uid) {
+        ZC.oVirtVmsPanel.superclass.setContext.apply(this, [uid]);
+    }
+}]);
+
+//Add disks dropdown to the storage domain or vms component
+Zenoss.nav.appendTo('Component', [{
+    id: 'component_disks',
+    text: _t('Related Disks'),
+    xtype: 'oVirtVmDiskPanel',
+    subComponentGridPanel: true,
+    filterNav: function(navpanel) {
+        if (navpanel.refOwner.componentType == 'oVirtStorageDomain') {
+            return true;
+        }
+        else if (navpanel.refOwner.componentType == 'oVirtVms') {
+            return true;
+        } else {
+            return false;
+        }
+    },
+    setContext: function(uid) {
+        ZC.oVirtVmDiskPanel.superclass.setContext.apply(this, [uid]);
+    }
+}]);
+
 
 })();
