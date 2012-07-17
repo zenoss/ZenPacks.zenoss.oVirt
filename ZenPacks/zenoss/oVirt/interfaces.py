@@ -13,6 +13,9 @@
 
 from Products.Zuul.form import schema
 from Products.Zuul.interfaces import IFacade
+from Products.Zuul.interfaces import IDeviceInfo
+from Products.Zuul.interfaces.component import IComponentInfo
+from Products.Zuul.utils import ZuulMessageFactory as _t
 
 # In Zenoss 3 we mistakenly mapped TextLine to Zope's multi-line text
 # equivalent and Text to Zope's single-line text equivalent. This was
@@ -39,4 +42,31 @@ class IoVirtFacade(IFacade):
     def add_ovirt(self, url, username, domain, password, collector):
         """Add ovirt."""
 
-#Todo: fillout component infos ...
+
+class IoVirtInfo(IDeviceInfo):
+    """Interface for oVirt API (Info) adapter."""
+
+    vm_count = schema.Int(title=_t(u"VM Count"))
+
+
+class IDatacenterInfo(IComponentInfo):
+    """Interface for the DataCenter API (Info) Adapter."""
+
+
+class IClusterInfo(IComponentInfo):
+    """Interface for the Cluster API (Info) Adapter."""
+
+
+class IVmInfo(IComponentInfo):
+    """Interface for the VM API (Info) Adapter."""
+
+
+class IHostInfo(IComponentInfo):
+    """Interface for the Host API (Info) Adapter."""
+
+
+class IStorageDomainInfo(IComponentInfo):
+    """Interface for the StorageDomain API (Info) Adapter."""
+
+class IDiskInfo(IComponentInfo):
+    """Interface for the Disk API (Info) Adapter."""

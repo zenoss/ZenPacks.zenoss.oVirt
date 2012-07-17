@@ -39,18 +39,16 @@ class Disk(BaseComponent):
         for component in self.device().getDeviceComponents():
             if component.id == vm_id:
                 vm = component
+                if not vm:
+                    return
 
-        if not vm:
-            return
+                # Check if the relationship already exists.
+                if self.id in vm.disks.objectIds():
+                    return
 
-        # Check if the relationship already exists.
-        if self.id in vm.disks.objectIds():
-            return
+                self.vm.addRelation(vm)
 
-        self.vm.addRelation(vm)
-
-        # Do we need to remove this relation?
-
+               # Do we need to remove this relation?
 
     def getVmId(self):
         if self.vm():

@@ -16,7 +16,7 @@
         permission="zenoss.Common"
         />
 
-    <adapter 
+    <adapter
         name="oVirt"
         provides=".interfaces.IoVirtFacade"
         for="*"
@@ -28,6 +28,49 @@
         name="oVirt"
         provides="Products.ZenModel.interfaces.IDeviceLoader"
         component=".deviceloaders.oVirtLoader"
+        />
+
+    <!-- API (Info) Adapters -->
+    <adapter
+        provides=".interfaces.IoVirtInfo"
+        for=".System.System"
+        factory=".info.oVirtInfo"
+        />
+
+    <adapter
+        provides=".interfaces.IDatacenterInfo"
+        for=".DataCenter.DataCenter"
+        factory=".info.DatacenterInfo"
+        />
+
+    <adapter
+        provides=".interfaces.IClusterInfo"
+        for=".Cluster.Cluster"
+        factory=".info.ClusterInfo"
+        />
+
+    <adapter
+        provides=".interfaces.IStorageDomainInfo"
+        for=".StorageDomain.StorageDomain"
+        factory=".info.StorageDomainInfo"
+        />
+
+    <adapter
+        provides=".interfaces.IVmInfo"
+        for=".Vms.Vms"
+        factory=".info.VmInfo"
+        />
+
+    <adapter
+        provides=".interfaces.IHostInfo"
+        for=".Host.Host"
+        factory=".info.HostInfo"
+        />
+
+    <adapter
+        provides=".interfaces.IDiskInfo"
+        for=".Disk.Disk"
+        factory=".info.DiskInfo"
         />
 
     <!-- Include Browser Code -->

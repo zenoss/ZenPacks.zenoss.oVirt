@@ -41,11 +41,6 @@ class DataCenter(BaseComponent):
              'ZenPacks.zenoss.oVirt.Cluster.Cluster',
              'datacenter')
               ),
-
-        ('storagedomains', ToMany(ToOne,
-             'ZenPacks.zenoss.oVirt.StorageDomain.StorageDomain',
-             'datacenter')
-              ),
         )
 
     def device(self):
