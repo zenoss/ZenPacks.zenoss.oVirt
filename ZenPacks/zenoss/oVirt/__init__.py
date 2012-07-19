@@ -64,7 +64,9 @@ class ZenPack(ZenPackBase):
     ]
 
     # Placeholder for future plugin installation
-    _plugins = ()
+    _plugins = (
+         'poll_ovirt.py',
+         )
 
     def install(self, app):
         super(ZenPack, self).install(app)
@@ -92,4 +94,3 @@ class ZenPack(ZenPackBase):
         for plugin in self._plugins:
             LOG.info('Removing %s link from $ZENHOME/libexec/', plugin)
             os.system('rm -f "%s"' % zenPath('libexec', plugin))
-

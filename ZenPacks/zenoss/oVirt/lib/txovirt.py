@@ -14,45 +14,45 @@ __all__ = ['Client']
 
 import twisted.web.client
 import sys
-from twisted.internet import defer
-from xml.dom.minidom import parseString
 from xml.etree import ElementTree
-from twisted.python import log
+
 
 def getText(element):
     return element.childNodes[0].data
 
+
 class Client(object):
     """oVirt Client"""
 
-    def __init__(self, base_url, username,domain, password):
+    def __init__(self, base_url, username, domain, password):
         self.base_url = base_url
         self.username = username
         self.domain = domain
         self.password = password
         #Build the credential string
         creds = '%s@%s:%s' % (self.username, self.domain, self.password)
-        print creds
-        print self.base_url
         creds = creds.encode('Base64').strip('\r\n')
         self.headers = {
             'Authorization': 'Basic %s' % creds,
             'Accept': 'application/xml'
         }
 
-    def request(self,command,**kwargs):
+    def request(self, command, **kwargs):
         def process_result(results):
             doc = ElementTree.fromstring(results)
-            print "Returning data"
-            return doc 
+            return doc
 
-        url = '%s/api/%s' % (self.base_url,command)
-        print "running %s" % command
-        return twisted.web.client.getPage(url,headers=self.headers).addCallback(process_result)
+        url = '%s/api/%s' % (self.base_url, command)
+        print url
+        return twisted.web.client.getPage(url, headers=self.headers).addCallback(process_result)
+
+    def listEvents(self, last=None, **kwargs):
+        if not last:
+            return self.request('events', **kwargs)
+
 
 if __name__ == '__main__':
     import os
-    import sys
 
     from twisted.internet import reactor
     from twisted.internet.defer import DeferredList
@@ -72,7 +72,7 @@ if __name__ == '__main__':
                 print result.printTraceback()
 
     deferreds = []
-    if len(sys.argv)<2:
+    if len(sys.argv) < 2:
         deferreds.extend((
             client.request('clusters'),
             client.request('datacenters'),

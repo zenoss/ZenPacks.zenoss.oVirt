@@ -103,6 +103,7 @@ class oVirt(PythonPlugin):
                                             'address',
                                             'status_state',
                                             'status_detail',
+                                            'statistics_url'
                                            ],
                              'compname': '"datacenters/%s/clusters/%s" % self.host_compname(data,id)',
                              'name': {'default': '',
@@ -127,6 +128,9 @@ class oVirt(PythonPlugin):
                                         },
                              'status_detail': {'default': '',
                                           'lookup': "find('status').find('detail').text",
+                                        },
+                             'statistics_url': {'default': '',
+                                          'lookup': "findall('link')[4].attrib['href']",
                                         },
                             },
                       'vms':

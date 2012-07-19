@@ -22,11 +22,13 @@ class Host(BaseComponent):
     address = None
     status_state = None
     status_detail = None
+    statistics_url = None
 
     _properties = BaseComponent._properties + (
                 {'id': 'address', 'type': 'string', 'mode': 'w'},
                 {'id': 'status_state', 'type': 'string', 'mode': 'w'},
                 {'id': 'status_detail', 'type': 'string', 'mode': 'w'},
+                {'id': 'statistics_url', 'type': 'string', 'mode': 'w'},
     )
 
     _relations = BaseComponent._relations + (
