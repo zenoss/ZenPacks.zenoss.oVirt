@@ -16,6 +16,12 @@ import twisted.web.client
 import sys
 from xml.etree import ElementTree
 
+def CamelCase(data, separator='.'):
+    temp = [x.title() for x in data.split(separator)]
+    result=temp[0].lower()
+    if len(temp) > 1:
+        result += ''.join(temp[1:])
+    return result
 
 def getText(element):
     return element.childNodes[0].data

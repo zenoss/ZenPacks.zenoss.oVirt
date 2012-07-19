@@ -31,6 +31,7 @@ from utils import add_local_lib_path
 add_local_lib_path()
 
 import txovirt
+from txovirt import CamelCase
 
 # Map of ovirt severities to Zenoss Severity.
 SEVERITY_MAP = {
@@ -656,7 +657,7 @@ class oVirtPoller(object):
             results.setdefault(host['id'], {})
 
             for metric in response.getchildren():
-                results[host['id']][metric.find('name').text] = metric.find('values').find('value').find('datum').text
+                results[host['id']][CamelCase(metric.find('name').text)] = metric.find('values').find('value').find('datum').text
 
         return results
 
