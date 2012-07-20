@@ -18,13 +18,11 @@ import md5
 import tempfile
 import json
 import time
-import random
-import datetime
 
 import xml.utils.iso8601
 
 from twisted.internet import reactor
-from twisted.internet.defer import DeferredList, inlineCallbacks, returnValue
+from twisted.internet.defer import DeferredList, inlineCallbacks
 
 from utils import add_local_lib_path
 
