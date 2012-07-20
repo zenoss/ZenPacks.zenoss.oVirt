@@ -713,6 +713,8 @@ class oVirtPoller(object):
                 disk = yield self.client.request(vm['link'][0]['href'].split('/api/')[1])
                 deferred_statistics.append(self.client.request(elementtree_to_dict(disk.getchildren()[0])['link']['href'].split('/api/')[1]))
 
+        #DeferredLists do NOT need try/except handling when consumeErrors are True
+        #We check its results for problems later.
         statistics_results = yield DeferredList(deferred_statistics, consumeErrors=True)
 
         processed_results = {}
@@ -770,19 +772,20 @@ class oVirtPoller(object):
     def run(self):
         deferreds = []
 
-        deferreds.extend((
-            self.client.request('hosts'),
-            self.client.request('vms'),
-            ))
-
         if self._collect_events:
-            # Go back two days to compensate for downtime and timezone
-            # variance between poller and cloud
-            # look for last event /api/events?from=6990
             deferreds.extend((
                     self.client.listEvents(),
                     ))
-
+        else:
+            saved_values = self._saved_values()
+            if saved_values is not None:
+                self._values = saved_values
+                self._print_output()
+                return
+            deferreds.extend((
+                self.client.request('hosts'),
+                self.client.request('vms'),
+                ))
         DeferredList(deferreds, consumeErrors=True).addCallback(self._callback)
 
         reactor.run()
