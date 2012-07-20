@@ -652,29 +652,6 @@ class oVirtPoller(object):
         self._save(new_events, key='events')
         return events
 
-    def _process_statistics(self, responses):
-
-        results = {}
-        for (host, response) in responses:
-            results.setdefault(host['id'], {})
-
-            for metric in response.getchildren():
-                results[host['id']][CamelCase(metric.find('name').text)] = metric.find('values').find('value').find('datum').text
-
-        return results
-
-    def _errback(self, result):
-        if reactor.running:
-            reactor.stop()
-        error = result.getErrorMessage()
-        self._events.append(dict(
-                  severity=4,
-                  summary='oVirt error: %s' % error,
-                  eventKey='ovirt_failure',
-                  eventClassKey='ovirt_error',
-                  ))
-        self._print_output()
-
     @inlineCallbacks
     def _callback(self, results):
         data = {}
@@ -690,8 +667,7 @@ class oVirtPoller(object):
 
                 self._print_output()
                 os._exit(1)
-            #result_to_json
-            #data.update(result)
+
             data.setdefault(result.tag, []).append(result)
 
         if 'events' in data.keys():
@@ -702,16 +678,21 @@ class oVirtPoller(object):
             data['storage_domain']
 
         deferred_statistics = []
+
+        # Gather the Host Statistics and send them to a DeferredList to be processed later.
         if 'hosts' in data.keys():
             hosts = elementtree_to_dict(data['hosts'][0])['host']
             for host in hosts:
                 deferred_statistics.append(self.client.request(host['link'][4]['href'].split('/api/')[1]))
 
+        # Gather the VM statistics and its disk/network component statistics.
         if 'vms' in data.keys():
             vms = elementtree_to_dict(data['vms'][0])['vm']
             for vm in vms:
+                # VM statistics to be processed later.
                 deferred_statistics.append(self.client.request(vm['link'][6]['href'].split('/api/')[1]))
                 try:
+                    # Find the disk and scrape the page.
                     disk = yield self.client.request(vm['link'][0]['href'].split('/api/')[1])
                 except Exception, e:
                     self._events.append(dict(
@@ -725,15 +706,18 @@ class oVirtPoller(object):
                     # Use os._exit to immediately exit and not raise any further exceptions.
                     os._exit(1)
 
+                # Disk statistics to be processed later.
                 deferred_statistics.append(self.client.request(elementtree_to_dict(disk.getchildren()[0])['link']['href'].split('/api/')[1]))
 
-        #DeferredLists do NOT need try/except handling when consumeErrors are True
-        #We check its results for problems later.
+        """DeferredLists do NOT need try/except handling when consumeErrors are True
+           We check its results for problems later.
+           We are now processing all of the statistics requests."""
         statistics_results = yield DeferredList(deferred_statistics, consumeErrors=True)
 
         processed_results = {}
         for success, result in statistics_results:
             if not success:
+                # Create an error if the processing has failed.
                 error = result.getErrorMessage()
                 self._events.append(dict(
                     severity=4,
@@ -743,10 +727,12 @@ class oVirtPoller(object):
                     ))
 
                 self._print_output()
+                # Use os._exit to immediately exit and not raise any more exceptions.
                 os._exit(1)
 
             for data in result.getchildren():
                 key = None
+                # Find the component id in the results.
                 for component in ('host', 'vm', 'disk'):
                     try:
                         key = data.find(component).attrib['id']
@@ -754,6 +740,7 @@ class oVirtPoller(object):
                         pass
 
                 def mName(metric):
+                    """given a metric return a CamelCase Datapoint name."""
                     return CamelCase(metric.find('name').text)
 
                 def mValue(metric):
@@ -773,9 +760,9 @@ class oVirtPoller(object):
 
         self._events.append(dict(
             severity=0,
-            summary='CloudStack polled successfully',
-            eventKey='cloudstack_failure',
-            eventClassKey='cloudstack_success',
+            summary='oVirt polled successfully',
+            eventKey='ovirt_failure',
+            eventClassKey='ovirt_success',
             ))
 
         self._print_output()
@@ -786,26 +773,34 @@ class oVirtPoller(object):
     def run(self):
         deferreds = []
 
+        # Only process events if this is true.
         if self._collect_events:
             deferreds.extend((
                     self.client.listEvents(),
                     ))
         else:
+            # Try the cache if its available
             saved_values = self._saved_values()
             if saved_values is not None:
                 self._values = saved_values
+                # Send success that we read from the cache.
                 self._events.append(dict(
                     severity=0,
-                    summary='CloudStack polled successfully',
-                    eventKey='cloudstack_failure',
-                    eventClassKey='cloudstack_success',
+                    summary='oVirt polled successfully',
+                    eventKey='ovirt_failure',
+                    eventClassKey='ovirt_success',
                     ))
+
+                #Print the results for the parser to read.
                 self._print_output()
                 return
+
             deferreds.extend((
                 self.client.request('hosts'),
                 self.client.request('vms'),
                 ))
+
+        # Now start processing our tasks with the results going to the self._callback method.
         DeferredList(deferreds, consumeErrors=True).addCallback(self._callback)
 
         reactor.run()
