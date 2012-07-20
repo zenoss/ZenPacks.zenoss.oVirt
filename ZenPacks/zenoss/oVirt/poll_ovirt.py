@@ -699,54 +699,58 @@ class oVirtPoller(object):
         if 'storage_domain' in data.keys():
             data['storage_domain']
 
+        deferred_statistics = []
         if 'hosts' in data.keys():
             hosts = elementtree_to_dict(data['hosts'][0])['host']
-            results = []
             for host in hosts:
-                ############ CATCH ERRORS with an ErrBack?
-                try:
-                    print "Inline Hosts"
-                    result = yield self.client.request(host['link'][4]['href'].split('/api/')[1]).addErrback(self._errback)
-                except Exception, e:
-                    self._events.append(dict(
-                        severity=4,
-                        summary='oVirt error: %s' % e,
-                        eventKey='ovirt_failure',
-                        eventClassKey='ovirt_error',
-                        ))
-
-                    self._print_output()
-                    if reactor.running:
-                        reactor.stop()
-                    os._exit(1)
-                results.append((host, result))
-                self._values.update(self._process_statistics(results))
+                deferred_statistics.append(self.client.request(host['link'][4]['href'].split('/api/')[1]))
 
         if 'vms' in data.keys():
             vms = elementtree_to_dict(data['vms'][0])['vm']
-            results = []
             for vm in vms:
-                try:
-                    print "Inline Vms"
-                    ############ CATCH ERRORS with an ErrBack?  Add a callback and chain these in one DeferredList??
-                    result = yield self.client.request(vm['link'][6]['href'].split('/api/')[1]).addErrback(self._errback)
-                except Exception, e:
-                    self._events.append(dict(
-                        severity=4,
-                        summary='oVirt error: %s' % e,
-                        eventKey='ovirt_failure',
-                        eventClassKey='ovirt_error',
-                        ))
+                deferred_statistics.append(self.client.request(vm['link'][6]['href'].split('/api/')[1]))
+                #Try except here!
+                disk = yield self.client.request(vm['link'][0]['href'].split('/api/')[1])
+                deferred_statistics.append(self.client.request(elementtree_to_dict(disk.getchildren()[0])['link']['href'].split('/api/')[1]))
 
-                    self._print_output()
-                    if reactor.running:
-                        reactor.stop()
-                    os._exit(1)
-                results.append((vm, result))
-                self._values.update(self._process_statistics(results))
+        statistics_results = yield DeferredList(deferred_statistics, consumeErrors=True)
 
-                # Gather the disk statistics
+        processed_results = {}
+        for success, result in statistics_results:
+            if not success:
+                error = result.getErrorMessage()
+                self._events.append(dict(
+                    severity=4,
+                    summary='oVirt error: %s' % error,
+                    eventKey='ovirt_failure',
+                    eventClassKey='ovirt_error',
+                    ))
 
+                self._print_output()
+                os._exit(1)
+
+            for data in result.getchildren():
+                key = None
+                for component in ('host', 'vm', 'disk'):
+                    try:
+                        key = data.find(component).attrib['id']
+                    except Exception:
+                        pass
+
+                def mName(metric):
+                    return CamelCase(metric.find('name').text)
+
+                def mValue(metric):
+                        try:
+                            return metric.find('values').find('value').find('datum').text
+                        except Exception:
+                            return None
+
+                if mValue(data) is not None:
+                    processed_results.setdefault(key, {})
+                    processed_results[key][mName(data)] = mValue(data)
+
+        self._values.update(processed_results)
 
         if len(self._values.keys()) > 0:
             self._save(self._values, key='values')
@@ -758,10 +762,10 @@ class oVirtPoller(object):
             eventClassKey='cloudstack_success',
             ))
 
+        self._print_output()
+        # We are not needing any more data, stop the reactor.
         if reactor.running:
             reactor.stop()
-
-        self._print_output()
 
     def run(self):
         deferreds = []
