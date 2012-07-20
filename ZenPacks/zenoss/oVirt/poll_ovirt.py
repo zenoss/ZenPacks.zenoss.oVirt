@@ -496,6 +496,9 @@ EVENT_TYPE_MAP = {
 
 
 def elementtree_to_dict(element):
+    """Recursively convert An ElementTree to a Dictionary.
+    This misses cases, but is good enough for event processing"""
+
     node = {}
 
     text = getattr(element, 'text', None)
@@ -509,6 +512,7 @@ def elementtree_to_dict(element):
         child_nodes.setdefault(child.tag, []).append(elementtree_to_dict(child))
 
     # convert all single-element lists into non-lists
+    # This makes major assumptions and simplifications
     for key, value in child_nodes.items():
         if len(value) == 1:
             if 'text' in value[0].keys():
@@ -707,8 +711,20 @@ class oVirtPoller(object):
             vms = elementtree_to_dict(data['vms'][0])['vm']
             for vm in vms:
                 deferred_statistics.append(self.client.request(vm['link'][6]['href'].split('/api/')[1]))
-                #Try except here!
-                disk = yield self.client.request(vm['link'][0]['href'].split('/api/')[1])
+                try:
+                    disk = yield self.client.request(vm['link'][0]['href'].split('/api/')[1])
+                except Exception, e:
+                    self._events.append(dict(
+                        severity=4,
+                        summary='oVirt error: %s' % e,
+                        eventKey='ovirt_failure',
+                        eventClassKey='ovirt_error',
+                        ))
+
+                    self._print_output()
+                    # Use os._exit to immediately exit and not raise any further exceptions.
+                    os._exit(1)
+
                 deferred_statistics.append(self.client.request(elementtree_to_dict(disk.getchildren()[0])['link']['href'].split('/api/')[1]))
 
         #DeferredLists do NOT need try/except handling when consumeErrors are True
@@ -793,6 +809,7 @@ class oVirtPoller(object):
         DeferredList(deferreds, consumeErrors=True).addCallback(self._callback)
 
         reactor.run()
+        #Nothing will run after this line, unless the reactor is stopped.
 
 if __name__ == '__main__':
     usage = "Usage: %s <url> <username> <domain> <password>"
