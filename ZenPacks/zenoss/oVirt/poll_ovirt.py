@@ -780,6 +780,12 @@ class oVirtPoller(object):
             saved_values = self._saved_values()
             if saved_values is not None:
                 self._values = saved_values
+                self._events.append(dict(
+                    severity=0,
+                    summary='CloudStack polled successfully',
+                    eventKey='cloudstack_failure',
+                    eventClassKey='cloudstack_success',
+                    ))
                 self._print_output()
                 return
             deferreds.extend((
