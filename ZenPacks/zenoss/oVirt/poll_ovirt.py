@@ -661,6 +661,18 @@ class oVirtPoller(object):
 
         return results
 
+    def _errback(self, result):
+        if reactor.running:
+            reactor.stop()
+        error = result.getErrorMessage()
+        self._events.append(dict(
+                  severity=4,
+                  summary='oVirt error: %s' % error,
+                  eventKey='ovirt_failure',
+                  eventClassKey='ovirt_error',
+                  ))
+        self._print_output()
+
     @inlineCallbacks
     def _callback(self, results):
         data = {}
@@ -675,7 +687,7 @@ class oVirtPoller(object):
                     ))
 
                 self._print_output()
-                return
+                os._exit(1)
             #result_to_json
             #data.update(result)
             data.setdefault(result.tag, []).append(result)
@@ -692,7 +704,21 @@ class oVirtPoller(object):
             results = []
             for host in hosts:
                 ############ CATCH ERRORS with an ErrBack?
-                result = yield self.client.request(host['link'][4]['href'].split('/api/')[1])
+                try:
+                    print "Inline Hosts"
+                    result = yield self.client.request(host['link'][4]['href'].split('/api/')[1]).addErrback(self._errback)
+                except Exception, e:
+                    self._events.append(dict(
+                        severity=4,
+                        summary='oVirt error: %s' % e,
+                        eventKey='ovirt_failure',
+                        eventClassKey='ovirt_error',
+                        ))
+
+                    self._print_output()
+                    if reactor.running:
+                        reactor.stop()
+                    os._exit(1)
                 results.append((host, result))
                 self._values.update(self._process_statistics(results))
 
@@ -700,8 +726,22 @@ class oVirtPoller(object):
             vms = elementtree_to_dict(data['vms'][0])['vm']
             results = []
             for vm in vms:
-                ############ CATCH ERRORS with an ErrBack?  Add a callback and chain these in one DeferredList??
-                result = yield self.client.request(vm['link'][6]['href'].split('/api/')[1])
+                try:
+                    print "Inline Vms"
+                    ############ CATCH ERRORS with an ErrBack?  Add a callback and chain these in one DeferredList??
+                    result = yield self.client.request(vm['link'][6]['href'].split('/api/')[1]).addErrback(self._errback)
+                except Exception, e:
+                    self._events.append(dict(
+                        severity=4,
+                        summary='oVirt error: %s' % e,
+                        eventKey='ovirt_failure',
+                        eventClassKey='ovirt_error',
+                        ))
+
+                    self._print_output()
+                    if reactor.running:
+                        reactor.stop()
+                    os._exit(1)
                 results.append((vm, result))
                 self._values.update(self._process_statistics(results))
 
