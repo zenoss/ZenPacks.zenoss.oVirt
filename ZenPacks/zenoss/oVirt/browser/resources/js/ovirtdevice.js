@@ -91,6 +91,8 @@ ZC.oVirtDataCenterPanel = Ext.extend(ZC.oVirtComponentGridPanel, {
                 {name: 'entity'},
                 {name: 'severity'},
                 {name: 'description'},
+                {name: 'storagedomain_count'},
+                {name: 'cluster_count'},
                 {name: 'storage_type'},
                 {name: 'storage_format'},
                 {name: 'status'},
@@ -132,6 +134,18 @@ ZC.oVirtDataCenterPanel = Ext.extend(ZC.oVirtComponentGridPanel, {
                 header: _t('Storage Format'),
                 sortable: true,
                 width: 90
+            },{
+                id: 'storagedomain_count',
+                dataIndex: 'storagedomain_count',
+                header: _t('# StorageDomains'),
+                sortable: true,
+                width: 100
+            },{
+                id: 'cluster_count',
+                dataIndex: 'cluster_count',
+                header: _t('# Clusters'),
+                sortable: true,
+                width: 70
             },{
                 id: 'monitored',
                 dataIndex: 'monitored',

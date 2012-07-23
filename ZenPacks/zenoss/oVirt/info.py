@@ -60,8 +60,13 @@ class DatacenterInfo(BaseComponentInfo):
     storage_format = ProxyProperty('storage_format')
 
     @property
+    def cluster_count(self):
+        return self._object.clusters.countObjects()
+
+    @property
     def storagedomain_count(self):
-        return 1
+        return self._object.storagedomains.countObjects()
+
 
 class ClusterInfo(BaseComponentInfo):
     """Cluster API (Info) adapter factory."""

@@ -52,6 +52,9 @@ class IoVirtInfo(IDeviceInfo):
 class IDatacenterInfo(IComponentInfo):
     """Interface for the DataCenter API (Info) Adapter."""
 
+    cluster_count = schema.Int(title=_t(u"Cluster Count"))
+    storagedomain_count = schema.Int(title=_t(u"StorageDomain Count"))
+
 
 class IClusterInfo(IComponentInfo):
     """Interface for the Cluster API (Info) Adapter."""
