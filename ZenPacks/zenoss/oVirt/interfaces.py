@@ -71,5 +71,12 @@ class IHostInfo(IComponentInfo):
 class IStorageDomainInfo(IComponentInfo):
     """Interface for the StorageDomain API (Info) Adapter."""
 
+
 class IDiskInfo(IComponentInfo):
     """Interface for the Disk API (Info) Adapter."""
+
+    bootable = SingleLineText(title=_t(u"Bootable"))
+    interface = SingleLineText(title=_t(u"Interface"))
+    format = SingleLineText(title=_t(u"Format"))
+    size = schema.Int(title=_t(u"Size"))
+    status = SingleLineText(title=_t(u"Status"))

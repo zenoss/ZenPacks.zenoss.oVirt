@@ -435,6 +435,9 @@ ZC.oVirtVmDiskPanel = Ext.extend(ZC.oVirtComponentGridPanel, {
                 {name: 'status'},
                 {name: 'monitor'},
                 {name: 'monitored'},
+                {name: 'size'},
+                {name: 'interface'},
+                {name: 'format'},
                 {name: 'locking'}
             ],
             sortInfo: {
@@ -453,6 +456,20 @@ ZC.oVirtVmDiskPanel = Ext.extend(ZC.oVirtComponentGridPanel, {
                 dataIndex: 'entity',
                 header: _t('Disk'),
                 renderer: Zenoss.render.oVirt_entityLinkFromGrid,
+                sortable: true,
+                width: 70
+            },{
+                id: 'status',
+                dataIndex: 'status',
+                header: _t('Status'),
+                sortable: true,
+                width: 45
+            },{
+                id: 'size',
+                dataIndex: 'size',
+                header: _t('Size'),
+                renderer: Zenoss.render.memory,
+                sortable: true,
                 width: 70
             },{
                 id: 'vm',
@@ -468,6 +485,18 @@ ZC.oVirtVmDiskPanel = Ext.extend(ZC.oVirtComponentGridPanel, {
                 renderer: Zenoss.render.oVirt_entityLinkFromGrid,
                 sortable: true,
                 width: 100
+            },{
+                id: 'interface',
+                dataIndex: 'interface',
+                header: _t('Interface'),
+                sortable: true,
+                width: 75
+            },{
+                id: 'format',
+                dataIndex: 'format',
+                header: _t('Format'),
+                sortable: true,
+                width: 60
             },{
                 id: 'monitored',
                 dataIndex: 'monitored',

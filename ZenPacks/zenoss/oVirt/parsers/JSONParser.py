@@ -11,7 +11,7 @@
 #
 ###########################################################################
 
-"""JSON
+"""JSONParser
 
 General purpose JSON parser for handling JSON objects matching the following
 template. This allows many datapoints for many components to be collected
@@ -67,7 +67,7 @@ def stringify_keys(dictionary):
     return fixed_dictionary
 
 
-class JSON(CommandParser):
+class JSONParser(CommandParser):
     def processResults(self, cmd, result):
         data = None
 

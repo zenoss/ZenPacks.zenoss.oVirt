@@ -114,6 +114,12 @@ class DiskInfo(BaseComponentInfo):
 
     implements(IDiskInfo)
 
+    bootable = ProxyProperty('bootable')
+    interface = ProxyProperty('interface')
+    format = ProxyProperty('format')
+    size = ProxyProperty('size')
+    status = ProxyProperty('status')
+
     @property
     @info
     def storagedomain(self):

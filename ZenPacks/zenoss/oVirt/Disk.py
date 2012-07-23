@@ -21,6 +21,20 @@ from zope.event import notify
 class Disk(BaseComponent):
     meta_type = portal_type = "oVirtVmDisk"
 
+    bootable = None
+    format = None
+    interface = None
+    size = None
+    status = None
+
+    _properties = BaseComponent._properties + (
+        {'id': 'bootable', 'type': 'string', 'mode': 'w'},
+        {'id': 'format', 'type': 'string', 'mode': 'w'},
+        {'id': 'interface', 'type': 'string', 'mode': 'w'},
+        {'id': 'size', 'type': 'string', 'mode': 'w'},
+        {'id': 'status', 'type': 'string', 'mode': 'w'},
+    )
+
     _relations = BaseComponent._relations + (
         ('storagedomains', ToOne(ToManyCont,
              'ZenPacks.zenoss.oVirt.StorageDomain.StorageDomain',
