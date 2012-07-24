@@ -55,11 +55,11 @@ class Vms(BaseComponent):
              'ZenPacks.zenoss.oVirt.Disk.Disk',
              'vm')
               ),
-        
-        #nics
-        #snapshots
-        #cdroms
-        #statistics
+
+        ('nics', ToManyCont(ToOne,
+             'ZenPacks.zenoss.oVirt.VmNic.VmNic',
+             'vm')
+              ),
         )
 
     def device(self):

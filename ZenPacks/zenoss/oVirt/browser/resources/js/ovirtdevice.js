@@ -2,12 +2,15 @@
 
 var ZC = Ext.ns('Zenoss.component');
 
-ZC.registerName('oVirtVmDisk', _t('Disk'), _t('Disks'));
+ZC.registerName('oVirtVmDisk', _t('VM Disk'), _t('VM Disks'));
+ZC.registerName('oVirtVmNic', _t('VM Nic'), _t('VM Nics'));
 ZC.registerName('oVirtHost', _t('Host'), _t('Hosts'));
+ZC.registerName('oVirtHostNic', _t('Host Nic'), _t('Host Nics'));
 ZC.registerName('oVirtCluster', _t('Cluster'), _t('Clusters'));
 ZC.registerName('oVirtStorageDomain', _t('Storage Domain'), _t('Storage Domains'));
 ZC.registerName('oVirtVms', _t('Virtual Machine'), _t('Virtual Machines'));
 ZC.registerName('oVirtDataCenter', _t('Datacenter'), _t('Datacenters'));
+
 
 Zenoss.types.TYPES.DeviceClass[0] = new RegExp(
     "^/zport/dmd/Devices(/(?!devices)[^/*])*/?$");
@@ -18,7 +21,9 @@ Zenoss.types.register({
      'oVirtCluster': "^/zport/dmd/Devices/.*/devices/.*/datacenters/.*/clusters/[^/]*/?$",
      'oVirtStorageDomain': "^/zport/dmd/Devices/.*/devices/.*/storagedomains/[^/]*/?$",
      'oVirtVms': "^/zport/dmd/Devices/.*/devices/.*/datacenters/.*/clusters/.*/vms/[^/]*/?$",
-     'oVirtDataCenter': "^/zport/dmd/Devices/.*/devices/.*/datacenters/[^/]*/?$"
+     'oVirtDataCenter': "^/zport/dmd/Devices/.*/devices/.*/datacenters/[^/]*/?$",
+     'oVirtVmNic': "^/zport/dmd/Devices/.*/devices/.*/datacenters/.*/clusters/.*/vms/.*/nics/[^/]*/?$",
+     'oVirtHostNic': "^/zport/dmd/Devices/.*/devices/.*/datacenters/.*/clusters/.*/hosts/.*/nics/[^/]*/?$",
 });
 
 Ext.apply(Zenoss.render, {
@@ -459,19 +464,6 @@ ZC.oVirtVmDiskPanel = Ext.extend(ZC.oVirtComponentGridPanel, {
                 sortable: true,
                 width: 70
             },{
-                id: 'status',
-                dataIndex: 'status',
-                header: _t('Status'),
-                sortable: true,
-                width: 45
-            },{
-                id: 'size',
-                dataIndex: 'size',
-                header: _t('Size'),
-                renderer: Zenoss.render.memory,
-                sortable: true,
-                width: 70
-            },{
                 id: 'vm',
                 dataIndex: 'vm',
                 header: _t('Virtual Machine'),
@@ -485,6 +477,19 @@ ZC.oVirtVmDiskPanel = Ext.extend(ZC.oVirtComponentGridPanel, {
                 renderer: Zenoss.render.oVirt_entityLinkFromGrid,
                 sortable: true,
                 width: 100
+            },{
+                id: 'status',
+                dataIndex: 'status',
+                header: _t('Status'),
+                sortable: true,
+                width: 45
+            },{
+                id: 'size',
+                dataIndex: 'size',
+                header: _t('Size'),
+                renderer: Zenoss.render.memory,
+                sortable: true,
+                width: 70
             },{
                 id: 'interface',
                 dataIndex: 'interface',
@@ -517,6 +522,202 @@ ZC.oVirtVmDiskPanel = Ext.extend(ZC.oVirtComponentGridPanel, {
 });
 
 Ext.reg('oVirtVmDiskPanel', ZC.oVirtVmDiskPanel);
+
+ZC.oVirtVmNicPanel = Ext.extend(ZC.oVirtComponentGridPanel, {
+
+    constructor: function(config) {
+        config = Ext.applyIf(config||{}, {
+            autoExpandColumn: 'entity',
+            componentType: 'oVirtVmNic',
+            fields: [
+                {name: 'meta_type'},
+                {name: 'uid'},
+                {name: 'title'},
+                {name: 'severity'},
+                {name: 'entity'},
+                {name: 'vm'},
+                {name: 'interface'},
+                {name: 'mac'},
+                {name: 'status'},
+                {name: 'monitor'},
+                {name: 'monitored'},
+                {name: 'format'},
+                {name: 'locking'}
+            ],
+            sortInfo: {
+                field: 'entity',
+                direction: 'ASC'
+            },
+            columns: [{
+                id: 'severity',
+                dataIndex: 'severity',
+                header: _t('Events'),
+                renderer: Zenoss.render.severity,
+                sortable: true,
+                width: 50
+            },{
+                id: 'entity',
+                dataIndex: 'entity',
+                header: _t('Nic'),
+                renderer: Zenoss.render.oVirt_entityLinkFromGrid,
+                sortable: true,
+                width: 70
+            },{
+                id: 'vm',
+                dataIndex: 'vm',
+                header: _t('Virtual Machine'),
+                renderer: Zenoss.render.oVirt_entityLinkFromGrid,
+                sortable: true,
+                width: 100
+            },{
+                id: 'status',
+                dataIndex: 'status',
+                header: _t('Status'),
+                sortable: true,
+                width: 45
+            },{
+                id: 'mac',
+                dataIndex: 'mac',
+                header: _t('Mac'),
+                sortable: true,
+                width: 120
+            },{
+                id: 'interface',
+                dataIndex: 'interface',
+                header: _t('Interface'),
+                sortable: true,
+                width: 75
+            },{
+                id: 'monitored',
+                dataIndex: 'monitored',
+                header: _t('Monitored'),
+                renderer: Zenoss.render.checkbox,
+                sortable: true,
+                width: 65
+            },{
+                id: 'locking',
+                dataIndex: 'locking',
+                header: _t('Locking'),
+                renderer: Zenoss.render.locking_icons,
+                width: 65
+            }]
+        });
+        ZC.oVirtVmNicPanel.superclass.constructor.call(this, config);
+    }
+});
+
+Ext.reg('oVirtVmNicPanel', ZC.oVirtVmNicPanel);
+
+ZC.oVirtHostNicPanel = Ext.extend(ZC.oVirtComponentGridPanel, {
+
+    constructor: function(config) {
+        config = Ext.applyIf(config||{}, {
+            autoExpandColumn: 'entity',
+            componentType: 'oVirtHostNic',
+            fields: [
+                {name: 'meta_type'},
+                {name: 'uid'},
+                {name: 'title'},
+                {name: 'severity'},
+                {name: 'entity'},
+                {name: 'host'},
+                {name: 'ip'},
+                {name: 'netmask'},
+                {name: 'gateway'},
+                {name: 'nicespeed'},
+                {name: 'mac'},
+                {name: 'status'},
+                {name: 'monitor'},
+                {name: 'monitored'},
+                {name: 'format'},
+                {name: 'locking'}
+            ],
+            sortInfo: {
+                field: 'entity',
+                direction: 'ASC'
+            },
+            columns: [{
+                id: 'severity',
+                dataIndex: 'severity',
+                header: _t('Events'),
+                renderer: Zenoss.render.severity,
+                sortable: true,
+                width: 50
+            },{
+                id: 'entity',
+                dataIndex: 'entity',
+                header: _t('Nic'),
+                renderer: Zenoss.render.oVirt_entityLinkFromGrid,
+                sortable: true,
+                width: 70
+            },{
+                id: 'status',
+                dataIndex: 'status',
+                header: _t('Status'),
+                sortable: true,
+                width: 45
+            },{
+                id: 'host',
+                dataIndex: 'host',
+                header: _t('Host'),
+                renderer: Zenoss.render.oVirt_entityLinkFromGrid,
+                sortable: true,
+                width: 160
+            },{
+                id: 'mac',
+                dataIndex: 'mac',
+                header: _t('Mac'),
+                sortable: true,
+                width: 120
+            },{
+                id: 'ip',
+                dataIndex: 'ip',
+                header: _t('Ip'),
+                renderer: Zenoss.render.ipAddress,
+                sortable: true,
+                width: 120
+            },{
+                id: 'netmask',
+                dataIndex: 'netmask',
+                header: _t('Netmask'),
+                renderer: Zenoss.render.ipAddress,
+                sortable: true,
+                width: 120
+
+            },{
+                id: 'gateway',
+                dataIndex: 'gateway',
+                header: _t('Gateway'),
+                renderer: Zenoss.render.ipAddress,
+                sortable: true,
+                width: 120
+
+            },{
+                id: 'speed',
+                dataIndex: 'nicespeed',
+                header: _t('Speed'),
+                sortable: true,
+                width: 120
+            },{
+                id: 'monitored',
+                dataIndex: 'monitored',
+                header: _t('Monitored'),
+                renderer: Zenoss.render.checkbox,
+                sortable: true,
+                width: 65
+            },{
+                id: 'locking',
+                dataIndex: 'locking',
+                header: _t('Locking'),
+                renderer: Zenoss.render.locking_icons,
+                width: 65
+            }]
+        });
+        ZC.oVirtHostNicPanel.superclass.constructor.call(this, config);
+    }
+});
+
+Ext.reg('oVirtHostNicPanel', ZC.oVirtHostNicPanel);
 
 //Add cluster dropdown to the DataCenter Component.
 Zenoss.nav.appendTo('Component', [{
@@ -610,6 +811,5 @@ Zenoss.nav.appendTo('Component', [{
         ZC.oVirtVmDiskPanel.superclass.setContext.apply(this, [uid]);
     }
 }]);
-
 
 })();

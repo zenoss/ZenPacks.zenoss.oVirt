@@ -73,6 +73,18 @@
         factory=".info.DiskInfo"
         />
 
+    <adapter
+        provides=".interfaces.IVmNicInfo"
+        for=".VmNic.VmNic"
+        factory=".info.VmNicInfo"
+        />
+
+    <adapter
+        provides=".interfaces.IHostNicInfo"
+        for=".HostNic.HostNic"
+        factory=".info.HostNicInfo"
+        />
+
     <!-- Custom Path Reporters -->
     <adapter
         factory=".catalog.paths.DiskPathReporter"

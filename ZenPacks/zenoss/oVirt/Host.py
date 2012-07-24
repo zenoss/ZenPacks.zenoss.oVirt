@@ -36,8 +36,12 @@ class Host(BaseComponent):
              'ZenPacks.zenoss.oVirt.Cluster.Cluster',
              'hosts')
               ),
+
+        ('nics', ToManyCont(ToOne,
+             'ZenPacks.zenoss.oVirt.HostNic.HostNic',
+             'host')
+              ),
         )
-        #storage
 
     def device(self):
         return self.cluster().device()

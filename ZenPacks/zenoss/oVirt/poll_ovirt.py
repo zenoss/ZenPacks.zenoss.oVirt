@@ -683,7 +683,27 @@ class oVirtPoller(object):
         if 'hosts' in data.keys():
             hosts = elementtree_to_dict(data['hosts'][0])['host']
             for host in hosts:
+                # Host statistics to be processed later.
                 deferred_statistics.append(self.client.request(host['link'][4]['href'].split('/api/')[1]))
+
+                # Grab Nic statistics for the Host
+                try:
+                    # Find the nic and scrape the page.
+                    nic = yield self.client.request(host['link'][1]['href'].split('/api/')[1])
+                except Exception, e:
+                    self._events.append(dict(
+                        severity=4,
+                        summary='oVirt error: %s' % e,
+                        eventKey='ovirt_failure',
+                        eventClassKey='ovirt_error',
+                        ))
+
+                    self._print_output()
+                    # Use os._exit to immediately exit and not raise any further exceptions.
+                    os._exit(1)
+
+                # Nic statistics to be processed later.
+                deferred_statistics.append(self.client.request(elementtree_to_dict(nic.getchildren()[0])['link']['href'].split('/api/')[1]))
 
         # Gather the VM statistics and its disk/network component statistics.
         if 'vms' in data.keys():
@@ -691,6 +711,8 @@ class oVirtPoller(object):
             for vm in vms:
                 # VM statistics to be processed later.
                 deferred_statistics.append(self.client.request(vm['link'][6]['href'].split('/api/')[1]))
+
+                # Grab Disk Statistics
                 try:
                     # Find the disk and scrape the page.
                     disk = yield self.client.request(vm['link'][0]['href'].split('/api/')[1])
@@ -709,6 +731,25 @@ class oVirtPoller(object):
                 # Disk statistics to be processed later.
                 deferred_statistics.append(self.client.request(elementtree_to_dict(disk.getchildren()[0])['link']['href'].split('/api/')[1]))
 
+                # Grab Nic statistics
+                try:
+                    # Find the nic and scrape the page.
+                    nic = yield self.client.request(vm['link'][1]['href'].split('/api/')[1])
+                except Exception, e:
+                    self._events.append(dict(
+                        severity=4,
+                        summary='oVirt error: %s' % e,
+                        eventKey='ovirt_failure',
+                        eventClassKey='ovirt_error',
+                        ))
+
+                    self._print_output()
+                    # Use os._exit to immediately exit and not raise any further exceptions.
+                    os._exit(1)
+
+                # Nic statistics to be processed later.
+                deferred_statistics.append(self.client.request(elementtree_to_dict(nic.getchildren()[0])['link']['href'].split('/api/')[1]))
+
         """DeferredLists do NOT need try/except handling when consumeErrors are True
            We check its results for problems later.
            We are now processing all of the statistics requests."""
@@ -716,6 +757,7 @@ class oVirtPoller(object):
 
         processed_results = {}
         for success, result in statistics_results:
+
             if not success:
                 # Create an error if the processing has failed.
                 error = result.getErrorMessage()
@@ -733,7 +775,7 @@ class oVirtPoller(object):
             for data in result.getchildren():
                 key = None
                 # Find the component id in the results.
-                for component in ('host', 'vm', 'disk'):
+                for component in ('host', 'vm', 'disk', 'nic', 'host_nic'):
                     try:
                         key = data.find(component).attrib['id']
                     except Exception:

@@ -20,7 +20,8 @@ from Products.Zuul.infos.component import ComponentInfo
 
 from ZenPacks.zenoss.oVirt.interfaces import (
     IoVirtInfo, IDatacenterInfo, IClusterInfo,
-    IVmInfo, IHostInfo, IStorageDomainInfo, IDiskInfo)
+    IVmInfo, IHostInfo, IStorageDomainInfo, IDiskInfo,
+    IHostNicInfo, IVmNicInfo)
 
 
 class oVirtInfo(DeviceInfo):
@@ -129,3 +130,50 @@ class DiskInfo(BaseComponentInfo):
     @info
     def vm(self):
         return self._object.vm()
+
+
+class HostNicInfo(BaseComponentInfo):
+    """HostNic API (Info) adapter factory."""
+
+    implements(IHostNicInfo)
+
+    mac = ProxyProperty('mac')
+    ip = ProxyProperty('ip')
+    netmask = ProxyProperty('netmask')
+    gateway = ProxyProperty('gateway')
+    status = ProxyProperty('status')
+    speed = ProxyProperty('speed')
+
+    @property
+    @info
+    def nicespeed(self):
+        """
+        Return a string that expresses self.speed in reasonable units.
+        """
+        if not self.speed:
+            return 'Unknown'
+        speed = int(self.speed)
+        for unit in ('bps', 'Kbps', 'Mbps', 'Gbps'):
+            if speed < 1000: break
+            speed /= 1000.0
+        return "%.0f %s" % (speed, unit)
+
+    @property
+    @info
+    def host(self):
+        return self._object.host()
+
+
+class VmNicInfo(BaseComponentInfo):
+    """VmNic API (Info) adapter factory."""
+
+    implements(IVmNicInfo)
+
+    mac = ProxyProperty('mac')
+    interface = ProxyProperty('interface')
+
+    @property
+    @info
+    def vm(self):
+        return self._object.vm()
+

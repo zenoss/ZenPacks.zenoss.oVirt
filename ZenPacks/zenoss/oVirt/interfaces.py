@@ -80,3 +80,21 @@ class IDiskInfo(IComponentInfo):
     format = SingleLineText(title=_t(u"Format"))
     size = schema.Int(title=_t(u"Size"))
     status = SingleLineText(title=_t(u"Status"))
+
+
+class IHostNicInfo(IComponentInfo):
+    """Interface for the Host Nic API (Info) Adapter."""
+
+    mac = SingleLineText(title=_t(u"Mac"))
+    ip = SingleLineText(title=_t(u"Ip"))
+    netmask = SingleLineText(title=_t(u"Netmask"))
+    gateway = SingleLineText(title=_t(u"Gateway"))
+    status = SingleLineText(title=_t(u"Status"))
+    speed = SingleLineText(title=_t(u"Speed"))
+
+
+class IVmNicInfo(IComponentInfo):
+    """Interface for the VM Nic API (Info) Adapter."""
+
+    interface = SingleLineText(title=_t(u"Interface"))
+    mac = SingleLineText(title=_t(u"Mac"))

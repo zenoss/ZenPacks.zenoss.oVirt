@@ -133,6 +133,46 @@ class oVirt(PythonPlugin):
                                           'lookup': "findall('link')[4].attrib['href']",
                                         },
                             },
+                      'host_nics':
+                            {'relname': 'nics',
+                             'modname': 'ZenPacks.zenoss.oVirt.HostNic',
+                             'attributes': ['guid', 'name', 'host_guid',
+                                            'mac', 'ip', 'netmask',
+                                            'gateway', 'status', 'speed'],  # This needs to have the guid first because its the id we are using else where
+                             'compname': '"datacenters/%s/clusters/%s/hosts/%s" % self.hostnic_compname(data,id)',
+                             'name': {'default': '',
+                                          'lookup': "find('name').text",
+                                          'prepId': True,
+                                          'name': 'title',
+                                        },
+                             'guid': {'default': '',
+                                          'lookup': "attrib['id']",
+                                          'prepId': True,
+                                          'name': 'id',
+                                        },
+                             'host_guid': {'default': '',
+                                          'lookup': "find('host').attrib['id']",
+                                          'delete': True,
+                                        },
+                             'mac': {'default': '',
+                                          'lookup': "find('mac').attrib['address']",
+                                        },
+                             'ip': {'default': '',
+                                          'lookup': "find('ip').attrib['address']",
+                                        },
+                             'netmask': {'default': '',
+                                          'lookup': "find('ip').attrib['netmask']",
+                                        },
+                             'gateway': {'default': '',
+                                          'lookup': "find('ip').attrib['gateway']",
+                                        },
+                             'speed': {'default': '',
+                                          'lookup': "find('speed').text",
+                                        },
+                             'status': {'default': '',
+                                          'lookup': "find('status').find('state').text",
+                                        },
+                            },
                       'vms':
                             {'command': 'vms',
                              'relname': 'vms',
@@ -154,6 +194,33 @@ class oVirt(PythonPlugin):
                                           'delete': True,
                                         },
                             },
+                      'nics':
+                            {'relname': 'nics',
+                             'modname': 'ZenPacks.zenoss.oVirt.VmNic',
+                             'attributes': ['guid', 'name', 'vm_guid',
+                             'mac', 'interface'],  # This needs to have the guid first because its the id we are using else where
+                             'compname': '"datacenters/%s/clusters/%s/vms/%s" % self.vmnic_compname(data,id)',
+                             'name': {'default': '',
+                                          'lookup': "find('name').text",
+                                          'prepId': True,
+                                          'name': 'title',
+                                        },
+                             'guid': {'default': '',
+                                          'lookup': "attrib['id']",
+                                          'prepId': True,
+                                          'name': 'id',
+                                        },
+                             'vm_guid': {'default': '',
+                                          'lookup': "find('vm').attrib['id']",
+                                          'delete': True,
+                                        },
+                             'mac': {'default': '',
+                                          'lookup': "find('mac').attrib['address']",
+                                        },
+                             'interface': {'default': '',
+                                          'lookup': "find('interface').text",
+                                        },
+                            },
                       'disks':
                             {'command': 'disks',
                              'relname': 'disks',
@@ -162,7 +229,7 @@ class oVirt(PythonPlugin):
                                             'vm_guid', 'storagedomain_guid',
                                             'setVmId', 'bootable', 'format',
                                             'interface', 'size', 'status'],  # This needs to have the guid first because its the id we are using else where
-                                            
+
                              'compname': '"storagedomains/%s" % self.disk_compname(data,id)',
                              'name': {'default': '',
                                           'lookup': "find('name').text",
@@ -236,10 +303,24 @@ class oVirt(PythonPlugin):
         return (datacenter_guid, cluster_guid)
 
     #Helper Method
+    def hostnic_compname(self, data, hostnic_id):
+        host_guid = self.prepId(data['host_nics'][hostnic_id]["host_guid"])
+        cluster_guid = self.prepId(data["hosts"][host_guid]["cluster_guid"])
+        datacenter_guid = self.prepId(data["clusters"][cluster_guid]["datacenter_guid"])
+        return (datacenter_guid, cluster_guid, host_guid)
+
+    #Helper Method
     def vm_compname(self, data, vm_id):
         cluster_guid = self.prepId(data["vms"][vm_id]["cluster_guid"])
         datacenter_guid = self.prepId(data["clusters"][cluster_guid]["datacenter_guid"])
         return (datacenter_guid, cluster_guid)
+
+    #Helper Method
+    def vmnic_compname(self, data, vmnic_id):
+        vm_guid = self.prepId(data['nics'][vmnic_id]["vm_guid"])
+        cluster_guid = self.prepId(data["vms"][vm_guid]["cluster_guid"])
+        datacenter_guid = self.prepId(data["clusters"][cluster_guid]["datacenter_guid"])
+        return (datacenter_guid, cluster_guid, vm_guid)
 
     #Helper Method
     def disk_compname(self, data, disk_id):
@@ -292,6 +373,17 @@ class oVirt(PythonPlugin):
                         if 'disks' in link.attrib['href']:
                             command = link.attrib['href'].rsplit('/api/')[1]
                             deferreds.append(client.request(command))
+                        if 'nics' in link.attrib['href']:
+                            command = link.attrib['href'].rsplit('/api/')[1]
+                            deferreds.append(client.request(command))
+
+            elif key == 'hosts':
+                hosts = yield client.request(self.collector_map[key]['command'])
+                for host in hosts.getchildren():
+                    for link in host.findall('link'):
+                        if 'nics' in link.attrib['href']:
+                            command = link.attrib['href'].rsplit('/api/')[1]
+                            deferreds.append(client.request(command))
             else:
                 deferreds.append(client.request(self.collector_map[key]['command']))
 
@@ -302,6 +394,9 @@ class oVirt(PythonPlugin):
 
         # append the vms to the list
         results.append((True, vms))
+
+        # append the hosts to the list
+        results.append((True, hosts))
 
         data = []
         for success, result in results:
@@ -420,4 +515,5 @@ class oVirt(PythonPlugin):
                         objmaps=objmaps
                         )
                     relmap.append(rm)
+
         return relmap

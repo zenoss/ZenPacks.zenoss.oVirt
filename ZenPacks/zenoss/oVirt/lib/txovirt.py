@@ -49,6 +49,7 @@ class Client(object):
             return doc
 
         url = '%s/api/%s' % (self.base_url, command)
+        #print url
         return twisted.web.client.getPage(url, headers=self.headers).addCallback(process_result)
 
     def listEvents(self, last=None, **kwargs):
