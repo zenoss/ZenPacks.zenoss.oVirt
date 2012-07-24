@@ -674,8 +674,14 @@ class oVirtPoller(object):
             self._events.extend(
                 self._process_events(data['events']))
 
-        if 'storage_domain' in data.keys():
-            data['storage_domain']
+        if 'storage_domains' in data.keys():
+            processed_results = {}
+            for storage_domain in elementtree_to_dict(data['storage_domains'][0])['storage_domain']:
+                id = storage_domain['id']
+                processed_results.setdefault(id, {})
+                for key in ['committed', 'used', 'available']:
+                    processed_results[id][key] = storage_domain[key]
+            self._values.update(processed_results)
 
         deferred_statistics = []
 
@@ -840,6 +846,7 @@ class oVirtPoller(object):
             deferreds.extend((
                 self.client.request('hosts'),
                 self.client.request('vms'),
+                self.client.request('storagedomains'),
                 ))
 
         # Now start processing our tasks with the results going to the self._callback method.

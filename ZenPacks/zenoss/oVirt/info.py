@@ -100,6 +100,7 @@ class HostInfo(BaseComponentInfo):
     def cluster(self):
         return self._object.cluster()
 
+
 class VmInfo(BaseComponentInfo):
     """VM API (Info) adapter factory."""
 
@@ -110,15 +111,27 @@ class VmInfo(BaseComponentInfo):
     def cluster(self):
         return self._object.cluster()
 
+
 class StorageDomainInfo(BaseComponentInfo):
     """Storage Domain API (Info) adapter factory."""
 
     implements(IStorageDomainInfo)
 
+    storagedomain_type = ProxyProperty('storagedomain_type')
+    storage_type = ProxyProperty('storage_type')
+    storage_format = ProxyProperty('storage_format')
+    status = ProxyProperty('status')
+
     @property
     @info
     def datacenter(self):
         return self._object.datacenter()
+
+    @property
+    @info
+    def disk_count(self):
+        return self._object.disks.countObjects()
+
 
 class DiskInfo(BaseComponentInfo):
     """Disk API (Info) adapter factory."""
@@ -164,7 +177,8 @@ class HostNicInfo(BaseComponentInfo):
             return 'Unknown'
         speed = int(self.speed)
         for unit in ('bps', 'Kbps', 'Mbps', 'Gbps'):
-            if speed < 1000: break
+            if speed < 1000:
+                break
             speed /= 1000.0
         return "%.0f %s" % (speed, unit)
 
@@ -186,4 +200,3 @@ class VmNicInfo(BaseComponentInfo):
     @info
     def vm(self):
         return self._object.vm()
-

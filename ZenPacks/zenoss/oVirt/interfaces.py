@@ -71,6 +71,11 @@ class IHostInfo(IComponentInfo):
 class IStorageDomainInfo(IComponentInfo):
     """Interface for the StorageDomain API (Info) Adapter."""
 
+    storagedomain_type = SingleLineText(title=_t(u"storagedomain_type"))
+    storage_type = SingleLineText(title=_t(u"storage_type"))
+    storage_format = SingleLineText(title=_t(u"storage_format"))
+    status = SingleLineText(title=_t(u"status"))
+
 
 class IDiskInfo(IComponentInfo):
     """Interface for the Disk API (Info) Adapter."""

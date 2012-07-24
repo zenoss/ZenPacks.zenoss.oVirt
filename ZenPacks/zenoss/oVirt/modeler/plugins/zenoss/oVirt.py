@@ -272,7 +272,10 @@ class oVirt(PythonPlugin):
                             {'command': 'storagedomains',
                              'relname': 'storagedomains',
                              'modname': 'ZenPacks.zenoss.oVirt.StorageDomain',
-                             'attributes': ['guid', 'name', 'setDatacenterId', 'datacenter_guid', 'storage_type'],  # This needs to have the guid first because its the id we are using else where
+                             'attributes': ['guid', 'name', 'setDatacenterId',
+                                            'datacenter_guid', 'storage_type',
+                                            'storage_format', 'storagedomain_type',
+                                            'status'],  # This needs to have the guid first because its the id we are using else where
                              'name': {'default': '',
                                           'lookup': "find('name').text",
                                           'prepId': True,
@@ -292,6 +295,15 @@ class oVirt(PythonPlugin):
                                         },
                              'storage_type': {'default': '',
                                           'lookup': "find('storage').find('type').text"
+                                        },
+                             'storage_format': {'default': '',
+                                          'lookup': "find('storage_format').text"
+                                        },
+                             'storagedomain_type': {'default': '',
+                                          'lookup': "find('type').text"
+                                        },
+                             'status': {'default': '',
+                                          'lookup': "find('status').find('state').text"
                                         },
                             },
                      }

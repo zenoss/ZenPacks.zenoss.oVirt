@@ -20,10 +20,17 @@ from zope.event import notify
 class StorageDomain(BaseComponent):
     meta_type = portal_type = "oVirtStorageDomain"
 
+    storagedomain_type = None
     storage_type = None
+    storage_format = None
+    status = None
+
 
     _properties = BaseComponent._properties + (
+        {'id': 'storagedomain_type', 'type': 'string', 'mode': 'w'},
         {'id': 'storage_type', 'type': 'string', 'mode': 'w'},
+        {'id': 'storage_format', 'type': 'string', 'mode': 'w'},
+        {'id': 'status', 'type': 'string', 'mode': 'w'},
         )
 
     _relations = BaseComponent._relations + (

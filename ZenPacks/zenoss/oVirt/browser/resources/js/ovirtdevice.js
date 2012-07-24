@@ -262,6 +262,10 @@ ZC.oVirtStorageDomainPanel = Ext.extend(ZC.oVirtComponentGridPanel, {
                 {name: 'severity'},
                 {name: 'entity'},
                 {name: 'datacenter'},
+                {name: 'storagedomain_type'},
+                {name: 'storage_type'},
+                {name: 'storage_format'},
+                {name: 'disk_count'},
                 {name: 'status'},
                 {name: 'monitor'},
                 {name: 'monitored'},
@@ -290,6 +294,26 @@ ZC.oVirtStorageDomainPanel = Ext.extend(ZC.oVirtComponentGridPanel, {
                 header: _t('Datacenter'),
                 renderer: Zenoss.render.oVirt_entityLinkFromGrid,
                 width: 70
+            },{
+                id: 'status',
+                dataIndex: 'status',
+                header: _t('Status'),
+                width: 70
+            },{
+                id: 'disk_count',
+                dataIndex: 'disk_count',
+                header: _t('# Disks'),
+                width: 70
+            },{
+                id: 'storagedomain_type',
+                dataIndex: 'storagedomain_type',
+                header: _t('Type'),
+                width: 70
+            },{
+                id: 'storage_type',
+                dataIndex: 'storage_type',
+                header: _t('Storage Type'),
+                width: 90
             },{
                 id: 'monitored',
                 dataIndex: 'monitored',
