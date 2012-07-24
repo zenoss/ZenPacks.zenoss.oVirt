@@ -79,6 +79,16 @@ class ClusterInfo(BaseComponentInfo):
     def datacenter(self):
         return self._object.datacenter()
 
+    @property
+    @info
+    def host_count(self):
+        return self._object.hosts.countObjects()
+
+    @property
+    @info
+    def vm_count(self):
+        return self._object.vms.countObjects()
+
 
 class HostInfo(BaseComponentInfo):
     """Host API (Info) adapter factory."""

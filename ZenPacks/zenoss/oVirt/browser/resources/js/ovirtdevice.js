@@ -185,6 +185,8 @@ ZC.oVirtClusterPanel = Ext.extend(ZC.oVirtComponentGridPanel, {
                 {name: 'severity'},
                 {name: 'datacenter'},
                 {name: 'entity'},
+                {name: 'host_count'},
+                {name: 'vm_count'},
                 {name: 'status'},
                 {name: 'monitor'},
                 {name: 'monitored'},
@@ -212,6 +214,18 @@ ZC.oVirtClusterPanel = Ext.extend(ZC.oVirtComponentGridPanel, {
                 dataIndex: 'datacenter',
                 header: _t('Datacenter'),
                 renderer: Zenoss.render.oVirt_entityLinkFromGrid,
+                sortable: true,
+                width: 100
+            },{
+                id: 'host_count',
+                dataIndex: 'host_count',
+                header: _t('# Hosts'),
+                sortable: true,
+                width: 100
+            },{
+                id: 'vm_count',
+                dataIndex: 'vm_count',
+                header: _t('# VMs'),
                 sortable: true,
                 width: 100
             },{
