@@ -918,4 +918,40 @@ Zenoss.nav.appendTo('Component', [{
     }
 }]);
 
+//Add vm nics dropdown to the vms component
+Zenoss.nav.appendTo('Component', [{
+    id: 'component_vmnics',
+    text: _t('Related Nics'),
+    xtype: 'oVirtVmNicPanel',
+    subComponentGridPanel: true,
+    filterNav: function(navpanel) {
+        if (navpanel.refOwner.componentType == 'oVirtVms') {
+            return true;
+        } else {
+            return false;
+        }
+    },
+    setContext: function(uid) {
+        ZC.oVirtVmNicPanel.superclass.setContext.apply(this, [uid]);
+    }
+}]);
+
+//Add host nics dropdown to the hosts component
+Zenoss.nav.appendTo('Component', [{
+    id: 'component_hostnics',
+    text: _t('Related Nics'),
+    xtype: 'oVirtHostNicPanel',
+    subComponentGridPanel: true,
+    filterNav: function(navpanel) {
+        if (navpanel.refOwner.componentType == 'oVirtHost') {
+            return true;
+        } else {
+            return false;
+        }
+    },
+    setContext: function(uid) {
+        ZC.oVirtHostNicPanel.superclass.setContext.apply(this, [uid]);
+    }
+}]);
+
 })();
