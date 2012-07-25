@@ -19,31 +19,31 @@ from ZenPacks.zenoss.oVirt import BaseComponent
 class Vms(BaseComponent):
     meta_type = portal_type = "oVirtVms"
 
-    vms_type = None
+    vm_type = None
     state = None
     memory = None
     cpu_cores = None
     cpu_sockets = None
     os_type = None
     os_boot = None
-    os_kernel = None
-    os_initrd = None
-    os_cmdline = None
-    high_availability_enabled = None
-    high_availability_priority = None
-    display_type = None
-    display_address = None
-    display_port = None
-    display_secureport = None
-    display_monitors = None
-    #template
     start_time = None
     creation_time = None
-    origin = None
-    stateless = None
-    placement_policy_affinity = None
+    affinity = None
     memory_policy_guaranteed = None
-    usb_enabled = None
+
+    _properties = BaseComponent._properties + (
+        {'id': 'vm_type', 'type': 'string', 'mode': 'w'},
+        {'id': 'state', 'type': 'string', 'mode': 'w'},
+        {'id': 'memory', 'type': 'string', 'mode': 'w'},
+        {'id': 'cpu_cores', 'type': 'string', 'mode': 'w'},
+        {'id': 'cpu_sockets', 'type': 'string', 'mode': 'w'},
+        {'id': 'os_type', 'type': 'string', 'mode': 'w'},
+        {'id': 'os_boot', 'type': 'string', 'mode': 'w'},
+        {'id': 'start_time', 'type': 'string', 'mode': 'w'},
+        {'id': 'creation_time', 'type': 'string', 'mode': 'w'},
+        {'id': 'affinity', 'type': 'string', 'mode': 'w'},
+        {'id': 'memory_policy_guaranteed', 'type': 'string', 'mode': 'w'},
+        )
 
     _relations = BaseComponent._relations + (
         ('cluster', ToOne(ToManyCont,

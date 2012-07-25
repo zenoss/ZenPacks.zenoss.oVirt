@@ -350,6 +350,17 @@ ZC.oVirtVmsPanel = Ext.extend(ZC.oVirtComponentGridPanel, {
                 {name: 'cluster'},
                 {name: 'status'},
                 {name: 'monitor'},
+                {name: 'vm_type'},
+                {name: 'state'},
+                {name: 'memory'},
+                {name: 'cpu_cores'},
+                {name: 'cpu_sockets'},
+                {name: 'os_type'},
+                {name: 'os_boot'},
+                {name: 'start_time'},
+                {name: 'creation_time'},
+                {name: 'affinity'},
+                {name: 'memory_policy_guaranteed'},
                 {name: 'monitored'},
                 {name: 'locking'}
             ],
@@ -377,6 +388,63 @@ ZC.oVirtVmsPanel = Ext.extend(ZC.oVirtComponentGridPanel, {
                 renderer: Zenoss.render.oVirt_entityLinkFromGrid,
                 sortable: true,
                 width: 100
+            },{
+                id: 'state',
+                dataIndex: 'state',
+                header: _t('State'),
+                width: 70
+            },{
+                id: 'vm_type',
+                dataIndex: 'vm_type',
+                header: _t('VM Type'),
+                width: 70
+            },{
+                id: 'cpu_cores',
+                dataIndex: 'cpu_cores',
+                header: _t('Cpu Cores'),
+                width: 70
+            },{
+                id: 'cpu_sockets',
+                dataIndex: 'cpu_sockets',
+                header: _t('Cpu Sockets'),
+                width: 73
+            },{
+                id: 'memory',
+                dataIndex: 'memory',
+                header: _t('Memory'),
+                renderer: Zenoss.render.memory,
+                width: 70
+            },{
+                id: 'memory_policy_guaranteed',
+                dataIndex: 'memory_policy_guaranteed',
+                header: _t('Guaranteed Memory'),
+                renderer: Zenoss.render.memory,
+                width: 110
+            },{
+                id: 'os_type',
+                dataIndex: 'os_type',
+                header: _t('OS Type'),
+                width: 70
+            },{
+                id: 'os_boot',
+                dataIndex: 'os_boot',
+                header: _t('OS Boot'),
+                width: 70
+            },{
+                id: 'affinity',
+                dataIndex: 'affinity',
+                header: _t('Affinity'),
+                width: 70
+            },{
+                id: 'start_time',
+                dataIndex: 'start_time',
+                header: _t('Start Time'),
+                width: 150
+            },{
+                id: 'creation_time',
+                dataIndex: 'creation_time',
+                header: _t('Create Time'),
+                width: 150
             },{
                 id: 'monitored',
                 dataIndex: 'monitored',

@@ -106,6 +106,18 @@ class VmInfo(BaseComponentInfo):
 
     implements(IVmInfo)
 
+    vm_type = ProxyProperty('vm_type')
+    state = ProxyProperty('state')
+    memory = ProxyProperty('memory')
+    cpu_cores = ProxyProperty('cpu_cores')
+    cpu_sockets = ProxyProperty('cpu_sockets')
+    os_type = ProxyProperty('os_type')
+    os_boot = ProxyProperty('os_boot')
+    start_time = ProxyProperty('start_time')
+    creation_time = ProxyProperty('creation_time')
+    affinity = ProxyProperty('affinity')
+    memory_policy_guaranteed = ProxyProperty('memory_policy_guaranteed')
+
     @property
     @info
     def cluster(self):

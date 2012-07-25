@@ -63,6 +63,18 @@ class IClusterInfo(IComponentInfo):
 class IVmInfo(IComponentInfo):
     """Interface for the VM API (Info) Adapter."""
 
+    vm_type = SingleLineText(u"vm_type")
+    state = SingleLineText(u"state")
+    memory = SingleLineText(u"memory")
+    cpu_cores = SingleLineText(u"cpu_cores")
+    cpu_sockets = SingleLineText(u"cpu_sockets")
+    os_type = SingleLineText(u"os_type")
+    os_boot = SingleLineText(u"os_boot")
+    start_time = SingleLineText(u"start_time")
+    creation_time = SingleLineText(u"creation_time")
+    affinity = SingleLineText(u"affinity")
+    memory_policy_guaranteed = SingleLineText(u"memory_policy_guaranteed")
+
 
 class IHostInfo(IComponentInfo):
     """Interface for the Host API (Info) Adapter."""
