@@ -79,6 +79,14 @@ class IVmInfo(IComponentInfo):
 class IHostInfo(IComponentInfo):
     """Interface for the Host API (Info) Adapter."""
 
+    address = SingleLineText(u"address")
+    status_state = SingleLineText(u"status_state")
+    status_detail = SingleLineText(u"status_detail")
+    memory = SingleLineText(u"memory")
+    cpu_sockets = SingleLineText(u"cpu_sockets")
+    cpu_cores = SingleLineText(u"cpu_cores")
+    cpu_name = SingleLineText(u"cpu_name")
+    cpu_speed = SingleLineText(u"cpu_speed")
 
 class IStorageDomainInfo(IComponentInfo):
     """Interface for the StorageDomain API (Info) Adapter."""

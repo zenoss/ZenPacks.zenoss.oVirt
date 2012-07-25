@@ -29,10 +29,6 @@ class oVirtInfo(DeviceInfo):
 
     implements(IoVirtInfo)
 
-    @property
-    def vm_count(self):
-        return 1
-
 
 class BaseComponentInfo(ComponentInfo):
     """Abstract base component API (Info) adapter factory."""
@@ -94,6 +90,15 @@ class HostInfo(BaseComponentInfo):
     """Host API (Info) adapter factory."""
 
     implements(IHostInfo)
+
+    address = ProxyProperty('address')
+    status_state = ProxyProperty('status_state')
+    status_detail = ProxyProperty('status_detail')
+    memory = ProxyProperty('memory')
+    cpu_sockets = ProxyProperty('cpu_sockets')
+    cpu_cores = ProxyProperty('cpu_cores')
+    cpu_name = ProxyProperty('cpu_name')
+    cpu_speed = ProxyProperty('cpu_speed')
 
     @property
     @info

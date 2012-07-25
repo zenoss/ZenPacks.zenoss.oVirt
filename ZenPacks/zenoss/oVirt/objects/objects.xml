@@ -32,14 +32,246 @@ True
 <tomanycont id='rrdTemplates'>
 <object id='oVirtHost' module='Products.ZenModel.RRDTemplate' class='RRDTemplate'>
 <property id='zendoc' type='string'>
-Aggregate capacity metrics for an entire oVirt Host.
+Gather performance metrics for oVirt Host components.
 </property>
 <property type="text" id="description" mode="w" >
-Aggregate capacity metrics for an entire oVirt Host.
+Gather performance metrics for oVirt Host components.
 </property>
 <property type="string" id="targetPythonClass" mode="w" >
 ZenPacks.zenoss.oVirt.Host
 </property>
+<tomanycont id='datasources'>
+<object id='oVirt' module='Products.ZenModel.BasicDataSource' class='BasicDataSource'>
+<property select_variable="sourcetypes" type="selection" id="sourcetype" mode="w" >
+COMMAND
+</property>
+<property type="boolean" id="enabled" mode="w" >
+True
+</property>
+<property type="string" id="component" mode="w" >
+${here/id}
+</property>
+<property type="string" id="eventClass" mode="w" >
+/Cmd/Fail
+</property>
+<property type="int" id="severity" mode="w" >
+4
+</property>
+<property type="string" id="commandTemplate" mode="w" >
+${here/ZenPackManager/packs/ZenPacks.zenoss.oVirt/path}/poll_ovirt.py "${here/zOVirtUrl}"  "${here/zOVirtUser}" "${here/zOVirtDomain}" "${here/zOVirtPassword}" hosts
+</property>
+<property type="int" id="cycletime" mode="w" >
+300
+</property>
+<property type="boolean" id="usessh" mode="w" >
+False
+</property>
+<property type="string" id="parser" mode="w" >
+ZenPacks.zenoss.oVirt.parsers.JSONParser
+</property>
+<tomanycont id='datapoints'>
+<object id='cpuCurrentIdle' module='Products.ZenModel.RRDDataPoint' class='RRDDataPoint'>
+<property id='zendoc' type='string'>
+Idle CPU usage
+</property>
+<property select_variable="rrdtypes" type="selection" id="rrdtype" mode="w" >
+GAUGE
+</property>
+<property type="boolean" id="isrow" mode="w" >
+True
+</property>
+<property type="string" id="rrdmin" mode="w" >
+0
+</property>
+<property type="string" id="description" mode="w" >
+Idle CPU usage
+</property>
+</object>
+<object id='cpuCurrentSystem' module='Products.ZenModel.RRDDataPoint' class='RRDDataPoint'>
+<property id='zendoc' type='string'>
+System CPU usage
+</property>
+<property select_variable="rrdtypes" type="selection" id="rrdtype" mode="w" >
+GAUGE
+</property>
+<property type="boolean" id="isrow" mode="w" >
+True
+</property>
+<property type="string" id="description" mode="w" >
+System CPU usage
+</property>
+</object>
+<object id='cpuCurrentUser' module='Products.ZenModel.RRDDataPoint' class='RRDDataPoint'>
+<property id='zendoc' type='string'>
+User CPU usage
+</property>
+<property select_variable="rrdtypes" type="selection" id="rrdtype" mode="w" >
+GAUGE
+</property>
+<property type="boolean" id="isrow" mode="w" >
+True
+</property>
+<property type="string" id="description" mode="w" >
+User CPU usage
+</property>
+</object>
+<object id='cpuLoadAvg5M' module='Products.ZenModel.RRDDataPoint' class='RRDDataPoint'>
+<property id='zendoc' type='string'>
+CPU 5 minute load average
+</property>
+<property select_variable="rrdtypes" type="selection" id="rrdtype" mode="w" >
+GAUGE
+</property>
+<property type="boolean" id="isrow" mode="w" >
+True
+</property>
+<property type="string" id="description" mode="w" >
+CPU 5 minute load average
+</property>
+</object>
+<object id='ksmCpuCurrent' module='Products.ZenModel.RRDDataPoint' class='RRDDataPoint'>
+<property id='zendoc' type='string'>
+KSM (Kernel Samepage Merging) CPU usage
+</property>
+<property select_variable="rrdtypes" type="selection" id="rrdtype" mode="w" >
+GAUGE
+</property>
+<property type="boolean" id="isrow" mode="w" >
+True
+</property>
+<property type="string" id="description" mode="w" >
+KSM (Kernel Samepage Merging) CPU usage
+</property>
+</object>
+<object id='memoryBuffers' module='Products.ZenModel.RRDDataPoint' class='RRDDataPoint'>
+<property id='zendoc' type='string'>
+IO buffers
+</property>
+<property select_variable="rrdtypes" type="selection" id="rrdtype" mode="w" >
+GAUGE
+</property>
+<property type="boolean" id="isrow" mode="w" >
+True
+</property>
+<property type="string" id="description" mode="w" >
+IO buffers
+</property>
+</object>
+<object id='memoryCached' module='Products.ZenModel.RRDDataPoint' class='RRDDataPoint'>
+<property id='zendoc' type='string'>
+OS caches
+</property>
+<property select_variable="rrdtypes" type="selection" id="rrdtype" mode="w" >
+GAUGE
+</property>
+<property type="boolean" id="isrow" mode="w" >
+True
+</property>
+<property type="string" id="description" mode="w" >
+OS caches
+</property>
+</object>
+<object id='memoryFree' module='Products.ZenModel.RRDDataPoint' class='RRDDataPoint'>
+<property id='zendoc' type='string'>
+Free memory
+</property>
+<property select_variable="rrdtypes" type="selection" id="rrdtype" mode="w" >
+GAUGE
+</property>
+<property type="boolean" id="isrow" mode="w" >
+True
+</property>
+<property type="string" id="description" mode="w" >
+Free memory
+</property>
+</object>
+<object id='memoryTotal' module='Products.ZenModel.RRDDataPoint' class='RRDDataPoint'>
+<property id='zendoc' type='string'>
+Total memory
+</property>
+<property select_variable="rrdtypes" type="selection" id="rrdtype" mode="w" >
+GAUGE
+</property>
+<property type="boolean" id="isrow" mode="w" >
+True
+</property>
+<property type="string" id="description" mode="w" >
+Total memory
+</property>
+</object>
+<object id='memoryUsed' module='Products.ZenModel.RRDDataPoint' class='RRDDataPoint'>
+<property id='zendoc' type='string'>
+Used memory
+</property>
+<property select_variable="rrdtypes" type="selection" id="rrdtype" mode="w" >
+GAUGE
+</property>
+<property type="boolean" id="isrow" mode="w" >
+True
+</property>
+<property type="string" id="description" mode="w" >
+Used memory
+</property>
+</object>
+<object id='swapCached' module='Products.ZenModel.RRDDataPoint' class='RRDDataPoint'>
+<property id='zendoc' type='string'>
+Swap also in memory
+</property>
+<property select_variable="rrdtypes" type="selection" id="rrdtype" mode="w" >
+GAUGE
+</property>
+<property type="boolean" id="isrow" mode="w" >
+True
+</property>
+<property type="string" id="description" mode="w" >
+Swap also in memory
+</property>
+</object>
+<object id='swapFree' module='Products.ZenModel.RRDDataPoint' class='RRDDataPoint'>
+<property id='zendoc' type='string'>
+Free swap
+</property>
+<property select_variable="rrdtypes" type="selection" id="rrdtype" mode="w" >
+GAUGE
+</property>
+<property type="boolean" id="isrow" mode="w" >
+True
+</property>
+<property type="string" id="description" mode="w" >
+Free swap
+</property>
+</object>
+<object id='swapTotal' module='Products.ZenModel.RRDDataPoint' class='RRDDataPoint'>
+<property id='zendoc' type='string'>
+Total swap
+</property>
+<property select_variable="rrdtypes" type="selection" id="rrdtype" mode="w" >
+GAUGE
+</property>
+<property type="boolean" id="isrow" mode="w" >
+True
+</property>
+<property type="string" id="description" mode="w" >
+Total swap
+</property>
+</object>
+<object id='swapUsed' module='Products.ZenModel.RRDDataPoint' class='RRDDataPoint'>
+<property id='zendoc' type='string'>
+Used swap
+</property>
+<property select_variable="rrdtypes" type="selection" id="rrdtype" mode="w" >
+GAUGE
+</property>
+<property type="boolean" id="isrow" mode="w" >
+True
+</property>
+<property type="string" id="description" mode="w" >
+Used swap
+</property>
+</object>
+</tomanycont>
+</object>
+</tomanycont>
 </object>
 <object id='oVirtHostNic' module='Products.ZenModel.RRDTemplate' class='RRDTemplate'>
 <property id='zendoc' type='string'>
@@ -939,6 +1171,299 @@ Outbound
 </property>
 <property type="string" id="dpName" mode="w" >
 oVirt_dataCurrentTx
+</property>
+<property type="string" id="cFunc" mode="w" >
+AVERAGE
+</property>
+</object>
+</tomanycont>
+</object>
+</tomanycont>
+</object>
+<object id='oVirtVms' module='Products.ZenModel.RRDTemplate' class='RRDTemplate'>
+<property id='zendoc' type='string'>
+Gather performance metrics for oVirt Vm components.
+</property>
+<property type="text" id="description" mode="w" >
+Gather performance metrics for oVirt Vm components.
+</property>
+<property type="string" id="targetPythonClass" mode="w" >
+ZenPacks.zenoss.oVirt.Vms
+</property>
+<tomanycont id='datasources'>
+<object id='oVirt' module='Products.ZenModel.BasicDataSource' class='BasicDataSource'>
+<property select_variable="sourcetypes" type="selection" id="sourcetype" mode="w" >
+COMMAND
+</property>
+<property type="boolean" id="enabled" mode="w" >
+True
+</property>
+<property type="string" id="component" mode="w" >
+${here/id}
+</property>
+<property type="string" id="eventClass" mode="w" >
+/Cmd/Fail
+</property>
+<property type="int" id="severity" mode="w" >
+4
+</property>
+<property type="string" id="commandTemplate" mode="w" >
+${here/ZenPackManager/packs/ZenPacks.zenoss.oVirt/path}/poll_ovirt.py "${here/zOVirtUrl}"  "${here/zOVirtUser}" "${here/zOVirtDomain}" "${here/zOVirtPassword}" vms
+</property>
+<property type="int" id="cycletime" mode="w" >
+300
+</property>
+<property type="boolean" id="usessh" mode="w" >
+False
+</property>
+<property type="string" id="parser" mode="w" >
+ZenPacks.zenoss.oVirt.parsers.JSONParser
+</property>
+<tomanycont id='datapoints'>
+<object id='cpuCurrentGuest' module='Products.ZenModel.RRDDataPoint' class='RRDDataPoint'>
+<property select_variable="rrdtypes" type="selection" id="rrdtype" mode="w" >
+GAUGE
+</property>
+<property type="boolean" id="isrow" mode="w" >
+True
+</property>
+</object>
+<object id='cpuCurrentHypervisor' module='Products.ZenModel.RRDDataPoint' class='RRDDataPoint'>
+<property select_variable="rrdtypes" type="selection" id="rrdtype" mode="w" >
+GAUGE
+</property>
+<property type="boolean" id="isrow" mode="w" >
+True
+</property>
+</object>
+<object id='cpuCurrentTotal' module='Products.ZenModel.RRDDataPoint' class='RRDDataPoint'>
+<property select_variable="rrdtypes" type="selection" id="rrdtype" mode="w" >
+GAUGE
+</property>
+<property type="boolean" id="isrow" mode="w" >
+True
+</property>
+</object>
+<object id='memoryInstalled' module='Products.ZenModel.RRDDataPoint' class='RRDDataPoint'>
+<property select_variable="rrdtypes" type="selection" id="rrdtype" mode="w" >
+GAUGE
+</property>
+<property type="boolean" id="isrow" mode="w" >
+True
+</property>
+</object>
+<object id='memoryUsed' module='Products.ZenModel.RRDDataPoint' class='RRDDataPoint'>
+<property select_variable="rrdtypes" type="selection" id="rrdtype" mode="w" >
+GAUGE
+</property>
+<property type="boolean" id="isrow" mode="w" >
+True
+</property>
+</object>
+</tomanycont>
+</object>
+</tomanycont>
+<tomanycont id='graphDefs'>
+<object id='VM Cpu' module='Products.ZenModel.GraphDefinition' class='GraphDefinition'>
+<property type="int" id="height" mode="w" >
+100
+</property>
+<property type="int" id="width" mode="w" >
+500
+</property>
+<property type="string" id="units" mode="w" >
+Percent
+</property>
+<property type="boolean" id="log" mode="w" >
+False
+</property>
+<property type="boolean" id="base" mode="w" >
+False
+</property>
+<property type="int" id="miny" mode="w" >
+0
+</property>
+<property type="int" id="maxy" mode="w" >
+-1
+</property>
+<property type="boolean" id="hasSummary" mode="w" >
+True
+</property>
+<property type="long" id="sequence" mode="w" >
+1
+</property>
+<tomanycont id='graphPoints'>
+<object id='cpuCurrentGuest' module='Products.ZenModel.DataPointGraphPoint' class='DataPointGraphPoint'>
+<property type="long" id="sequence" mode="w" >
+1
+</property>
+<property select_variable="lineTypes" type="selection" id="lineType" mode="w" >
+LINE
+</property>
+<property type="long" id="lineWidth" mode="w" >
+1
+</property>
+<property type="boolean" id="stacked" mode="w" >
+False
+</property>
+<property type="string" id="format" mode="w" >
+%5.2lf%s
+</property>
+<property type="string" id="legend" mode="w" >
+CPU Used by guest
+</property>
+<property type="long" id="limit" mode="w" >
+-1
+</property>
+<property type="string" id="dpName" mode="w" >
+oVirt_cpuCurrentGuest
+</property>
+<property type="string" id="cFunc" mode="w" >
+AVERAGE
+</property>
+</object>
+<object id='cpuCurrentHypervisor' module='Products.ZenModel.DataPointGraphPoint' class='DataPointGraphPoint'>
+<property type="long" id="sequence" mode="w" >
+2
+</property>
+<property select_variable="lineTypes" type="selection" id="lineType" mode="w" >
+LINE
+</property>
+<property type="long" id="lineWidth" mode="w" >
+1
+</property>
+<property type="boolean" id="stacked" mode="w" >
+False
+</property>
+<property type="string" id="format" mode="w" >
+%5.2lf%s
+</property>
+<property type="string" id="legend" mode="w" >
+CPU hypervisor overhead
+</property>
+<property type="long" id="limit" mode="w" >
+-1
+</property>
+<property type="string" id="dpName" mode="w" >
+oVirt_cpuCurrentHypervisor
+</property>
+<property type="string" id="cFunc" mode="w" >
+AVERAGE
+</property>
+</object>
+<object id='cpuCurrentTotal' module='Products.ZenModel.DataPointGraphPoint' class='DataPointGraphPoint'>
+<property type="long" id="sequence" mode="w" >
+0
+</property>
+<property select_variable="lineTypes" type="selection" id="lineType" mode="w" >
+LINE
+</property>
+<property type="long" id="lineWidth" mode="w" >
+1
+</property>
+<property type="boolean" id="stacked" mode="w" >
+False
+</property>
+<property type="string" id="format" mode="w" >
+%5.2lf%s
+</property>
+<property type="string" id="legend" mode="w" >
+Total CPU Used
+</property>
+<property type="long" id="limit" mode="w" >
+-1
+</property>
+<property type="string" id="dpName" mode="w" >
+oVirt_cpuCurrentTotal
+</property>
+<property type="string" id="cFunc" mode="w" >
+AVERAGE
+</property>
+</object>
+</tomanycont>
+</object>
+<object id='VM Memory' module='Products.ZenModel.GraphDefinition' class='GraphDefinition'>
+<property type="int" id="height" mode="w" >
+100
+</property>
+<property type="int" id="width" mode="w" >
+500
+</property>
+<property type="string" id="units" mode="w" >
+Bytes
+</property>
+<property type="boolean" id="log" mode="w" >
+False
+</property>
+<property type="boolean" id="base" mode="w" >
+False
+</property>
+<property type="int" id="miny" mode="w" >
+0
+</property>
+<property type="int" id="maxy" mode="w" >
+-1
+</property>
+<property type="boolean" id="hasSummary" mode="w" >
+True
+</property>
+<property type="long" id="sequence" mode="w" >
+0
+</property>
+<tomanycont id='graphPoints'>
+<object id='memoryInstalled' module='Products.ZenModel.DataPointGraphPoint' class='DataPointGraphPoint'>
+<property type="long" id="sequence" mode="w" >
+1
+</property>
+<property select_variable="lineTypes" type="selection" id="lineType" mode="w" >
+LINE
+</property>
+<property type="long" id="lineWidth" mode="w" >
+1
+</property>
+<property type="boolean" id="stacked" mode="w" >
+False
+</property>
+<property type="string" id="format" mode="w" >
+%5.2lf%s
+</property>
+<property type="string" id="legend" mode="w" >
+Installed
+</property>
+<property type="long" id="limit" mode="w" >
+-1
+</property>
+<property type="string" id="dpName" mode="w" >
+oVirt_memoryInstalled
+</property>
+<property type="string" id="cFunc" mode="w" >
+AVERAGE
+</property>
+</object>
+<object id='memoryUsed' module='Products.ZenModel.DataPointGraphPoint' class='DataPointGraphPoint'>
+<property type="long" id="sequence" mode="w" >
+0
+</property>
+<property select_variable="lineTypes" type="selection" id="lineType" mode="w" >
+LINE
+</property>
+<property type="long" id="lineWidth" mode="w" >
+1
+</property>
+<property type="boolean" id="stacked" mode="w" >
+False
+</property>
+<property type="string" id="format" mode="w" >
+%5.2lf%s
+</property>
+<property type="string" id="legend" mode="w" >
+Used
+</property>
+<property type="long" id="limit" mode="w" >
+-1
+</property>
+<property type="string" id="dpName" mode="w" >
+oVirt_memoryUsed
 </property>
 <property type="string" id="cFunc" mode="w" >
 AVERAGE

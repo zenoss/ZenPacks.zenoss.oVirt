@@ -479,7 +479,14 @@ ZC.oVirtHostPanel = Ext.extend(ZC.oVirtComponentGridPanel, {
                 {name: 'severity'},
                 {name: 'entity'},
                 {name: 'cluster'},
-                {name: 'status'},
+                {name: 'status_state'},
+                {name: 'status_detail'},
+                {name: 'address'},
+                {name: 'memory'},
+                {name: 'cpu_cores'},
+                {name: 'cpu_sockets'},
+                {name: 'cpu_name'},
+                {name: 'cpu_speed'},
                 {name: 'monitor'},
                 {name: 'monitored'},
                 {name: 'locking'}
@@ -502,12 +509,46 @@ ZC.oVirtHostPanel = Ext.extend(ZC.oVirtComponentGridPanel, {
                 renderer: Zenoss.render.oVirt_entityLinkFromGrid,
                 width: 70
             },{
+                id: 'address',
+                dataIndex: 'address',
+                header: _t('Address'),
+                sortable: true,
+                width: 100
+            },{
                 id: 'cluster',
                 dataIndex: 'cluster',
                 header: _t('Cluster'),
                 renderer: Zenoss.render.oVirt_entityLinkFromGrid,
                 sortable: true,
                 width: 100
+            },{
+                id: 'status_state',
+                dataIndex: 'status_state',
+                header: _t('State'),
+                sortable: true,
+                width: 100
+            },{
+                id: 'status_detail',
+                dataIndex: 'status_detail',
+                header: _t('Detail'),
+                sortable: true,
+                width: 100
+            },{
+                id: 'cpu_cores',
+                dataIndex: 'cpu_cores',
+                header: _t('Cpu Cores'),
+                width: 70
+            },{
+                id: 'cpu_sockets',
+                dataIndex: 'cpu_sockets',
+                header: _t('Cpu Sockets'),
+                width: 73
+            },{
+                id: 'memory',
+                dataIndex: 'memory',
+                header: _t('Memory'),
+                renderer: Zenoss.render.memory,
+                width: 70
             },{
                 id: 'monitored',
                 dataIndex: 'monitored',
