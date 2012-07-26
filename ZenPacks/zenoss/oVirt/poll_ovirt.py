@@ -799,7 +799,23 @@ class oVirtPoller(object):
 
                 if mValue(data) is not None:
                     processed_results.setdefault(key, {})
-                    processed_results[key][mName(data)] = mValue(data)
+                    processed_results[key][mName(data)] = abs(float(mValue(data)))
+
+        for key in processed_results.keys():
+            item = processed_results[key]
+            if 'swapTotal' in item  and 'swapUsed' in item:
+                try:
+                    percentSwapUsed = (float(item['swapUsed'])/float(item['swapTotal'])) * 100.0
+                    processed_results[key]['percentSwapUsed'] = "%.2f" % percentSwapUsed
+                except Exception:
+                    processed_results[key]['percentSwapUsed'] = "0"
+
+            if 'memoryTotal' in item  and 'memoryUsed' in item:
+                try:
+                    percentMemoryUsed = (float(item['memoryUsed'])/float(item['memoryTotal'])) * 100.0
+                    processed_results[key]['percentMemoryUsed'] = "%.2f" % percentMemoryUsed
+                except Exception:
+                    processed_results[key]['percentMemoryUsed'] = "0"
 
         self._values.update(processed_results)
 
