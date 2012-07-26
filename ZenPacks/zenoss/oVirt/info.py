@@ -57,10 +57,12 @@ class DatacenterInfo(BaseComponentInfo):
     storage_format = ProxyProperty('storage_format')
 
     @property
+    @info
     def cluster_count(self):
         return self._object.clusters.countObjects()
 
     @property
+    @info
     def storagedomain_count(self):
         return self._object.storagedomains.countObjects()
 

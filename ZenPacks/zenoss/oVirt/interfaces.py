@@ -52,6 +52,9 @@ class IoVirtInfo(IDeviceInfo):
 class IDatacenterInfo(IComponentInfo):
     """Interface for the DataCenter API (Info) Adapter."""
 
+    description = SingleLineText(title=_t(u"Description"))
+    storage_type = SingleLineText(title=_t(u"Storage Type"))
+    storage_format = SingleLineText(title=_t(u"Storage Format"))
     cluster_count = schema.Int(title=_t(u"Cluster Count"))
     storagedomain_count = schema.Int(title=_t(u"StorageDomain Count"))
 
@@ -59,46 +62,48 @@ class IDatacenterInfo(IComponentInfo):
 class IClusterInfo(IComponentInfo):
     """Interface for the Cluster API (Info) Adapter."""
 
+    host_count = schema.Int(title=_t(u"Host Count"))
+    vm_count = schema.Int(title=_t(u"VM Count"))
+
 
 class IVmInfo(IComponentInfo):
     """Interface for the VM API (Info) Adapter."""
 
-    vm_type = SingleLineText(u"vm_type")
-    state = SingleLineText(u"state")
-    memory = SingleLineText(u"memory")
-    cpu_cores = SingleLineText(u"cpu_cores")
-    cpu_sockets = SingleLineText(u"cpu_sockets")
-    os_type = SingleLineText(u"os_type")
-    os_boot = SingleLineText(u"os_boot")
-    start_time = SingleLineText(u"start_time")
-    creation_time = SingleLineText(u"creation_time")
-    affinity = SingleLineText(u"affinity")
-    memory_policy_guaranteed = SingleLineText(u"memory_policy_guaranteed")
-
+    vm_type = SingleLineText(title=_t(u"Virtual Machine Type"))
+    state = SingleLineText(title=_t(u"State"))
+    start_time = SingleLineText(title=_t(u"Start Time"))
+    creation_time = SingleLineText(title=_t(u"Creation Time"))
+    memory = SingleLineText(title=_t(u"Memory"))
+    memory_policy_guaranteed = SingleLineText(title=_t(u"Guaranteed Memory Policy"))
+    cpu_cores = SingleLineText(title=_t(u"Cpu Cores"))
+    cpu_sockets = SingleLineText(title=_t(u"Cpu Sockets"))
+    os_type = SingleLineText(title=_t(u"OS Type"))
+    os_boot = SingleLineText(title=_t(u"OS Boot Device"))
+    affinity = SingleLineText(title=_t(u"Affinity"))
     nic_count = schema.Int(title=_t(u"Nic Count"))
 
 
 class IHostInfo(IComponentInfo):
     """Interface for the Host API (Info) Adapter."""
 
-    address = SingleLineText(u"address")
-    status_state = SingleLineText(u"status_state")
-    status_detail = SingleLineText(u"status_detail")
-    memory = SingleLineText(u"memory")
-    cpu_sockets = SingleLineText(u"cpu_sockets")
-    cpu_cores = SingleLineText(u"cpu_cores")
-    cpu_name = SingleLineText(u"cpu_name")
-    cpu_speed = SingleLineText(u"cpu_speed")
-
+    address = SingleLineText(title=_t(u"IP Address"))
+    status_state = SingleLineText(title=_t(u"State"))
+    status_detail = SingleLineText(title=_t(u"State Detail"))
+    memory = SingleLineText(title=_t(u"Memory"))
+    cpu_sockets = SingleLineText(title=_t(u"Cpu Sockets"))
+    cpu_cores = SingleLineText(title=_t(u"Cpu Cores"))
+    cpu_name = SingleLineText(title=_t(u"Cpu Type"))
+    cpu_speed = SingleLineText(title=_t(u"Cpu Speed"))
     nic_count = schema.Int(title=_t(u"Nic Count"))
+
 
 class IStorageDomainInfo(IComponentInfo):
     """Interface for the StorageDomain API (Info) Adapter."""
 
-    storagedomain_type = SingleLineText(title=_t(u"storagedomain_type"))
-    storage_type = SingleLineText(title=_t(u"storage_type"))
-    storage_format = SingleLineText(title=_t(u"storage_format"))
-    status = SingleLineText(title=_t(u"status"))
+    storagedomain_type = SingleLineText(title=_t(u"StorageDomain Type"))
+    storage_type = SingleLineText(title=_t(u"Storage Type"))
+    storage_format = SingleLineText(title=_t(u"Storage Format"))
+    status = SingleLineText(title=_t(u"Status"))
 
 
 class IDiskInfo(IComponentInfo):
@@ -114,8 +119,8 @@ class IDiskInfo(IComponentInfo):
 class IHostNicInfo(IComponentInfo):
     """Interface for the Host Nic API (Info) Adapter."""
 
-    mac = SingleLineText(title=_t(u"Mac"))
-    ip = SingleLineText(title=_t(u"Ip"))
+    mac = SingleLineText(title=_t(u"MAC Address"))
+    ip = SingleLineText(title=_t(u"IP Address"))
     netmask = SingleLineText(title=_t(u"Netmask"))
     gateway = SingleLineText(title=_t(u"Gateway"))
     status = SingleLineText(title=_t(u"Status"))

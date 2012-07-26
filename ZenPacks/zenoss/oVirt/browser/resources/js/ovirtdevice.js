@@ -388,12 +388,12 @@ ZC.oVirtVmsPanel = Ext.extend(ZC.oVirtComponentGridPanel, {
                 header: _t('Cluster'),
                 renderer: Zenoss.render.oVirt_entityLinkFromGrid,
                 sortable: true,
-                width: 100
+                width: 60
             },{
                 id: 'state',
                 dataIndex: 'state',
                 header: _t('State'),
-                width: 70
+                width: 45
             },{
                 id: 'vm_type',
                 dataIndex: 'vm_type',
@@ -420,17 +420,17 @@ ZC.oVirtVmsPanel = Ext.extend(ZC.oVirtComponentGridPanel, {
                 dataIndex: 'memory_policy_guaranteed',
                 header: _t('Guaranteed Memory'),
                 renderer: Zenoss.render.memory,
-                width: 110
+                width: 115
             },{
                 id: 'os_type',
                 dataIndex: 'os_type',
                 header: _t('OS Type'),
-                width: 70
+                width: 60
             },{
                 id: 'os_boot',
                 dataIndex: 'os_boot',
                 header: _t('OS Boot'),
-                width: 70
+                width: 60
             },{
                 id: 'affinity',
                 dataIndex: 'affinity',
@@ -440,17 +440,7 @@ ZC.oVirtVmsPanel = Ext.extend(ZC.oVirtComponentGridPanel, {
                 id: 'nic_count',
                 dataIndex: 'nic_count',
                 header: _t('# Nics'),
-                width: 150
-            },{
-                id: 'start_time',
-                dataIndex: 'start_time',
-                header: _t('Start Time'),
-                width: 150
-            },{
-                id: 'creation_time',
-                dataIndex: 'creation_time',
-                header: _t('Create Time'),
-                width: 150
+                width: 60
             },{
                 id: 'monitored',
                 dataIndex: 'monitored',
@@ -539,7 +529,7 @@ ZC.oVirtHostPanel = Ext.extend(ZC.oVirtComponentGridPanel, {
                 dataIndex: 'status_detail',
                 header: _t('Detail'),
                 sortable: true,
-                width: 100
+                width: 180
             },{
                 id: 'cpu_cores',
                 dataIndex: 'cpu_cores',
@@ -560,7 +550,7 @@ ZC.oVirtHostPanel = Ext.extend(ZC.oVirtComponentGridPanel, {
                 id: 'nic_count',
                 dataIndex: 'nic_count',
                 header: _t('# Nics'),
-                width: 150
+                width: 60 
             },{
                 id: 'monitored',
                 dataIndex: 'monitored',
