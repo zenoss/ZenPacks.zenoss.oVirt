@@ -75,6 +75,8 @@ class IVmInfo(IComponentInfo):
     affinity = SingleLineText(u"affinity")
     memory_policy_guaranteed = SingleLineText(u"memory_policy_guaranteed")
 
+    nic_count = schema.Int(title=_t(u"Nic Count"))
+
 
 class IHostInfo(IComponentInfo):
     """Interface for the Host API (Info) Adapter."""
@@ -87,6 +89,8 @@ class IHostInfo(IComponentInfo):
     cpu_cores = SingleLineText(u"cpu_cores")
     cpu_name = SingleLineText(u"cpu_name")
     cpu_speed = SingleLineText(u"cpu_speed")
+
+    nic_count = schema.Int(title=_t(u"Nic Count"))
 
 class IStorageDomainInfo(IComponentInfo):
     """Interface for the StorageDomain API (Info) Adapter."""

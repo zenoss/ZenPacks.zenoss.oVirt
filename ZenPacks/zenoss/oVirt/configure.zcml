@@ -102,9 +102,10 @@
     <include package=".browser"/>
 
     <!-- Include Dynamic View Adapters -->
-    <include
+    <!-- <include
         zcml:condition="installed ZenPacks.zenoss.DynamicView"
         package=".dynamicview"
         />
+    -->
 
 </configure>

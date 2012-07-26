@@ -357,6 +357,7 @@ ZC.oVirtVmsPanel = Ext.extend(ZC.oVirtComponentGridPanel, {
                 {name: 'cpu_sockets'},
                 {name: 'os_type'},
                 {name: 'os_boot'},
+                {name: 'nic_count'},
                 {name: 'start_time'},
                 {name: 'creation_time'},
                 {name: 'affinity'},
@@ -436,6 +437,11 @@ ZC.oVirtVmsPanel = Ext.extend(ZC.oVirtComponentGridPanel, {
                 header: _t('Affinity'),
                 width: 70
             },{
+                id: 'nic_count',
+                dataIndex: 'nic_count',
+                header: _t('# Nics'),
+                width: 150
+            },{
                 id: 'start_time',
                 dataIndex: 'start_time',
                 header: _t('Start Time'),
@@ -487,6 +493,7 @@ ZC.oVirtHostPanel = Ext.extend(ZC.oVirtComponentGridPanel, {
                 {name: 'cpu_sockets'},
                 {name: 'cpu_name'},
                 {name: 'cpu_speed'},
+                {name: 'nic_count'},
                 {name: 'monitor'},
                 {name: 'monitored'},
                 {name: 'locking'}
@@ -549,6 +556,11 @@ ZC.oVirtHostPanel = Ext.extend(ZC.oVirtComponentGridPanel, {
                 header: _t('Memory'),
                 renderer: Zenoss.render.memory,
                 width: 70
+            },{
+                id: 'nic_count',
+                dataIndex: 'nic_count',
+                header: _t('# Nics'),
+                width: 150
             },{
                 id: 'monitored',
                 dataIndex: 'monitored',
