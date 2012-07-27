@@ -33,6 +33,7 @@ class oVirtInfo(DeviceInfo):
 class BaseComponentInfo(ComponentInfo):
     """Abstract base component API (Info) adapter factory."""
     title = ProxyProperty('title')
+    id = ProxyProperty('id')
 
     @property
     def entity(self):

@@ -46,12 +46,14 @@ class IoVirtFacade(IFacade):
 class IoVirtInfo(IDeviceInfo):
     """Interface for oVirt API (Info) adapter."""
 
+    id = SingleLineText(title=_t(u"ID"))
     vm_count = schema.Int(title=_t(u"VM Count"))
 
 
 class IDatacenterInfo(IComponentInfo):
     """Interface for the DataCenter API (Info) Adapter."""
 
+    id = SingleLineText(title=_t(u"ID"))
     description = SingleLineText(title=_t(u"Description"))
     storage_type = SingleLineText(title=_t(u"Storage Type"))
     storage_format = SingleLineText(title=_t(u"Storage Format"))
@@ -62,6 +64,7 @@ class IDatacenterInfo(IComponentInfo):
 class IClusterInfo(IComponentInfo):
     """Interface for the Cluster API (Info) Adapter."""
 
+    id = SingleLineText(title=_t(u"ID"))
     host_count = schema.Int(title=_t(u"Host Count"))
     vm_count = schema.Int(title=_t(u"VM Count"))
 
@@ -69,6 +72,7 @@ class IClusterInfo(IComponentInfo):
 class IVmInfo(IComponentInfo):
     """Interface for the VM API (Info) Adapter."""
 
+    id = SingleLineText(title=_t(u"ID"))
     vm_type = SingleLineText(title=_t(u"Virtual Machine Type"))
     state = SingleLineText(title=_t(u"State"))
     start_time = SingleLineText(title=_t(u"Start Time"))
@@ -86,6 +90,7 @@ class IVmInfo(IComponentInfo):
 class IHostInfo(IComponentInfo):
     """Interface for the Host API (Info) Adapter."""
 
+    id = SingleLineText(title=_t(u"ID"))
     address = SingleLineText(title=_t(u"IP Address"))
     status_state = SingleLineText(title=_t(u"State"))
     status_detail = SingleLineText(title=_t(u"State Detail"))
@@ -100,6 +105,7 @@ class IHostInfo(IComponentInfo):
 class IStorageDomainInfo(IComponentInfo):
     """Interface for the StorageDomain API (Info) Adapter."""
 
+    id = SingleLineText(title=_t(u"ID"))
     storagedomain_type = SingleLineText(title=_t(u"StorageDomain Type"))
     storage_type = SingleLineText(title=_t(u"Storage Type"))
     storage_format = SingleLineText(title=_t(u"Storage Format"))
@@ -109,6 +115,7 @@ class IStorageDomainInfo(IComponentInfo):
 class IDiskInfo(IComponentInfo):
     """Interface for the Disk API (Info) Adapter."""
 
+    id = SingleLineText(title=_t(u"ID"))
     bootable = SingleLineText(title=_t(u"Bootable"))
     interface = SingleLineText(title=_t(u"Interface"))
     format = SingleLineText(title=_t(u"Format"))
@@ -119,6 +126,7 @@ class IDiskInfo(IComponentInfo):
 class IHostNicInfo(IComponentInfo):
     """Interface for the Host Nic API (Info) Adapter."""
 
+    id = SingleLineText(title=_t(u"ID"))
     mac = SingleLineText(title=_t(u"MAC Address"))
     ip = SingleLineText(title=_t(u"IP Address"))
     netmask = SingleLineText(title=_t(u"Netmask"))
@@ -130,5 +138,6 @@ class IHostNicInfo(IComponentInfo):
 class IVmNicInfo(IComponentInfo):
     """Interface for the VM Nic API (Info) Adapter."""
 
+    id = SingleLineText(title=_t(u"ID"))
     interface = SingleLineText(title=_t(u"Interface"))
     mac = SingleLineText(title=_t(u"Mac"))

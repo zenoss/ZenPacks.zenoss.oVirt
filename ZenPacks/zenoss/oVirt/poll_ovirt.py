@@ -581,6 +581,7 @@ class oVirtPoller(object):
 
     def _print_output(self):
         print json.dumps({'events': self._events, 'values': self._values}, sort_keys=True, indent=4)
+        sys.stdout.flush()
 
     def _process_events(self, response):
         response = response[0]
