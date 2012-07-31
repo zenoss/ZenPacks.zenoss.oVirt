@@ -33,7 +33,10 @@ from txovirt import CamelCase
 
 # Map of ovirt severities to Zenoss Severity.
 SEVERITY_MAP = {
+    'normal': 2,
     'warning': 3,
+    'alert': 4,
+    'error': 5,
     }
 
 #Map of ErrorCodes response parameter to textual description.
@@ -613,43 +616,58 @@ class oVirtPoller(object):
                 continue
             if 'logged out' in event['description']:
                 continue
-
             event_type = EVENT_TYPE_MAP.get(int(event['code']), 'Unknown (%s)' % event['code'])
-            #Process severity
-            if 'severity' in event.keys():
-                severity = SEVERITY_MAP.get(event['severity'], 3)
-            else:
-                severity = 3
 
-            events.append(dict(
+            #Process severity
+            severity = SEVERITY_MAP.get(event.get('severity',3), 3)
+          
+            # if the component type is in the event_type use that to set the component for the event.
+            component = None
+            for key in [key for key in event.keys() if key not in ['code', 'description', 'time', 'text', 'href', 'user', 'time', 'id', 'severity']]:
+                if key.lower() in event_type.lower():
+                    component = event[key]['id']
+                    continue
+
+            # If we dont have a component at this point try and map it out to known component types. 
+            # vm -> cluster -> host
+           
+  
+            if not component:
+                if 'vm' in event.keys():
+                    component = event['vm']['id']
+                elif 'cluster' in event.keys():
+                    component = event['cluster']['id']
+                elif 'host' in event.keys():
+                    component = event['host']['id']
+                elif 'data_center' in event.keys():
+                    component = event['data_center']['id']
+                elif 'storage_domain' in event.keys():
+                    component = event['storage_domain']['id']
+                #else:
+                    # No component set this will be a device level event.
+                    #print event_type
+                    #print [key for key in event.keys() if key not in ['code', 'description', 'time', 'text', 'href', 'user', 'time', 'id', 'severity']]
+    
+            evt=dict(
                 severity=severity,
                 summary=event['description'],
                 message='%s: %s' % (event_type, event['description']),
                 eventKey='event_%s' % event['id'],
                 eventClassKey='ovirt_alert',
                 rcvtime=rcvtime,
+                component=component,
                 ovirt_type=event_type
-                ))
+                )
+            
+            # Don't add null components
+            if not component:
+               del evt['component']
+
+            events.append(evt)
 
         # Send clear events for events that no longer exist.
-        if last_events:
-            for event in last_events:
-                # Dont send clears for logins and logouts
-                if 'logged in' in event['description']:
-                    continue
-                if 'logged out' in event['description']:
-                    continue
-                if event['id'] not in new_event_ids:
-                    event_type = EVENT_TYPE_MAP.get(int(event['code']), 'Unknown (%s)' % event['code'])
-                    events.append(dict(
-                        severity=0,
-                        summary=event['description'],
-                        message='%s: %s' % (event_type, event['description']),
-                        eventKey='event_%s' % event['id'],
-                        eventClassKey='ovirt_alert',
-                        ovirt_type=event_type,
-                        ))
-
+        # If ovirt had event lifecycle management we could send clears here.
+        
         self._save(new_events, key='events')
         return events
 

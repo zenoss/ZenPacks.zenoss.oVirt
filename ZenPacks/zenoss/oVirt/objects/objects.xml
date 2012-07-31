@@ -2627,4 +2627,17 @@ AVERAGE
 </object>
 </tomanycont>
 </object>
+<!-- ('', 'zport', 'dmd', 'Events', 'oVirt') -->
+<object id='/zport/dmd/Events/oVirt' module='Products.ZenEvents.EventClass' class='EventClass'>
+<tomanycont id='instances'>
+<object id='ovirt_alert' module='Products.ZenEvents.EventClassInst' class='EventClassInst'>
+<property type="string" id="eventClassKey" mode="w" >
+ovirt_alert
+</property>
+<property type="int" id="sequence" mode="w" >
+7
+</property>
+</object>
+</tomanycont>
+</object>
 </objects>

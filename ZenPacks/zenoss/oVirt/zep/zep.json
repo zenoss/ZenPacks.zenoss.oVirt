@@ -1,0 +1,9 @@
+{
+    "EventDetailItem": [
+        {
+            "key": "ovirt_type",
+            "type": "1",
+            "name": "Ovirt Event Type"
+        }
+    ]
+}
