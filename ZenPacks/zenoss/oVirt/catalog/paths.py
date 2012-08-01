@@ -35,3 +35,20 @@ class DataCenterPathReporter(DefaultPathReporter):
         for storagedomain in storagedomains:
             paths.extend(relPath(storagedomain, 'system'))
         return paths
+
+
+class HostPathReporter(DefaultPathReporter):
+    def getPaths(self):
+        paths = super(HostPathReporter, self).getPaths()
+        vms = self.context.vms()
+        for vm in vms:
+            paths.extend(relPath(vm, 'cluster'))
+        return paths
+
+class VmsPathReporter(DefaultPathReporter):
+    def getPaths(self):
+        paths = super(VmsPathReporter, self).getPaths()
+        host = self.context.host()
+        if host:
+            paths.extend(relPath(host, 'cluster'))
+        return paths

@@ -12,8 +12,9 @@
 ###########################################################################
 
 from Products.ZenRelations.RelSchema import ToManyCont, ToMany, ToOne
-
 from ZenPacks.zenoss.oVirt import BaseComponent
+from Products.Zuul.catalog.events import IndexingEvent
+from zope.event import notify
 
 
 class Vms(BaseComponent):
@@ -55,12 +56,29 @@ class Vms(BaseComponent):
              'ZenPacks.zenoss.oVirt.Disk.Disk',
              'vm')
               ),
+        
+        ('host', ToOne(ToMany,
+             'ZenPacks.zenoss.oVirt.Host.Host',
+             'vms')
+              ),
 
         ('nics', ToManyCont(ToOne,
              'ZenPacks.zenoss.oVirt.VmNic.VmNic',
              'vm')
               ),
         )
+
+    def setHostId(self, id):
+        for host in self.cluster().hosts():
+            if id == host.id:
+                self.host.addRelation(host)
+                notify(IndexingEvent(host, 'path', False))
+                return
+
+    def getHostId(self):
+        host = self.host()
+        if host:
+            return host.id
 
     def device(self):
         return self.cluster().device()

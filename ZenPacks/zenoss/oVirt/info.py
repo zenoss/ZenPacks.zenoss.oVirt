@@ -112,6 +112,11 @@ class HostInfo(BaseComponentInfo):
     def nic_count(self):
         return self._object.nics.countObjects()
 
+    @property
+    @info
+    def vm_count(self):
+        return self._object.vms.countObjects()
+
 
 class VmInfo(BaseComponentInfo):
     """VM API (Info) adapter factory."""
@@ -137,6 +142,11 @@ class VmInfo(BaseComponentInfo):
     @info
     def nic_count(self):
         return self._object.nics.countObjects()
+    
+    @property
+    @info
+    def host(self):
+        return self._object.host()
 
 
 class StorageDomainInfo(BaseComponentInfo):

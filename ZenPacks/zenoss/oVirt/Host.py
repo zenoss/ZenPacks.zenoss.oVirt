@@ -11,7 +11,7 @@
 #
 ###########################################################################
 
-from Products.ZenRelations.RelSchema import ToManyCont, ToOne
+from Products.ZenRelations.RelSchema import ToManyCont, ToMany, ToOne
 
 from ZenPacks.zenoss.oVirt import BaseComponent
 
@@ -51,6 +51,11 @@ class Host(BaseComponent):
 
         ('nics', ToManyCont(ToOne,
              'ZenPacks.zenoss.oVirt.HostNic.HostNic',
+             'host')
+              ),
+        
+        ('vms', ToMany(ToOne,
+             'ZenPacks.zenoss.oVirt.Vms.Vms',
              'host')
               ),
         )

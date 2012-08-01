@@ -104,6 +104,18 @@
         provides="Products.Zuul.catalog.interfaces.IPathReporter"
         />
 
+    <adapter
+        factory=".catalog.paths.HostPathReporter"
+        for=".Host.Host"
+        provides="Products.Zuul.catalog.interfaces.IPathReporter"
+        />
+
+    <adapter
+        factory=".catalog.paths.VmsPathReporter"
+        for=".Vms.Vms"
+        provides="Products.Zuul.catalog.interfaces.IPathReporter"
+        />
+
     <!-- Include Browser Code -->
     <include package=".browser"/>
 

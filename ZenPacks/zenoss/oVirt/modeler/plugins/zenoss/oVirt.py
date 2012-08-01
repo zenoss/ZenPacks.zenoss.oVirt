@@ -196,7 +196,7 @@ class oVirt(PythonPlugin):
                              'modname': 'ZenPacks.zenoss.oVirt.Vms',
                              'attributes': ['guid', 'name', 'cluster_guid',
                              'vm_type', 'state', 'memory', 'cpu_cores', 'cpu_sockets',
-                             'os_type', 'os_boot', 'creation_time',
+                             'os_type', 'os_boot', 'creation_time', 'setHostId',
                              'affinity', 'memory_policy_guaranteed'],  # This needs to have the guid first because its the id we are using else where
                                                                        # Took start_time out because it wasnt consistent from the api and it was causing
                                                                        # the modeller to update objects on every run. 
@@ -215,7 +215,10 @@ class oVirt(PythonPlugin):
                                           'lookup': "find('cluster').attrib['id']",
                                           'delete': True,
                                         },
-                              'vm_type': {'default': '',
+                             'setHostId': {'default': '',
+                                          'lookup': "find('host').attrib['id']",
+                                        },
+                             'vm_type': {'default': '',
                                           'lookup': "find('type').text",
                                         },
                               'state': {'default': '',

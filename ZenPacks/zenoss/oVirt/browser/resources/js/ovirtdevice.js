@@ -348,6 +348,7 @@ ZC.oVirtVmsPanel = Ext.extend(ZC.oVirtComponentGridPanel, {
                 {name: 'cpu_sockets'},
                 {name: 'os_type'},
                 {name: 'os_boot'},
+                {name: 'host'},
                 {name: 'nic_count'},
                 {name: 'creation_time'},
                 {name: 'affinity'},
@@ -372,6 +373,13 @@ ZC.oVirtVmsPanel = Ext.extend(ZC.oVirtComponentGridPanel, {
                 header: _t('Virtual Machine'),
                 renderer: Zenoss.render.oVirt_entityLinkFromGrid,
                 width: 70
+            },{
+                id: 'host',
+                dataIndex: 'host',
+                header: _t('Host'),
+                renderer: Zenoss.render.oVirt_entityLinkFromGrid,
+                sortable: true,
+                width: 100
             },{
                 id: 'cluster',
                 dataIndex: 'cluster',
@@ -468,6 +476,7 @@ ZC.oVirtHostPanel = Ext.extend(ZC.oVirtComponentGridPanel, {
                 {name: 'cpu_speed'},
                 {name: 'storage_manager'},
                 {name: 'nic_count'},
+                {name: 'vm_count'},
                 {name: 'monitor'},
                 {name: 'monitored'},
                 {name: 'locking'}
@@ -527,6 +536,11 @@ ZC.oVirtHostPanel = Ext.extend(ZC.oVirtComponentGridPanel, {
                 id: 'nic_count',
                 dataIndex: 'nic_count',
                 header: _t('# Nics'),
+                width: 60
+            },{
+                id: 'vm_count',
+                dataIndex: 'vm_count',
+                header: _t('# Vms'),
                 width: 60
             },{
                 id: 'monitored',
@@ -968,6 +982,24 @@ Zenoss.nav.appendTo('Component', [{
     },
     setContext: function(uid) {
         ZC.oVirtHostNicPanel.superclass.setContext.apply(this, [uid]);
+    }
+}]);
+
+//Add vms dropdown to the hosts component
+Zenoss.nav.appendTo('Component', [{
+    id: 'component_hostvms',
+    text: _t('Related Vms'),
+    xtype: 'oVirtVmsPanel',
+    subComponentGridPanel: true,
+    filterNav: function(navpanel) {
+        if (navpanel.refOwner.componentType == 'oVirtHost') {
+            return true;
+        } else {
+            return false;
+        }
+    },
+    setContext: function(uid) {
+        ZC.oVirtVmsPanel.superclass.setContext.apply(this, [uid]);
     }
 }]);
 

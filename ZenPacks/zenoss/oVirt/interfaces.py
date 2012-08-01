@@ -97,6 +97,7 @@ class IHostInfo(IComponentInfo):
     cpu_name = SingleLineText(title=_t(u"Cpu Type"))
     cpu_speed = SingleLineText(title=_t(u"Cpu Speed"))
     nic_count = schema.Int(title=_t(u"Nic Count"))
+    vm_count = schema.Int(title=_t(u"Vm Count"))
 
 
 class IStorageDomainInfo(IComponentInfo):
