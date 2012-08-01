@@ -100,7 +100,6 @@ ZC.oVirtDataCenterPanel = Ext.extend(ZC.oVirtComponentGridPanel, {
                 {name: 'cluster_count'},
                 {name: 'storage_type'},
                 {name: 'storage_format'},
-                {name: 'status'},
                 {name: 'monitor'},
                 {name: 'monitored'},
                 {name: 'locking'}
@@ -187,7 +186,6 @@ ZC.oVirtClusterPanel = Ext.extend(ZC.oVirtComponentGridPanel, {
                 {name: 'entity'},
                 {name: 'host_count'},
                 {name: 'vm_count'},
-                {name: 'status'},
                 {name: 'monitor'},
                 {name: 'monitored'},
                 {name: 'locking'}
@@ -266,7 +264,6 @@ ZC.oVirtStorageDomainPanel = Ext.extend(ZC.oVirtComponentGridPanel, {
                 {name: 'storage_type'},
                 {name: 'storage_format'},
                 {name: 'disk_count'},
-                {name: 'status'},
                 {name: 'monitor'},
                 {name: 'monitored'},
                 {name: 'locking'}
@@ -293,11 +290,6 @@ ZC.oVirtStorageDomainPanel = Ext.extend(ZC.oVirtComponentGridPanel, {
                 dataIndex: 'datacenter',
                 header: _t('Datacenter'),
                 renderer: Zenoss.render.oVirt_entityLinkFromGrid,
-                width: 70
-            },{
-                id: 'status',
-                dataIndex: 'status',
-                header: _t('Status'),
                 width: 70
             },{
                 id: 'disk_count',
@@ -348,7 +340,6 @@ ZC.oVirtVmsPanel = Ext.extend(ZC.oVirtComponentGridPanel, {
                 {name: 'severity'},
                 {name: 'entity'},
                 {name: 'cluster'},
-                {name: 'status'},
                 {name: 'monitor'},
                 {name: 'vm_type'},
                 {name: 'state'},
@@ -389,11 +380,6 @@ ZC.oVirtVmsPanel = Ext.extend(ZC.oVirtComponentGridPanel, {
                 renderer: Zenoss.render.oVirt_entityLinkFromGrid,
                 sortable: true,
                 width: 60
-            },{
-                id: 'state',
-                dataIndex: 'state',
-                header: _t('State'),
-                width: 45
             },{
                 id: 'vm_type',
                 dataIndex: 'vm_type',
@@ -475,8 +461,6 @@ ZC.oVirtHostPanel = Ext.extend(ZC.oVirtComponentGridPanel, {
                 {name: 'severity'},
                 {name: 'entity'},
                 {name: 'cluster'},
-                {name: 'status_state'},
-                {name: 'status_detail'},
                 {name: 'address'},
                 {name: 'memory'},
                 {name: 'cpu_cores'},
@@ -519,18 +503,6 @@ ZC.oVirtHostPanel = Ext.extend(ZC.oVirtComponentGridPanel, {
                 sortable: true,
                 width: 100
             },{
-                id: 'status_state',
-                dataIndex: 'status_state',
-                header: _t('State'),
-                sortable: true,
-                width: 100
-            },{
-                id: 'status_detail',
-                dataIndex: 'status_detail',
-                header: _t('Detail'),
-                sortable: true,
-                width: 180
-            },{
                 id: 'cpu_cores',
                 dataIndex: 'cpu_cores',
                 header: _t('Cpu Cores'),
@@ -550,7 +522,7 @@ ZC.oVirtHostPanel = Ext.extend(ZC.oVirtComponentGridPanel, {
                 id: 'nic_count',
                 dataIndex: 'nic_count',
                 header: _t('# Nics'),
-                width: 60 
+                width: 60
             },{
                 id: 'monitored',
                 dataIndex: 'monitored',
@@ -586,7 +558,6 @@ ZC.oVirtVmDiskPanel = Ext.extend(ZC.oVirtComponentGridPanel, {
                 {name: 'entity'},
                 {name: 'vm'},
                 {name: 'storagedomain'},
-                {name: 'status'},
                 {name: 'monitor'},
                 {name: 'monitored'},
                 {name: 'size'},
@@ -626,12 +597,6 @@ ZC.oVirtVmDiskPanel = Ext.extend(ZC.oVirtComponentGridPanel, {
                 renderer: Zenoss.render.oVirt_entityLinkFromGrid,
                 sortable: true,
                 width: 100
-            },{
-                id: 'status',
-                dataIndex: 'status',
-                header: _t('Status'),
-                sortable: true,
-                width: 45
             },{
                 id: 'size',
                 dataIndex: 'size',
@@ -687,7 +652,6 @@ ZC.oVirtVmNicPanel = Ext.extend(ZC.oVirtComponentGridPanel, {
                 {name: 'vm'},
                 {name: 'interface'},
                 {name: 'mac'},
-                {name: 'status'},
                 {name: 'monitor'},
                 {name: 'monitored'},
                 {name: 'format'},
@@ -718,12 +682,6 @@ ZC.oVirtVmNicPanel = Ext.extend(ZC.oVirtComponentGridPanel, {
                 renderer: Zenoss.render.oVirt_entityLinkFromGrid,
                 sortable: true,
                 width: 100
-            },{
-                id: 'status',
-                dataIndex: 'status',
-                header: _t('Status'),
-                sortable: true,
-                width: 45
             },{
                 id: 'mac',
                 dataIndex: 'mac',
@@ -775,7 +733,6 @@ ZC.oVirtHostNicPanel = Ext.extend(ZC.oVirtComponentGridPanel, {
                 {name: 'gateway'},
                 {name: 'nicespeed'},
                 {name: 'mac'},
-                {name: 'status'},
                 {name: 'monitor'},
                 {name: 'monitored'},
                 {name: 'format'},
@@ -799,12 +756,6 @@ ZC.oVirtHostNicPanel = Ext.extend(ZC.oVirtComponentGridPanel, {
                 renderer: Zenoss.render.oVirt_entityLinkFromGrid,
                 sortable: true,
                 width: 70
-            },{
-                id: 'status',
-                dataIndex: 'status',
-                header: _t('Status'),
-                sortable: true,
-                width: 45
             },{
                 id: 'host',
                 dataIndex: 'host',

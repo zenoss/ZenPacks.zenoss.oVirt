@@ -95,8 +95,6 @@ class HostInfo(BaseComponentInfo):
     implements(IHostInfo)
 
     address = ProxyProperty('address')
-    status_state = ProxyProperty('status_state')
-    status_detail = ProxyProperty('status_detail')
     memory = ProxyProperty('memory')
     cpu_sockets = ProxyProperty('cpu_sockets')
     cpu_cores = ProxyProperty('cpu_cores')
@@ -120,7 +118,6 @@ class VmInfo(BaseComponentInfo):
     implements(IVmInfo)
 
     vm_type = ProxyProperty('vm_type')
-    state = ProxyProperty('state')
     memory = ProxyProperty('memory')
     cpu_cores = ProxyProperty('cpu_cores')
     cpu_sockets = ProxyProperty('cpu_sockets')
@@ -150,7 +147,6 @@ class StorageDomainInfo(BaseComponentInfo):
     storagedomain_type = ProxyProperty('storagedomain_type')
     storage_type = ProxyProperty('storage_type')
     storage_format = ProxyProperty('storage_format')
-    status = ProxyProperty('status')
 
     @property
     @info
@@ -172,7 +168,6 @@ class DiskInfo(BaseComponentInfo):
     interface = ProxyProperty('interface')
     format = ProxyProperty('format')
     size = ProxyProperty('size')
-    status = ProxyProperty('status')
 
     @property
     @info
@@ -194,7 +189,6 @@ class HostNicInfo(BaseComponentInfo):
     ip = ProxyProperty('ip')
     netmask = ProxyProperty('netmask')
     gateway = ProxyProperty('gateway')
-    status = ProxyProperty('status')
     speed = ProxyProperty('speed')
 
     @property

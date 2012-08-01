@@ -74,7 +74,6 @@ class IVmInfo(IComponentInfo):
 
     id = SingleLineText(title=_t(u"ID"))
     vm_type = SingleLineText(title=_t(u"Virtual Machine Type"))
-    state = SingleLineText(title=_t(u"State"))
     start_time = SingleLineText(title=_t(u"Start Time"))
     creation_time = SingleLineText(title=_t(u"Creation Time"))
     memory = SingleLineText(title=_t(u"Memory"))
@@ -92,8 +91,6 @@ class IHostInfo(IComponentInfo):
 
     id = SingleLineText(title=_t(u"ID"))
     address = SingleLineText(title=_t(u"IP Address"))
-    status_state = SingleLineText(title=_t(u"State"))
-    status_detail = SingleLineText(title=_t(u"State Detail"))
     memory = SingleLineText(title=_t(u"Memory"))
     cpu_sockets = SingleLineText(title=_t(u"Cpu Sockets"))
     cpu_cores = SingleLineText(title=_t(u"Cpu Cores"))
@@ -109,7 +106,6 @@ class IStorageDomainInfo(IComponentInfo):
     storagedomain_type = SingleLineText(title=_t(u"StorageDomain Type"))
     storage_type = SingleLineText(title=_t(u"Storage Type"))
     storage_format = SingleLineText(title=_t(u"Storage Format"))
-    status = SingleLineText(title=_t(u"Status"))
 
 
 class IDiskInfo(IComponentInfo):
@@ -120,7 +116,6 @@ class IDiskInfo(IComponentInfo):
     interface = SingleLineText(title=_t(u"Interface"))
     format = SingleLineText(title=_t(u"Format"))
     size = schema.Int(title=_t(u"Size"))
-    status = SingleLineText(title=_t(u"Status"))
 
 
 class IHostNicInfo(IComponentInfo):
@@ -131,7 +126,6 @@ class IHostNicInfo(IComponentInfo):
     ip = SingleLineText(title=_t(u"IP Address"))
     netmask = SingleLineText(title=_t(u"Netmask"))
     gateway = SingleLineText(title=_t(u"Gateway"))
-    status = SingleLineText(title=_t(u"Status"))
     speed = SingleLineText(title=_t(u"Speed"))
 
 
