@@ -19,7 +19,6 @@ import tempfile
 import json
 import time
 
-import xml.utils.iso8601
 
 from twisted.internet import reactor
 from twisted.internet.defer import DeferredList
@@ -29,7 +28,7 @@ from utils import add_local_lib_path
 add_local_lib_path()
 
 import txovirt
-from txovirt import CamelCase
+
 
 def elementtree_to_dict(element):
     """Recursively convert An ElementTree to a Dictionary.
@@ -136,50 +135,50 @@ class oVirtCounter(object):
 
             data.setdefault(result.tag, []).append(result)
 
-        results={}
-        results.setdefault(self._id,{})
-        
+        results = {}
+        results.setdefault(self._id, {})
+
         # Store the counts of the components by the component id as the key.
         # increment the cluster, hosts, vms etc as we find them.
         # liberal use of setdefault to set the nested datastructures properly.
         for key in data.keys():
             if 'storage_domains' in key:
-                results[self._id]['storagedomainCount']= len(data[key][0].getchildren())
+                results[self._id]['storagedomainCount'] = len(data[key][0].getchildren())
             if 'clusters' in key:
-                results[self._id]['clusterCount']= len(data[key][0].getchildren())
+                results[self._id]['clusterCount'] = len(data[key][0].getchildren())
                 for cluster in data[key][0].getchildren():
                     if cluster.find('data_center') is not None:
-                        results.setdefault(cluster.find('data_center').attrib['id'],{'clusterCount': 0, 'hostCount':0, 'vmsCount':0,'clusterids':[]})
+                        results.setdefault(cluster.find('data_center').attrib['id'], {'clusterCount': 0, 'hostCount': 0, 'vmsCount': 0, 'clusterids': []})
                         results[cluster.find('data_center').attrib['id']]['clusterCount'] += 1
                         results[cluster.find('data_center').attrib['id']]['clusterids'].append(cluster.attrib['id'])
 
             if 'data_centers' in key:
-                results[self._id]['datacenterCount']= len(data[key][0].getchildren())
+                results[self._id]['datacenterCount'] = len(data[key][0].getchildren())
             if 'hosts' in key:
-                results[self._id]['hostCount']= len(data[key][0].getchildren())
+                results[self._id]['hostCount'] = len(data[key][0].getchildren())
                 for host in data[key][0].getchildren():
-                    results.setdefault(host.attrib['id'],{'vmsCount': 0})
+                    results.setdefault(host.attrib['id'], {'vmsCount': 0})
                     if host.find('cluster') is not None:
-                        results.setdefault(host.find('cluster').attrib['id'],{'vmsCount': 0,'hostCount':0})
+                        results.setdefault(host.find('cluster').attrib['id'], {'vmsCount': 0, 'hostCount': 0})
                         results[host.find('cluster').attrib['id']]['hostCount'] += 1
             if 'vms' in key:
-                results[self._id]['vmsCount']= len(data[key][0].getchildren())
+                results[self._id]['vmsCount'] = len(data[key][0].getchildren())
                 for vm in data[key][0].getchildren():
                     if vm.find('cluster') is not None:
-                        results.setdefault(vm.find('cluster').attrib['id'],{'vmsCount': 0,'hostCount':0})
+                        results.setdefault(vm.find('cluster').attrib['id'], {'vmsCount': 0, 'hostCount': 0})
                         results[vm.find('cluster').attrib['id']]['vmsCount'] += 1
                     if vm.find('host') is not None:
-                        results.setdefault(vm.find('host').attrib['id'],{'vmsCount': 0,'clusterCount':0})
+                        results.setdefault(vm.find('host').attrib['id'], {'vmsCount': 0, 'clusterCount': 0})
                         results[vm.find('host').attrib['id']]['vmsCount'] += 1
 
         # post process the resulting dictionary to copy the cluster counts inside a datacenter.
         # remove the temporary clusterids key.
         for key in results:
-            if results[key].has_key('clusterids'):
-               for clusterid in results[key]['clusterids']:
-                   for clusterkeys in results[clusterid].keys():
-                       results[key][clusterkeys] = results[clusterid][clusterkeys]
-               del results[key]['clusterids']
+            if 'cluster_ids' in results[key].keys():
+                for clusterid in results[key]['clusterids']:
+                    for clusterkeys in results[clusterid].keys():
+                        results[key][clusterkeys] = results[clusterid][clusterkeys]
+                del results[key]['clusterids']
 
         self._values.update(results)
 
