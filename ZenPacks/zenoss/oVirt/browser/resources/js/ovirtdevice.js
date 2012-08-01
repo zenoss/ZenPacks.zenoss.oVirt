@@ -911,6 +911,24 @@ Zenoss.nav.appendTo('Component', [{
     }
 }]);
 
+//Add datacenters dropdown to the storage domain
+Zenoss.nav.appendTo('Component', [{
+    id: 'component_datacenters',
+    text: _t('Related DataCenters'),
+    xtype: 'oVirtDataCenterPanel',
+    subComponentGridPanel: true,
+    filterNav: function(navpanel) {
+        if (navpanel.refOwner.componentType == 'oVirtStorageDomain') {
+            return true;
+        } else {
+            return false;
+        }
+    },
+    setContext: function(uid) {
+        ZC.oVirtDataCenterPanel.superclass.setContext.apply(this, [uid]);
+    }
+}]);
+
 //Add vm nics dropdown to the vms component
 Zenoss.nav.appendTo('Component', [{
     id: 'component_vmnics',
