@@ -466,6 +466,7 @@ ZC.oVirtHostPanel = Ext.extend(ZC.oVirtComponentGridPanel, {
                 {name: 'cpu_sockets'},
                 {name: 'cpu_name'},
                 {name: 'cpu_speed'},
+                {name: 'storage_manager'},
                 {name: 'nic_count'},
                 {name: 'monitor'},
                 {name: 'monitored'},
@@ -493,6 +494,11 @@ ZC.oVirtHostPanel = Ext.extend(ZC.oVirtComponentGridPanel, {
                 dataIndex: 'address',
                 header: _t('Address'),
                 sortable: true,
+                width: 100
+            },{
+                id: 'storage_manager',
+                dataIndex: 'storage_manager',
+                header: _t('Storage Manager'),
                 width: 100
             },{
                 id: 'cluster',

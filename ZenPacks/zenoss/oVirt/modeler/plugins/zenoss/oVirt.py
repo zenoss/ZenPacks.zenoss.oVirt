@@ -106,7 +106,7 @@ class oVirt(PythonPlugin):
                              'attributes': ['guid', 'name', 'cluster_guid',
                                             'address', 'status_state', 'status_detail',
                                             'memory', 'cpu_sockets', 'cpu_cores',
-                                            'cpu_name', 'cpu_speed'],  # This needs to have the guid first because its the id we are using else where
+                                            'cpu_name', 'cpu_speed', 'storage_manager'],  # This needs to have the guid first because its the id we are using else where
                              'compname': '"datacenters/%s/clusters/%s" % self.host_compname(data,id)',
                              'name': {'default': '',
                                           'lookup': "find('name').text",
@@ -145,6 +145,9 @@ class oVirt(PythonPlugin):
                                         },
                              'cpu_speed': {'default': '',
                                           'lookup': "find('cpu').find('speed').text",
+                                        },
+                             'storage_manager': {'default': '',
+                                          'lookup': "find('storage_manager').text",
                                         },
                             },
                       'host_nics':

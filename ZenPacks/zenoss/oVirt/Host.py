@@ -27,7 +27,7 @@ class Host(BaseComponent):
     cpu_cores = None
     cpu_name = None
     cpu_speed = None
-
+    storage_manager = None
 
 
     _properties = BaseComponent._properties + (
@@ -38,7 +38,8 @@ class Host(BaseComponent):
                 {'id': 'cpu_sockets', 'type': 'string', 'mode': 'w'},
                 {'id': 'cpu_cores', 'type': 'string', 'mode': 'w'},
                 {'id': 'cpu_name', 'type': 'string', 'mode': 'w'},
-                {'id': 'cpu_speed', 'type': 'string', 'mode': 'w'}
+                {'id': 'cpu_speed', 'type': 'string', 'mode': 'w'},
+                {'id': 'storage_manager', 'type': 'string', 'mode': 'w'}
 
     )
 

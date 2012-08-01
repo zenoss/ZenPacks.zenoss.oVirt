@@ -89,6 +89,7 @@ class IHostInfo(IComponentInfo):
     """Interface for the Host API (Info) Adapter."""
 
     id = SingleLineText(title=_t(u"ID"))
+    storage_manager = schema.Int(title=_t(u"Storage Manager"))
     address = SingleLineText(title=_t(u"IP Address"))
     memory = SingleLineText(title=_t(u"Memory"))
     cpu_sockets = SingleLineText(title=_t(u"Cpu Sockets"))

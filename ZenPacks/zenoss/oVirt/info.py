@@ -100,6 +100,7 @@ class HostInfo(BaseComponentInfo):
     cpu_cores = ProxyProperty('cpu_cores')
     cpu_name = ProxyProperty('cpu_name')
     cpu_speed = ProxyProperty('cpu_speed')
+    storage_manager = ProxyProperty('storage_manager')
 
     @property
     @info
