@@ -287,16 +287,6 @@ ZC.oVirtStorageDomainPanel = Ext.extend(ZC.oVirtComponentGridPanel, {
                 renderer: Zenoss.render.oVirt_entityLinkFromGrid,
                 width: 70
             },{
-                id: 'datacenter_count',
-                dataIndex: 'datacenter_count',
-                header: _t('# Datacenters'),
-                width: 70
-            },{
-                id: 'disk_count',
-                dataIndex: 'disk_count',
-                header: _t('# Disks'),
-                width: 70
-            },{
                 id: 'storagedomain_type',
                 dataIndex: 'storagedomain_type',
                 header: _t('Type'),
@@ -306,6 +296,16 @@ ZC.oVirtStorageDomainPanel = Ext.extend(ZC.oVirtComponentGridPanel, {
                 dataIndex: 'storage_type',
                 header: _t('Storage Type'),
                 width: 90
+            },{
+                id: 'datacenter_count',
+                dataIndex: 'datacenter_count',
+                header: _t('# Datacenters'),
+                width: 80
+            },{
+                id: 'disk_count',
+                dataIndex: 'disk_count',
+                header: _t('# Disks'),
+                width: 70
             },{
                 id: 'monitored',
                 dataIndex: 'monitored',

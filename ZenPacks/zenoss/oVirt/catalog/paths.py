@@ -22,7 +22,16 @@ class DiskPathReporter(DefaultPathReporter):
 class StorageDomainPathReporter(DefaultPathReporter):
     def getPaths(self):
         paths = super(StorageDomainPathReporter, self).getPaths()
-        datacenter = self.context.datacenter()
-        if datacenter:
+        datacenters = self.context.datacenter()
+        for datacenter in datacenters:
             paths.extend(relPath(datacenter, 'system'))
+        return paths
+
+
+class DataCenterPathReporter(DefaultPathReporter):
+    def getPaths(self):
+        paths = super(DataCenterPathReporter, self).getPaths()
+        storagedomains = self.context.storagedomains()
+        for storagedomain in storagedomains:
+            paths.extend(relPath(storagedomain, 'system'))
         return paths

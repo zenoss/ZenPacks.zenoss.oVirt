@@ -98,6 +98,12 @@
         provides="Products.Zuul.catalog.interfaces.IPathReporter"
         />
 
+    <adapter
+        factory=".catalog.paths.DataCenterPathReporter"
+        for=".DataCenter.DataCenter"
+        provides="Products.Zuul.catalog.interfaces.IPathReporter"
+        />
+
     <!-- Include Browser Code -->
     <include package=".browser"/>
 
