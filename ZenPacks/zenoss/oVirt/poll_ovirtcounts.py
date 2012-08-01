@@ -1,30 +1,85 @@
 #!/usr/bin/env python
-import Globals
-import sys
+###########################################################################
+#
+# This program is part of Zenoss Core, an open source monitoring platform.
+# Copyright (C) 2011, 2012 Zenoss Inc.
+#
+# This program is free software; you can redistribute it and/or modify it
+# under the terms of the GNU General Public License version 2 or (at your
+# option) any later version as published by the Free Software Foundation.
+#
+# For complete information please visit: http://www.zenoss.com/oss/
+#
+###########################################################################
+
 import os
-import json
+import sys
 import md5
-import time
 import tempfile
+import json
+import time
 
-from Products.ZenUtils.ZenScriptBase import ZenScriptBase
-from Products.ZenUtils.Utils import unused
+import xml.utils.iso8601
 
-unused(Globals)
+from twisted.internet import reactor
+from twisted.internet.defer import DeferredList
+
+from utils import add_local_lib_path
+
+add_local_lib_path()
+
+import txovirt
+from txovirt import CamelCase
+
+def elementtree_to_dict(element):
+    """Recursively convert An ElementTree to a Dictionary.
+    This misses cases, but is good enough for event processing"""
+
+    node = {}
+
+    text = getattr(element, 'text', None)
+    if text is not None:
+        node['text'] = text
+
+    node.update(element.items())  # element's attributes
+
+    child_nodes = {}
+    for child in element:  # element's children
+        child_nodes.setdefault(child.tag, []).append(elementtree_to_dict(child))
+
+    # convert all single-element lists into non-lists
+    # This makes major assumptions and simplifications
+    for key, value in child_nodes.items():
+        if len(value) == 1:
+            if 'text' in value[0].keys():
+                child_nodes[key] = value[0]['text']
+            else:
+                child_nodes[key] = value[0]
+
+    node.update(child_nodes.items())
+    return node
 
 
 class oVirtCounter(object):
-    """Caching Counter that counts subcomponents"""
+    """Caching poller that gathers counts from an ovirt system"""
 
-    def __init__(self, device):
-        self._device = device
+    def __init__(self, url, username, domain, password, ovirt_id):
+        self._url = url
+        self._username = username
+        self._domain = domain
+        self._password = password
+        self._id = ovirt_id
         self._values = {}
         self._events = []
+        self.client = txovirt.Client(
+            self._url,
+            self._username,
+            self._domain,
+            self._password)
 
     def _temp_filename(self, key):
-        """Create a tenpfile for the cache based on devicename"""
-
-        target_hash = md5.md5('ovirt+%s' % self._device).hexdigest()
+        """Create a tempfile for the cache based on a key"""
+        target_hash = md5.md5('%s+%s+%s+counts' % (self._url, self._username, self._domain)).hexdigest()
 
         return os.path.join(
             tempfile.gettempdir(),
@@ -51,70 +106,142 @@ class oVirtCounter(object):
             values = json.load(tmp)
             tmp.close()
         except ValueError:
-            # Error loading the json out of the cache, lets remove the
-            # cache.
+            # Error loading the json out of the cache, lets remove the cache.
             os.unlink(tmpfile)
             return None
+
         return values
 
     def _saved_values(self):
         return self._saved(key='values')
 
     def _print_output(self):
-        print json.dumps({'events': self._events, 'values': self._values},
-                        sort_keys=True, indent=4)
+        print json.dumps({'events': self._events, 'values': self._values}, sort_keys=True, indent=4)
+        sys.stdout.flush()
 
-    def _process(self):
-        results = {}
-        device = self._device
-        results.setdefault(device.id, {})
-        results[device.id]['storagedomainCount'] = device.storagedomains._count
-        results[device.id]['datacenterCount'] = device.datacenters._count
-        clusters = 0
-        hosts = 0
-        vms = 0
+    def _callback(self, results):
+        data = {}
+        for success, result in results:
+            if not success:
+                error = result.getErrorMessage()
+                self._events.append(dict(
+                    severity=4,
+                    summary='oVirt count error: %s' % error,
+                    eventKey='ovirt_count_failure',
+                    eventClassKey='ovirt_count_error',
+                    ))
 
-        for datacenter in device.datacenters():
-            results.setdefault(datacenter.id, {})
-            results[datacenter.id]['clusterCount'] = datacenter.clusters._count
-            clusters += datacenter.clusters._count
-            for cluster in datacenter.clusters():
-                results.setdefault(cluster.id, {})
-                results[cluster.id]['hostCount'] = cluster.hosts._count
-                results[datacenter.id]['hostCount'] = cluster.hosts._count
-                hosts += cluster.hosts._count
+                self._print_output()
+                os._exit(1)
 
-                results[cluster.id]['vmsCount'] = cluster.vms._count
-                results[datacenter.id]['vmsCount'] = cluster.vms._count
-                vms += cluster.vms._count
+            data.setdefault(result.tag, []).append(result)
 
-        results[device.id]['clusterCount'] = clusters
-        results[device.id]['hostCount'] = hosts
-        results[device.id]['vmsCount'] = vms
-        self._save(results, key='values')
+        results={}
+        results.setdefault(self._id,{})
+        
+        # Store the counts of the components by the component id as the key.
+        # increment the cluster, hosts, vms etc as we find them.
+        # liberal use of setdefault to set the nested datastructures properly.
+        for key in data.keys():
+            if 'storage_domains' in key:
+                results[self._id]['storagedomainCount']= len(data[key][0].getchildren())
+            if 'clusters' in key:
+                results[self._id]['clusterCount']= len(data[key][0].getchildren())
+                for cluster in data[key][0].getchildren():
+                    if cluster.find('data_center') is not None:
+                        results.setdefault(cluster.find('data_center').attrib['id'],{'clusterCount': 0, 'hostCount':0, 'vmsCount':0,'clusterids':[]})
+                        results[cluster.find('data_center').attrib['id']]['clusterCount'] += 1
+                        results[cluster.find('data_center').attrib['id']]['clusterids'].append(cluster.attrib['id'])
+
+            if 'data_centers' in key:
+                results[self._id]['datacenterCount']= len(data[key][0].getchildren())
+            if 'hosts' in key:
+                results[self._id]['hostCount']= len(data[key][0].getchildren())
+                for host in data[key][0].getchildren():
+                    results.setdefault(host.attrib['id'],{'vmsCount': 0})
+                    if host.find('cluster') is not None:
+                        results.setdefault(host.find('cluster').attrib['id'],{'vmsCount': 0,'hostCount':0})
+                        results[host.find('cluster').attrib['id']]['hostCount'] += 1
+            if 'vms' in key:
+                results[self._id]['vmsCount']= len(data[key][0].getchildren())
+                for vm in data[key][0].getchildren():
+                    if vm.find('cluster') is not None:
+                        results.setdefault(vm.find('cluster').attrib['id'],{'vmsCount': 0,'hostCount':0})
+                        results[vm.find('cluster').attrib['id']]['vmsCount'] += 1
+                    if vm.find('host') is not None:
+                        results.setdefault(vm.find('host').attrib['id'],{'vmsCount': 0,'clusterCount':0})
+                        results[vm.find('host').attrib['id']]['vmsCount'] += 1
+
+        # post process the resulting dictionary to copy the cluster counts inside a datacenter.
+        # remove the temporary clusterids key.
+        for key in results:
+            if results[key].has_key('clusterids'):
+               for clusterid in results[key]['clusterids']:
+                   for clusterkeys in results[clusterid].keys():
+                       results[key][clusterkeys] = results[clusterid][clusterkeys]
+               del results[key]['clusterids']
+
         self._values.update(results)
 
+        if len(self._values.keys()) > 0:
+            self._save(self._values, key='values')
+
+        self._events.append(dict(
+            severity=0,
+            summary='oVirt counted successfully',
+            eventKey='ovirt_count_failure',
+            eventClassKey='ovirt_count_success',
+            ))
+
+        self._print_output()
+
+        # We are not needing any more data, stop the reactor.
+        if reactor.running:
+            reactor.stop()
+
     def run(self):
+        deferreds = []
+
+        # Try the cache if its available
         saved_values = self._saved_values()
         if saved_values is not None:
             self._values = saved_values
+            # Send success that we read from the cache.
+            self._events.append(dict(
+                severity=0,
+                summary='oVirt polled successfully',
+                eventKey='ovirt_failure',
+                eventClassKey='ovirt_success',
+                ))
 
-            # Print the results for the parser to read.
+            #Print the results for the parser to read.
             self._print_output()
             return
-        else:
-            self._process()
-            self._print_output()
-            return
 
+        deferreds.extend((
+            self.client.request('hosts'),
+            self.client.request('vms'),
+            self.client.request('storagedomains'),
+            self.client.request('datacenters'),
+            self.client.request('clusters'),
+            ))
 
-if __name__ == "__main__":
-    if len(sys.argv) < 2:
-        print "Usage %s <device>" % (sys.argv[0],)
+        # Now start processing our tasks with the results going to the self._callback method.
+        DeferredList(deferreds, consumeErrors=True).addCallback(self._callback)
+
+        reactor.run()
+        #Nothing will run after this line, unless the reactor is stopped.
+
+if __name__ == '__main__':
+    usage = "Usage: %s <url> <username> <domain> <password> <id>"
+    url = username = domain = password = ovirt_id = None
+
+    try:
+        url, username, domain, password, ovirt_id = sys.argv[1:6]
+    except ValueError:
+        print >> sys.stderr, usage % sys.argv[0]
         sys.exit(1)
 
-    dmd = ZenScriptBase(connect=True).dmd
-    device = dmd.Devices.findDeviceByIdOrIp(sys.argv[1])
-    ovCounter = oVirtCounter(device)
-
-    ovCounter.run()
+    #time.sleep(random.randint(1, 5))
+    counter = oVirtCounter(url, username, domain, password, ovirt_id)
+    counter.run()
