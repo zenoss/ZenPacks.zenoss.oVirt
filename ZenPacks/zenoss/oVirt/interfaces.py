@@ -74,7 +74,6 @@ class IVmInfo(IComponentInfo):
 
     id = SingleLineText(title=_t(u"ID"))
     vm_type = SingleLineText(title=_t(u"Virtual Machine Type"))
-    start_time = SingleLineText(title=_t(u"Start Time"))
     creation_time = SingleLineText(title=_t(u"Creation Time"))
     memory = SingleLineText(title=_t(u"Memory"))
     memory_policy_guaranteed = SingleLineText(title=_t(u"Guaranteed Memory Policy"))
@@ -106,6 +105,7 @@ class IStorageDomainInfo(IComponentInfo):
     storagedomain_type = SingleLineText(title=_t(u"StorageDomain Type"))
     storage_type = SingleLineText(title=_t(u"Storage Type"))
     storage_format = SingleLineText(title=_t(u"Storage Format"))
+    datacenter_count = schema.Int(title=_t(u"DataCenter Count"))
 
 
 class IDiskInfo(IComponentInfo):

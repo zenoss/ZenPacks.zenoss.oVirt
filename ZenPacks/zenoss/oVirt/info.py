@@ -123,7 +123,6 @@ class VmInfo(BaseComponentInfo):
     cpu_sockets = ProxyProperty('cpu_sockets')
     os_type = ProxyProperty('os_type')
     os_boot = ProxyProperty('os_boot')
-    start_time = ProxyProperty('start_time')
     creation_time = ProxyProperty('creation_time')
     affinity = ProxyProperty('affinity')
     memory_policy_guaranteed = ProxyProperty('memory_policy_guaranteed')
@@ -150,13 +149,13 @@ class StorageDomainInfo(BaseComponentInfo):
 
     @property
     @info
-    def datacenter(self):
-        return self._object.datacenter()
+    def disk_count(self):
+        return self._object.disks.countObjects()
 
     @property
     @info
-    def disk_count(self):
-        return self._object.disks.countObjects()
+    def datacenter_count(self):
+        return self._object.datacenter.countObjects()
 
 
 class DiskInfo(BaseComponentInfo):
