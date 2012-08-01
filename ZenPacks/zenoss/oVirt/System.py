@@ -16,7 +16,7 @@ from Products.ZenRelations.RelSchema import ToManyCont, ToOne
 
 
 class System(Device):
-    meta_type = portal_type = "System"
+    meta_type = portal_type = "oVirtSystem"
 
     _relations = Device._relations + (
         ('datacenters', ToManyCont(ToOne, 'ZenPacks.zenoss.oVirt.DataCenter.DataCenter', 'system')),

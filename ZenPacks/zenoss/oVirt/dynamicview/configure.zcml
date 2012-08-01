@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="utf-8"?>
+<configure xmlns="http://namespaces.zope.org/zope">
+
+    <!-- IRelatable Adapters -->
+    <adapter
+        provides="ZenPacks.zenoss.DynamicView.interfaces.IRelatable"
+        for="..System.System"
+        factory=".adapters.SystemRelatable"
+        />
+
+    <adapter
+        provides="ZenPacks.zenoss.DynamicView.interfaces.IRelatable"
+        for="..DataCenter.DataCenter"
+        factory=".adapters.DataCenterRelatable"
+        />
+
+    <adapter
+        provides="ZenPacks.zenoss.DynamicView.interfaces.IRelatable"
+        for="..Cluster.Cluster"
+        factory=".adapters.ClusterRelatable"
+        />
+
+    <adapter
+        provides="ZenPacks.zenoss.DynamicView.interfaces.IRelatable"
+        for="..Host.Host"
+        factory=".adapters.HostRelatable"
+        />
+
+    <adapter
+        provides="ZenPacks.zenoss.DynamicView.interfaces.IRelatable"
+        for="..Vms.Vms"
+        factory=".adapters.VmsRelatable"
+        />
+
+    <!-- IRelationsProvider Subscribers -->
+    <subscriber
+        provides="ZenPacks.zenoss.DynamicView.interfaces.IRelationsProvider"
+        for="..System.System"
+        factory=".adapters.SystemRelationsProvider"
+        />
+
+    <subscriber
+        provides="ZenPacks.zenoss.DynamicView.interfaces.IRelationsProvider"
+        for="..DataCenter.DataCenter"
+        factory=".adapters.DataCenterRelationsProvider"
+        />
+
+    <subscriber
+        provides="ZenPacks.zenoss.DynamicView.interfaces.IRelationsProvider"
+        for="..Cluster.Cluster"
+        factory=".adapters.ClusterRelationsProvider"
+        />
+
+    <subscriber
+        provides="ZenPacks.zenoss.DynamicView.interfaces.IRelationsProvider"
+        for="..Host.Host"
+        factory=".adapters.HostRelationsProvider"
+        />
+    
+    <subscriber
+        provides="ZenPacks.zenoss.DynamicView.interfaces.IRelationsProvider"
+        for="..Vms.Vms"
+        factory=".adapters.VmsRelationsProvider"
+        />
+
+
+
+
+
+
+
+    <!-- Dynamic View -->
+    <include package="ZenPacks.zenoss.DynamicView" file="meta.zcml"/>
+
+    <relatableGroup
+       name="oVirt"
+       groupType="system"
+       icon="/++resource++ovirt/img/oVirt-icon.png"
+       weight="11"
+       />
+    
+    <dynamicViewToGroup
+       view="service_view"
+       group="oVirt"
+       weight="550"
+       />
+
+    <dynamicViewToGroup
+       view="component_view"
+       group="oVirt"
+       weight="215"
+       />
+
+    <dynamicViewToGroup
+       view="subcomponent_view"
+       group="oVirt"
+       weight="130"
+       />
+ 
+</configure>

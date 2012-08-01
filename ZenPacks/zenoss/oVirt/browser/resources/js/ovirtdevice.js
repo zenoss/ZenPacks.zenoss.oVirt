@@ -997,4 +997,12 @@ Zenoss.nav.appendTo('Component', [{
     }
 }]);
 
+Zenoss.nav.appendTo('Component', [{
+    id: 'subcomponent_view',
+    text: _t('Dynamic View'),
+    xtype: 'dynamicview',
+    relationshipFilter: 'impacted_by',
+    viewName: 'subcomponent_view',
+}]);
+
 })();
