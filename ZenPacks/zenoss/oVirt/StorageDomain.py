@@ -25,7 +25,6 @@ class StorageDomain(BaseComponent):
     storage_format = None
     status = None
 
-
     _properties = BaseComponent._properties + (
         {'id': 'storagedomain_type', 'type': 'string', 'mode': 'w'},
         {'id': 'storage_type', 'type': 'string', 'mode': 'w'},
@@ -44,7 +43,7 @@ class StorageDomain(BaseComponent):
              'storagedomains')
               ),
 
-        ('datacenter', ToOne(ToMany,
+        ('datacenter', ToMany(ToMany,
              'ZenPacks.zenoss.oVirt.DataCenter.DataCenter',
              'storagedomains')
               ),
@@ -54,21 +53,18 @@ class StorageDomain(BaseComponent):
     def device(self):
         return self.system().device()
 
-    def setDatacenterId(self, datacenter_id):
-        print "Setting datacenter %s for %s" % (datacenter_id, self)
-        datacenter = self.system().datacenters._getOb(datacenter_id, None)
-        if not datacenter:
-            return
+    def setDatacenterId(self, ids):
+        new_ids = set(ids)
+        current_ids = set(x.id for x in self.datacenter())
 
-        # Check if the relationship already exists.
-        if self.id in datacenter.storagedomains.objectIds():
-            return
-
-        self.datacenter.addRelation(datacenter)
-        notify(IndexingEvent(datacenter, 'path', False))
+        for id_ in new_ids.symmetric_difference(current_ids):
+            datacenter = self.device().datacenters._getOb(id_)
+            if datacenter:
+                if id_ in new_ids:
+                    self.datacenter.addRelation(datacenter)
+                else:
+                    self.datacenter.removeRelation(datacenter)
+                notify(IndexingEvent(datacenter, 'path', False))
 
     def getDatacenterId(self):
-        if self.datacenter():
-            return self.datacenter().id
-        else:
-            return ''
+        return sorted([x.id for x in self.datacenter()])

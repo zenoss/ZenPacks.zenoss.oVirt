@@ -42,7 +42,7 @@ class DataCenter(BaseComponent):
              'datacenter')
               ),
 
-        ('storagedomains', ToMany(ToOne,
+        ('storagedomains', ToMany(ToMany,
              'ZenPacks.zenoss.oVirt.StorageDomain.StorageDomain',
              'datacenter')
               ),
