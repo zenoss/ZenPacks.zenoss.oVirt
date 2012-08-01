@@ -32,7 +32,13 @@ class oVirt(PythonPlugin):
         'zOVirtPassword',
         'zOVirtDomain',
     )
+
+    # Order to collect from the ovirt server
     collector_map_order = ['data_centers', 'storage_domains', 'clusters', 'hosts', 'vms']
+ 
+    # Order to build the datamap
+    data_map_order = ['data_centers', 'storage_domains', 'clusters', 'hosts', 'vms', 'disks', 'nics', 'host_nics']
+
     collector_map = {'data_centers':
                               {'command': 'datacenters',
                                 #'attributes': ['name','guid','href','description','storage_type','major_version','minor_version','element_status'],
@@ -187,8 +193,10 @@ class oVirt(PythonPlugin):
                              'modname': 'ZenPacks.zenoss.oVirt.Vms',
                              'attributes': ['guid', 'name', 'cluster_guid',
                              'vm_type', 'state', 'memory', 'cpu_cores', 'cpu_sockets',
-                             'os_type', 'os_boot', 'start_time', 'creation_time',
+                             'os_type', 'os_boot', 'creation_time',
                              'affinity', 'memory_policy_guaranteed'],  # This needs to have the guid first because its the id we are using else where
+                                                                       # Took start_time out because it wasnt consistent from the api and it was causing
+                                                                       # the modeller to update objects on every run. 
                              'compname': '"datacenters/%s/clusters/%s" % self.vm_compname(data,id)',
                              'name': {'default': '',
                                           'lookup': "find('name').text",
@@ -317,8 +325,7 @@ class oVirt(PythonPlugin):
                              'relname': 'storagedomains',
                              'modname': 'ZenPacks.zenoss.oVirt.StorageDomain',
                              'attributes': ['guid', 'name', 'setDatacenterId',
-                                            'datacenter_guid', 'storage_type',
-                                            'storage_format', 'storagedomain_type',
+                                            'storage_type', 'storage_format', 'storagedomain_type',
                                             'status'],  # This needs to have the guid first because its the id we are using else where
                              'name': {'default': '',
                                           'lookup': "find('name').text",
@@ -331,11 +338,8 @@ class oVirt(PythonPlugin):
                                           'name': 'id',
                                         },
                              'setDatacenterId': {'default': '',
-                                          'lookup': "find('data_center').attrib['id']"
-                                        },
-                             'datacenter_guid': {'default': '',  # This one is used temporarily to build the compname
                                           'lookup': "find('data_center').attrib['id']",
-                                          'delete': True,
+                                          'array': True
                                         },
                              'storage_type': {'default': '',
                                           'lookup': "find('storage').find('type').text"
@@ -472,7 +476,6 @@ class oVirt(PythonPlugin):
             for entry in result.getchildren():
                 skey = None
                 id = None
-                temp_data = {}
                 # Rewrite the key based on the name in the configuration dictionary above, if it exists.
                 for attribute in self.collector_map[key]['attributes']:
                     if 'name' in self.collector_map[key][attribute].keys():
@@ -500,7 +503,7 @@ class oVirt(PythonPlugin):
                     # Store the id mapping and create the sub-dictionary.
                     if skey == 'id':
                         id = results
-                        temp_data.setdefault(id, {})
+                        data[key].setdefault(id, {})
 
                     # Abort if the id isn't found first. All devices/components must have an id.
                     if not id:
@@ -508,18 +511,15 @@ class oVirt(PythonPlugin):
                         return None
 
                     # store the results to the data dict
-                    temp_data[id][skey] = results
-
-                # Do not store duplicate entries
-                for id in temp_data:
-                    if id in data[key]:
-                        log.debug("Duplicate Key found: skipping id %s", id)
-                        continue
+                    if self.collector_map[key][attribute].get('array'):
+                        print id
+                        if results:
+                            data[key][id].setdefault(skey, []).append(results)
                     else:
-                        data[key][id] = temp_data[id]
+                        data[key][id][skey] = results
 
         print "Results processed into data dictionary"
-        for key in data.keys():
+        for key in self.data_map_order:
             # objmaps are a dictionary if we are processing a component
             if 'compname' in self.collector_map[key].keys():
                 objmaps = {}
@@ -571,5 +571,4 @@ class oVirt(PythonPlugin):
                         objmaps=objmaps
                         )
                     relmap.append(rm)
-
         return relmap
