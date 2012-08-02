@@ -56,7 +56,7 @@ class Vms(BaseComponent):
              'ZenPacks.zenoss.oVirt.Disk.Disk',
              'vm')
               ),
-        
+
         ('host', ToOne(ToMany,
              'ZenPacks.zenoss.oVirt.Host.Host',
              'vms')
@@ -79,6 +79,21 @@ class Vms(BaseComponent):
         host = self.host()
         if host:
             return host.id
+
+    def guest(self):
+        macAddress = [nic.get('mac') for nic in self.nics()]
+        if not macAddress:
+            return None
+
+        cat = self.dmd.ZenLinkManager._getCatalog(layer=2)
+        if cat is not None:
+            # Use the first nic on a device, if we modelled the vm
+            # this nic should already exist
+            brains = cat(macaddress=macAddress[0])
+            if brains:
+                return brains[0].getObject().device()
+
+        return None
 
     def device(self):
         return self.cluster().device()

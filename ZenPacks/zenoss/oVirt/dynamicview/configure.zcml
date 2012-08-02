@@ -80,18 +80,12 @@
         for="..Host.Host"
         factory=".adapters.HostRelationsProvider"
         />
-    
+
     <subscriber
         provides="ZenPacks.zenoss.DynamicView.interfaces.IRelationsProvider"
         for="..Vms.Vms"
         factory=".adapters.VmsRelationsProvider"
         />
-
-
-
-
-
-
 
     <!-- Dynamic View -->
     <include package="ZenPacks.zenoss.DynamicView" file="meta.zcml"/>
@@ -102,7 +96,7 @@
        icon="/++resource++ovirt/img/oVirt-icon.png"
        weight="11"
        />
-    
+
     <dynamicViewToGroup
        view="service_view"
        group="oVirt"
@@ -120,5 +114,5 @@
        group="oVirt"
        weight="130"
        />
- 
+
 </configure>

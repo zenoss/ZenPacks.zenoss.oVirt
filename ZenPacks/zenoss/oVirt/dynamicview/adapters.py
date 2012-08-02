@@ -28,8 +28,8 @@ from ZenPacks.zenoss.oVirt.VmNic import VmNic
 from ZenPacks.zenoss.oVirt.Disk import Disk
 from ZenPacks.zenoss.oVirt.StorageDomain import StorageDomain
 
-### IRelatable Adapters
 
+### IRelatable Adapters
 class SystemRelatable(BaseRelatable):
     adapts(System)
 
@@ -92,6 +92,7 @@ class SystemRelationsProvider(BaseRelationsProvider):
     # running vms etc.  We are purposely not creating a relationship
     # at this time.
 
+
 class DataCenterRelationsProvider(BaseRelationsProvider):
     adapts(DataCenter)
 
@@ -115,6 +116,7 @@ class ClusterRelationsProvider(BaseRelationsProvider):
             for host in self._adapted.hosts():
                 yield self.constructRelationTo(host, TAG_IMPACTED_BY)
 
+
 class VmsRelationsProvider(BaseRelationsProvider):
     adapts(Vms)
 
@@ -128,6 +130,11 @@ class VmsRelationsProvider(BaseRelationsProvider):
 
             for disk in self._adapted.disks():
                 yield self.constructRelationTo(disk, TAG_IMPACTED_BY)
+
+        if type in (TAG_IMPACTS, TAG_ALL):
+            device = self._adapted.guest()
+            if device:
+                yield self.constructRelationTo(device, TAG_IMPACTS)
 
 
 class StorageDomainRelationsProvider(BaseRelationsProvider):
@@ -165,7 +172,7 @@ class HostRelationsProvider(BaseRelationsProvider):
         if type in (TAG_ALL, TAG_IMPACTS):
             for cluster in self._adapted.clusters():
                 yield self.constructRelationTo(cluster, TAG_IMPACTS)
-        
+
         if type in (TAG_ALL, TAG_IMPACTED_BY):
             for nic in self._adapted.nics():
                 yield self.constructRelationTo(nic, TAG_IMPACTED_BY)
