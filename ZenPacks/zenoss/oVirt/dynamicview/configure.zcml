@@ -16,6 +16,12 @@
 
     <adapter
         provides="ZenPacks.zenoss.DynamicView.interfaces.IRelatable"
+        for="..StorageDomain.StorageDomain"
+        factory=".adapters.StorageDomainRelatable"
+        />
+
+    <adapter
+        provides="ZenPacks.zenoss.DynamicView.interfaces.IRelatable"
         for="..Cluster.Cluster"
         factory=".adapters.ClusterRelatable"
         />
@@ -28,8 +34,26 @@
 
     <adapter
         provides="ZenPacks.zenoss.DynamicView.interfaces.IRelatable"
+        for="..HostNic.HostNic"
+        factory=".adapters.HostNicRelatable"
+        />
+
+    <adapter
+        provides="ZenPacks.zenoss.DynamicView.interfaces.IRelatable"
         for="..Vms.Vms"
         factory=".adapters.VmsRelatable"
+        />
+
+    <adapter
+        provides="ZenPacks.zenoss.DynamicView.interfaces.IRelatable"
+        for="..VmNic.VmNic"
+        factory=".adapters.VmNicRelatable"
+        />
+
+    <adapter
+        provides="ZenPacks.zenoss.DynamicView.interfaces.IRelatable"
+        for="..Disk.Disk"
+        factory=".adapters.DiskRelatable"
         />
 
     <!-- IRelationsProvider Subscribers -->

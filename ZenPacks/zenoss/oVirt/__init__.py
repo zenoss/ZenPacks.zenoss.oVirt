@@ -52,7 +52,7 @@ class BaseComponent(DeviceComponent, ManagedEntity):
     event_key = "ComponentId"
 
     def getIconPath(self):
-        return '/++resource++ovirt/img/ovirt.png'
+        return '/++resource++ovirt/img/oVirt-icon.png'
 
 
 class ZenPack(ZenPackBase):
