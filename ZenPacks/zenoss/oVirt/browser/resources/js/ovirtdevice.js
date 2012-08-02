@@ -336,6 +336,7 @@ ZC.oVirtVmsPanel = Ext.extend(ZC.oVirtComponentGridPanel, {
             fields: [
                 {name: 'meta_type'},
                 {name: 'uid'},
+                {name: 'name'},
                 {name: 'title'},
                 {name: 'severity'},
                 {name: 'entity'},
@@ -349,6 +350,7 @@ ZC.oVirtVmsPanel = Ext.extend(ZC.oVirtComponentGridPanel, {
                 {name: 'os_type'},
                 {name: 'os_boot'},
                 {name: 'host'},
+                {name: 'guest'},
                 {name: 'nic_count'},
                 {name: 'creation_time'},
                 {name: 'affinity'},
@@ -378,6 +380,17 @@ ZC.oVirtVmsPanel = Ext.extend(ZC.oVirtComponentGridPanel, {
                 dataIndex: 'host',
                 header: _t('Host'),
                 renderer: Zenoss.render.oVirt_entityLinkFromGrid,
+                sortable: true,
+                width: 100
+            },{
+                id: 'guest',
+                dataIndex: 'guest',
+                header: _t('Managed Device'),
+                renderer: function(obj) {
+                    if (obj && obj.uid && obj.name) {
+                        return Zenoss.render.link(obj.uid, undefined, obj.name);
+                    }
+                },
                 sortable: true,
                 width: 100
             },{

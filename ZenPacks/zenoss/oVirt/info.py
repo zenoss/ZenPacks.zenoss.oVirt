@@ -147,6 +147,11 @@ class VmInfo(BaseComponentInfo):
     @info
     def host(self):
         return self._object.host()
+    
+    @property
+    @info
+    def guest(self):
+        return self._object.guest()
 
 
 class StorageDomainInfo(BaseComponentInfo):
