@@ -518,13 +518,11 @@ class oVirt(PythonPlugin):
 
                     # store the results to the data dict
                     if self.collector_map[key][attribute].get('array'):
-                        print id
                         if results:
                             data[key][id].setdefault(skey, []).append(results)
                     else:
                         data[key][id][skey] = results
 
-        print "Results processed into data dictionary"
         for key in self.data_map_order:
             # objmaps are a dictionary if we are processing a component
             if 'compname' in self.collector_map[key].keys():
