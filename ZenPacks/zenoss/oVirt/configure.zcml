@@ -57,7 +57,7 @@
 
     <adapter
         provides=".interfaces.IVmInfo"
-        for=".Vms.Vms"
+        for=".Vm.Vm"
         factory=".info.VmInfo"
         />
 
@@ -68,9 +68,9 @@
         />
 
     <adapter
-        provides=".interfaces.IDiskInfo"
-        for=".Disk.Disk"
-        factory=".info.DiskInfo"
+        provides=".interfaces.IVmDiskInfo"
+        for=".VmDisk.VmDisk"
+        factory=".info.VmDiskInfo"
         />
 
     <adapter
@@ -87,8 +87,8 @@
 
     <!-- Custom Path Reporters -->
     <adapter
-        factory=".catalog.paths.DiskPathReporter"
-        for=".Disk.Disk"
+        factory=".catalog.paths.VmDiskPathReporter"
+        for=".VmDisk.VmDisk"
         provides="Products.Zuul.catalog.interfaces.IPathReporter"
         />
 
@@ -111,8 +111,8 @@
         />
 
     <adapter
-        factory=".catalog.paths.VmsPathReporter"
-        for=".Vms.Vms"
+        factory=".catalog.paths.VmPathReporter"
+        for=".Vm.Vm"
         provides="Products.Zuul.catalog.interfaces.IPathReporter"
         />
 

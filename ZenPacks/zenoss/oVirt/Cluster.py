@@ -51,7 +51,7 @@ class Cluster(BaseComponent):
               ),
 
         ('vms', ToManyCont(ToOne,
-             'ZenPacks.zenoss.oVirt.Vms.Vms',
+             'ZenPacks.zenoss.oVirt.Vm.Vm',
              'cluster')
               ),
 

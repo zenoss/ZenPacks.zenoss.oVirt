@@ -33,17 +33,17 @@ class StorageDomain(BaseComponent):
         )
 
     _relations = BaseComponent._relations + (
-        ('system', ToOne(ToManyCont,
+       ('system', ToOne(ToManyCont,
              'ZenPacks.zenoss.oVirt.System.System',
              'storagedomains')
               ),
 
        ('disks', ToManyCont(ToOne,
-             'ZenPacks.zenoss.oVirt.Disk.Disk',
+             'ZenPacks.zenoss.oVirt.VmDisk.VmDisk',
              'storagedomains')
               ),
 
-        ('datacenter', ToMany(ToMany,
+       ('datacenters', ToMany(ToMany,
              'ZenPacks.zenoss.oVirt.DataCenter.DataCenter',
              'storagedomains')
               ),
@@ -55,16 +55,16 @@ class StorageDomain(BaseComponent):
 
     def setDatacenterId(self, ids):
         new_ids = set(ids)
-        current_ids = set(x.id for x in self.datacenter())
+        current_ids = set(x.id for x in self.datacenters())
 
         for id_ in new_ids.symmetric_difference(current_ids):
             datacenter = self.device().datacenters._getOb(id_)
             if datacenter:
                 if id_ in new_ids:
-                    self.datacenter.addRelation(datacenter)
+                    self.datacenters.addRelation(datacenter)
                 else:
-                    self.datacenter.removeRelation(datacenter)
+                    self.datacenters.removeRelation(datacenter)
                 notify(IndexingEvent(datacenter, 'path', False))
 
     def getDatacenterId(self):
-        return sorted([x.id for x in self.datacenter()])
+        return sorted([x.id for x in self.datacenters()])

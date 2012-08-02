@@ -18,7 +18,7 @@ from Products.Zuul.catalog.events import IndexingEvent
 from zope.event import notify
 
 
-class Disk(BaseComponent):
+class VmDisk(BaseComponent):
     meta_type = portal_type = "oVirtVmDisk"
 
     bootable = None
@@ -42,7 +42,7 @@ class Disk(BaseComponent):
               ),
 
         ('vm', ToOne(ToMany,
-             'ZenPacks.zenoss.oVirt.Vms.Vms',
+             'ZenPacks.zenoss.oVirt.Vm.Vm',
              'disks')
               ),
         )

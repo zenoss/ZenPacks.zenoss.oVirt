@@ -40,8 +40,8 @@
 
     <adapter
         provides="ZenPacks.zenoss.DynamicView.interfaces.IRelatable"
-        for="..Vms.Vms"
-        factory=".adapters.VmsRelatable"
+        for="..Vm.Vm"
+        factory=".adapters.VmRelatable"
         />
 
     <adapter
@@ -52,8 +52,8 @@
 
     <adapter
         provides="ZenPacks.zenoss.DynamicView.interfaces.IRelatable"
-        for="..Disk.Disk"
-        factory=".adapters.DiskRelatable"
+        for="..VmDisk.VmDisk"
+        factory=".adapters.VmDiskRelatable"
         />
 
     <!-- IRelationsProvider Subscribers -->
@@ -83,8 +83,8 @@
 
     <subscriber
         provides="ZenPacks.zenoss.DynamicView.interfaces.IRelationsProvider"
-        for="..Vms.Vms"
-        factory=".adapters.VmsRelationsProvider"
+        for="..Vm.Vm"
+        factory=".adapters.VmRelationsProvider"
         />
 
     <!-- Dynamic View -->

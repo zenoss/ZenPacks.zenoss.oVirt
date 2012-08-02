@@ -8,7 +8,7 @@ ZC.registerName('oVirtHost', _t('Host'), _t('Hosts'));
 ZC.registerName('oVirtHostNic', _t('Host Nic'), _t('Host Nics'));
 ZC.registerName('oVirtCluster', _t('Cluster'), _t('Clusters'));
 ZC.registerName('oVirtStorageDomain', _t('Storage Domain'), _t('Storage Domains'));
-ZC.registerName('oVirtVms', _t('Virtual Machine'), _t('Virtual Machines'));
+ZC.registerName('oVirtVm', _t('Virtual Machine'), _t('Virtual Machines'));
 ZC.registerName('oVirtDataCenter', _t('Datacenter'), _t('Datacenters'));
 
 
@@ -20,7 +20,7 @@ Zenoss.types.register({
      'oVirtHost': "^/zport/dmd/Devices/.*/devices/.*/datacenters/.*/clusters/.*/hosts/[^/]*/?$",
      'oVirtCluster': "^/zport/dmd/Devices/.*/devices/.*/datacenters/.*/clusters/[^/]*/?$",
      'oVirtStorageDomain': "^/zport/dmd/Devices/.*/devices/.*/storagedomains/[^/]*/?$",
-     'oVirtVms': "^/zport/dmd/Devices/.*/devices/.*/datacenters/.*/clusters/.*/vms/[^/]*/?$",
+     'oVirtVm': "^/zport/dmd/Devices/.*/devices/.*/datacenters/.*/clusters/.*/vms/[^/]*/?$",
      'oVirtDataCenter': "^/zport/dmd/Devices/.*/devices/.*/datacenters/[^/]*/?$",
      'oVirtVmNic': "^/zport/dmd/Devices/.*/devices/.*/datacenters/.*/clusters/.*/vms/.*/nics/[^/]*/?$",
      'oVirtHostNic': "^/zport/dmd/Devices/.*/devices/.*/datacenters/.*/clusters/.*/hosts/.*/nics/[^/]*/?$",
@@ -327,12 +327,12 @@ ZC.oVirtStorageDomainPanel = Ext.extend(ZC.oVirtComponentGridPanel, {
 
 Ext.reg('oVirtStorageDomainPanel', ZC.oVirtStorageDomainPanel);
 
-ZC.oVirtVmsPanel = Ext.extend(ZC.oVirtComponentGridPanel, {
+ZC.oVirtVmPanel = Ext.extend(ZC.oVirtComponentGridPanel, {
 
     constructor: function(config) {
         config = Ext.applyIf(config||{}, {
             autoExpandColumn: 'entity',
-            componentType: 'oVirtVms',
+            componentType: 'oVirtVm',
             fields: [
                 {name: 'meta_type'},
                 {name: 'uid'},
@@ -462,11 +462,11 @@ ZC.oVirtVmsPanel = Ext.extend(ZC.oVirtComponentGridPanel, {
                 width: 65
             }]
         });
-        ZC.oVirtVmsPanel.superclass.constructor.call(this, config);
+        ZC.oVirtVmPanel.superclass.constructor.call(this, config);
     }
 });
 
-Ext.reg('oVirtVmsPanel', ZC.oVirtVmsPanel);
+Ext.reg('oVirtVmPanel', ZC.oVirtVmPanel);
 
 ZC.oVirtHostPanel = Ext.extend(ZC.oVirtComponentGridPanel, {
 
@@ -905,11 +905,11 @@ Zenoss.nav.appendTo('Component', [{
     }
 }]);
 
-//Add vms dropdown to the cluster component
+//Add vm dropdown to the cluster component
 Zenoss.nav.appendTo('Component', [{
-    id: 'component_vms',
+    id: 'component_vm',
     text: _t('Related Vms'),
-    xtype: 'oVirtVmsPanel',
+    xtype: 'oVirtVmPanel',
     subComponentGridPanel: true,
     filterNav: function(navpanel) {
         if (navpanel.refOwner.componentType == 'oVirtCluster') {
@@ -919,13 +919,13 @@ Zenoss.nav.appendTo('Component', [{
         }
     },
     setContext: function(uid) {
-        ZC.oVirtVmsPanel.superclass.setContext.apply(this, [uid]);
+        ZC.oVirtVmPanel.superclass.setContext.apply(this, [uid]);
     }
 }]);
 
-//Add disks dropdown to the storage domain or vms component
+//Add disks dropdown to the storage domain or vm component
 Zenoss.nav.appendTo('Component', [{
-    id: 'component_disks',
+    id: 'component_vmdisks',
     text: _t('Related Disks'),
     xtype: 'oVirtVmDiskPanel',
     subComponentGridPanel: true,
@@ -933,7 +933,7 @@ Zenoss.nav.appendTo('Component', [{
         if (navpanel.refOwner.componentType == 'oVirtStorageDomain') {
             return true;
         }
-        else if (navpanel.refOwner.componentType == 'oVirtVms') {
+        else if (navpanel.refOwner.componentType == 'oVirtVm') {
             return true;
         } else {
             return false;
@@ -962,14 +962,14 @@ Zenoss.nav.appendTo('Component', [{
     }
 }]);
 
-//Add vm nics dropdown to the vms component
+//Add vm nics dropdown to the vm component
 Zenoss.nav.appendTo('Component', [{
     id: 'component_vmnics',
     text: _t('Related Nics'),
     xtype: 'oVirtVmNicPanel',
     subComponentGridPanel: true,
     filterNav: function(navpanel) {
-        if (navpanel.refOwner.componentType == 'oVirtVms') {
+        if (navpanel.refOwner.componentType == 'oVirtVm') {
             return true;
         } else {
             return false;
@@ -998,11 +998,11 @@ Zenoss.nav.appendTo('Component', [{
     }
 }]);
 
-//Add vms dropdown to the hosts component
+//Add vm dropdown to the hosts component
 Zenoss.nav.appendTo('Component', [{
-    id: 'component_hostvms',
+    id: 'component_hostvm',
     text: _t('Related Vms'),
-    xtype: 'oVirtVmsPanel',
+    xtype: 'oVirtVmPanel',
     subComponentGridPanel: true,
     filterNav: function(navpanel) {
         if (navpanel.refOwner.componentType == 'oVirtHost') {
@@ -1012,7 +1012,7 @@ Zenoss.nav.appendTo('Component', [{
         }
     },
     setContext: function(uid) {
-        ZC.oVirtVmsPanel.superclass.setContext.apply(this, [uid]);
+        ZC.oVirtVmPanel.superclass.setContext.apply(this, [uid]);
     }
 }]);
 
