@@ -29,6 +29,20 @@ from Products.ZenModel.ZenossSecurity import ZEN_CHANGE_DEVICE
 unused(Globals)
 
 
+# Used by zenchkschema to validate consistency of relationships.
+productNames = (
+    'System',
+    'DataCenter',
+    'StorageDomain',
+    'Cluster',
+    'Host',
+    'HostNic',
+    'Vm',
+    'VmNic',
+    'VmDisk',
+    )
+
+
 class BaseComponent(DeviceComponent, ManagedEntity):
     """
     Abstract base class to avoid repeating boilerplate code in all of the
