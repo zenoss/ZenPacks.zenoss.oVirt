@@ -22,7 +22,7 @@ class VmDiskPathReporter(DefaultPathReporter):
 class StorageDomainPathReporter(DefaultPathReporter):
     def getPaths(self):
         paths = super(StorageDomainPathReporter, self).getPaths()
-        datacenters = self.context.datacenter()
+        datacenters = self.context.datacenters()
         for datacenter in datacenters:
             paths.extend(relPath(datacenter, 'system'))
         return paths
@@ -44,6 +44,7 @@ class HostPathReporter(DefaultPathReporter):
         for vm in vms:
             paths.extend(relPath(vm, 'cluster'))
         return paths
+
 
 class VmPathReporter(DefaultPathReporter):
     def getPaths(self):

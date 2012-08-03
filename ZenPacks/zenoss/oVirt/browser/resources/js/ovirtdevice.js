@@ -12,28 +12,33 @@ ZC.registerName('oVirtVm', _t('Virtual Machine'), _t('Virtual Machines'));
 ZC.registerName('oVirtDataCenter', _t('Datacenter'), _t('Datacenters'));
 
 
-Zenoss.types.TYPES.DeviceClass[0] = new RegExp(
-    "^/zport/dmd/Devices(/(?!devices)[^/*])*/?$");
-
-Zenoss.types.register({
-     'oVirtVmDisk': "^/zport/dmd/Devices/.*/devices/.*/storagedomains/.*/disks/[^/]*/?$",
-     'oVirtHost': "^/zport/dmd/Devices/.*/devices/.*/datacenters/.*/clusters/.*/hosts/[^/]*/?$",
-     'oVirtCluster': "^/zport/dmd/Devices/.*/devices/.*/datacenters/.*/clusters/[^/]*/?$",
-     'oVirtStorageDomain': "^/zport/dmd/Devices/.*/devices/.*/storagedomains/[^/]*/?$",
-     'oVirtVm': "^/zport/dmd/Devices/.*/devices/.*/datacenters/.*/clusters/.*/vms/[^/]*/?$",
-     'oVirtDataCenter': "^/zport/dmd/Devices/.*/devices/.*/datacenters/[^/]*/?$",
-     'oVirtVmNic': "^/zport/dmd/Devices/.*/devices/.*/datacenters/.*/clusters/.*/vms/.*/nics/[^/]*/?$",
-     'oVirtHostNic': "^/zport/dmd/Devices/.*/devices/.*/datacenters/.*/clusters/.*/hosts/.*/nics/[^/]*/?$",
-});
-
 Ext.apply(Zenoss.render, {
-    oVirt_entityLinkFromGrid: function(obj) {
-        if (obj && obj.uid && obj.title && obj.meta_type) {
-            if (!this.subComponentGridPanel && this.componentType == obj.meta_type) {
-                return obj.title;
-            } else {
-                return '<a href="javascript:Ext.getCmp(\'component_card\').componentgrid.jumpToEntity(\''+obj.uid+'\', \''+obj.meta_type+'\');">'+obj.title+'</a>';
-            }
+    oVirt_entityLinkFromGrid: function(obj, col, record) {
+        if (!obj)
+            return;
+
+        if (typeof(obj) == 'string')
+            obj = record.data;
+
+        if (!obj.title && obj.name)
+            obj.title = obj.name;
+
+        var isLink = false;
+
+        if (this.refName == 'componentgrid') {
+            // Zenoss >= 4.2 / ExtJS4
+            if (this.subComponentGridPanel || this.componentType != obj.meta_type)
+                isLink = true;
+        } else {
+            // Zenoss < 4.2 / ExtJS3
+            if (!this.panel || this.panel.subComponentGridPanel)
+                isLink = true;
+        }
+
+        if (isLink) {
+            return '<a href="javascript:Ext.getCmp(\'component_card\').componentgrid.jumpToEntity(\''+obj.uid+'\', \''+obj.meta_type+'\');">'+obj.title+'</a>';
+        } else {
+            return obj.title;
         }
     },
 
@@ -54,14 +59,25 @@ ZC.oVirtComponentGridPanel = Ext.extend(ZC.ComponentGridPanel, {
         var tree_selection_model = tree.getSelectionModel();
         var components_node = tree.getRootNode().findChildBy(
             function(n) {
-                return n.text == 'Components' || n.data.text == 'Components';
+                if (n.data) {
+                    // Zenoss >= 4.2 / ExtJS4
+                    return n.data.text == 'Components';
+                }
+
+                // Zenoss < 4.2 / ExtJS3
+                return n.text == 'Components';
             });
 
         // Reset context of component card.
         var component_card = Ext.getCmp('component_card');
-        component_card.setContext(
-            components_node.data ? components_node.data.id : components_node.id,
-            meta_type);
+
+        if (components_node.data) {
+            // Zenoss >= 4.2 / ExtJS4
+            component_card.setContext(components_node.data.id, meta_type);
+        } else {
+            // Zenoss < 4.2 / ExtJS3
+            component_card.setContext(components_node.id, meta_type);
+        }
 
         // Select chosen row in component grid.
         component_card.selectByToken(uid);
@@ -69,7 +85,13 @@ ZC.oVirtComponentGridPanel = Ext.extend(ZC.ComponentGridPanel, {
         // Select chosen component type from tree.
         var component_type_node = components_node.findChildBy(
             function(n) {
-                return n.id == meta_type || n.data.id == meta_type;
+                if (n.data) {
+                    // Zenoss >= 4.2 / ExtJS4
+                    return n.data.id == meta_type;
+                }
+
+                // Zenoss < 4.2 / ExtJS3
+                return n.id == meta_type;
             });
 
         if (component_type_node.select) {
@@ -84,16 +106,14 @@ ZC.oVirtComponentGridPanel = Ext.extend(ZC.ComponentGridPanel, {
 
 
 ZC.oVirtDataCenterPanel = Ext.extend(ZC.oVirtComponentGridPanel, {
-
     constructor: function(config) {
         config = Ext.applyIf(config||{}, {
-            autoExpandColumn: 'description',
             componentType: 'oVirtDataCenter',
+            autoExpandColumn: 'description',
             fields: [
                 {name: 'meta_type'},
                 {name: 'uid'},
-                {name: 'title'},
-                {name: 'entity'},
+                {name: 'name'},
                 {name: 'severity'},
                 {name: 'description'},
                 {name: 'storagedomain_count'},
@@ -104,10 +124,6 @@ ZC.oVirtDataCenterPanel = Ext.extend(ZC.oVirtComponentGridPanel, {
                 {name: 'monitored'},
                 {name: 'locking'}
             ],
-            sortInfo: {
-                field: 'entity',
-                direction: 'ASC'
-            },
             columns: [{
                 id: 'severity',
                 dataIndex: 'severity',
@@ -116,10 +132,12 @@ ZC.oVirtDataCenterPanel = Ext.extend(ZC.oVirtComponentGridPanel, {
                 sortable: true,
                 width: 50
             },{
-                id: 'entity',
-                dataIndex: 'entity',
+                id: 'name',
+                dataIndex: 'name',
                 header: _t('Name'),
                 renderer: Zenoss.render.oVirt_entityLinkFromGrid,
+                panel: this,
+                sortable: true,
                 width: 100
             },{
                 id: 'description',
@@ -172,28 +190,22 @@ ZC.oVirtDataCenterPanel = Ext.extend(ZC.oVirtComponentGridPanel, {
 Ext.reg('oVirtDataCenterPanel', ZC.oVirtDataCenterPanel);
 
 ZC.oVirtClusterPanel = Ext.extend(ZC.oVirtComponentGridPanel, {
-
     constructor: function(config) {
         config = Ext.applyIf(config||{}, {
-            autoExpandColumn: 'entity',
             componentType: 'oVirtCluster',
+            autoExpandColumn: 'name',
             fields: [
                 {name: 'meta_type'},
                 {name: 'uid'},
-                {name: 'title'},
+                {name: 'name'},
                 {name: 'severity'},
                 {name: 'datacenter'},
-                {name: 'entity'},
                 {name: 'host_count'},
                 {name: 'vm_count'},
                 {name: 'monitor'},
                 {name: 'monitored'},
                 {name: 'locking'}
             ],
-            sortInfo: {
-                field: 'entity',
-                direction: 'ASC'
-            },
             columns: [{
                 id: 'severity',
                 dataIndex: 'severity',
@@ -202,11 +214,12 @@ ZC.oVirtClusterPanel = Ext.extend(ZC.oVirtComponentGridPanel, {
                 sortable: true,
                 width: 50
             },{
-                id: 'entity',
-                dataIndex: 'entity',
+                id: 'name',
+                dataIndex: 'name',
                 header: _t('Cluster'),
                 renderer: Zenoss.render.oVirt_entityLinkFromGrid,
-                width: 70
+                panel: this,
+                sortable: true
             },{
                 id: 'datacenter',
                 dataIndex: 'datacenter',
@@ -248,17 +261,15 @@ ZC.oVirtClusterPanel = Ext.extend(ZC.oVirtComponentGridPanel, {
 Ext.reg('oVirtClusterPanel', ZC.oVirtClusterPanel);
 
 ZC.oVirtStorageDomainPanel = Ext.extend(ZC.oVirtComponentGridPanel, {
-
     constructor: function(config) {
         config = Ext.applyIf(config||{}, {
-            autoExpandColumn: 'entity',
             componentType: 'oVirtStorageDomain',
+            autoExpandColumn: 'name',
             fields: [
                 {name: 'meta_type'},
                 {name: 'uid'},
-                {name: 'title'},
+                {name: 'name'},
                 {name: 'severity'},
-                {name: 'entity'},
                 {name: 'datacenter'},
                 {name: 'storagedomain_type'},
                 {name: 'storage_type'},
@@ -269,10 +280,6 @@ ZC.oVirtStorageDomainPanel = Ext.extend(ZC.oVirtComponentGridPanel, {
                 {name: 'monitored'},
                 {name: 'locking'}
             ],
-            sortInfo: {
-                field: 'entity',
-                direction: 'ASC'
-            },
             columns: [{
                 id: 'severity',
                 dataIndex: 'severity',
@@ -281,11 +288,12 @@ ZC.oVirtStorageDomainPanel = Ext.extend(ZC.oVirtComponentGridPanel, {
                 sortable: true,
                 width: 50
             },{
-                id: 'entity',
-                dataIndex: 'entity',
+                id: 'name',
+                dataIndex: 'name',
                 header: _t('Storage Domain'),
                 renderer: Zenoss.render.oVirt_entityLinkFromGrid,
-                width: 70
+                panel: this,
+                sortable: true
             },{
                 id: 'storagedomain_type',
                 dataIndex: 'storagedomain_type',
@@ -328,18 +336,15 @@ ZC.oVirtStorageDomainPanel = Ext.extend(ZC.oVirtComponentGridPanel, {
 Ext.reg('oVirtStorageDomainPanel', ZC.oVirtStorageDomainPanel);
 
 ZC.oVirtVmPanel = Ext.extend(ZC.oVirtComponentGridPanel, {
-
     constructor: function(config) {
         config = Ext.applyIf(config||{}, {
-            autoExpandColumn: 'entity',
             componentType: 'oVirtVm',
+            autoExpandColumn: 'name',
             fields: [
                 {name: 'meta_type'},
                 {name: 'uid'},
                 {name: 'name'},
-                {name: 'title'},
                 {name: 'severity'},
-                {name: 'entity'},
                 {name: 'cluster'},
                 {name: 'monitor'},
                 {name: 'vm_type'},
@@ -358,10 +363,6 @@ ZC.oVirtVmPanel = Ext.extend(ZC.oVirtComponentGridPanel, {
                 {name: 'monitored'},
                 {name: 'locking'}
             ],
-            sortInfo: {
-                field: 'entity',
-                direction: 'ASC'
-            },
             columns: [{
                 id: 'severity',
                 dataIndex: 'severity',
@@ -370,11 +371,12 @@ ZC.oVirtVmPanel = Ext.extend(ZC.oVirtComponentGridPanel, {
                 sortable: true,
                 width: 50
             },{
-                id: 'entity',
-                dataIndex: 'entity',
+                id: 'name',
+                dataIndex: 'name',
                 header: _t('Virtual Machine'),
                 renderer: Zenoss.render.oVirt_entityLinkFromGrid,
-                width: 70
+                panel: this,
+                sortable: true
             },{
                 id: 'host',
                 dataIndex: 'host',
@@ -469,17 +471,15 @@ ZC.oVirtVmPanel = Ext.extend(ZC.oVirtComponentGridPanel, {
 Ext.reg('oVirtVmPanel', ZC.oVirtVmPanel);
 
 ZC.oVirtHostPanel = Ext.extend(ZC.oVirtComponentGridPanel, {
-
     constructor: function(config) {
         config = Ext.applyIf(config||{}, {
-            autoExpandColumn: 'entity',
             componentType: 'oVirtHost',
+            autoExpandColumn: 'name',
             fields: [
                 {name: 'meta_type'},
                 {name: 'uid'},
-                {name: 'title'},
+                {name: 'name'},
                 {name: 'severity'},
-                {name: 'entity'},
                 {name: 'cluster'},
                 {name: 'address'},
                 {name: 'memory'},
@@ -494,10 +494,6 @@ ZC.oVirtHostPanel = Ext.extend(ZC.oVirtComponentGridPanel, {
                 {name: 'monitored'},
                 {name: 'locking'}
             ],
-            sortInfo: {
-                field: 'entity',
-                direction: 'ASC'
-            },
             columns: [{
                 id: 'severity',
                 dataIndex: 'severity',
@@ -506,11 +502,12 @@ ZC.oVirtHostPanel = Ext.extend(ZC.oVirtComponentGridPanel, {
                 sortable: true,
                 width: 50
             },{
-                id: 'entity',
-                dataIndex: 'entity',
+                id: 'name',
+                dataIndex: 'name',
                 header: _t('Host'),
                 renderer: Zenoss.render.oVirt_entityLinkFromGrid,
-                width: 70
+                panel: this,
+                sortable: true
             },{
                 id: 'address',
                 dataIndex: 'address',
@@ -577,15 +574,14 @@ ZC.oVirtHostPanel = Ext.extend(ZC.oVirtComponentGridPanel, {
 Ext.reg('oVirtHostPanel', ZC.oVirtHostPanel);
 
 ZC.oVirtVmDiskPanel = Ext.extend(ZC.oVirtComponentGridPanel, {
-
     constructor: function(config) {
         config = Ext.applyIf(config||{}, {
-            autoExpandColumn: 'entity',
             componentType: 'oVirtVmDisk',
+            autoExpandColumn: 'name',
             fields: [
                 {name: 'meta_type'},
                 {name: 'uid'},
-                {name: 'title'},
+                {name: 'name'},
                 {name: 'severity'},
                 {name: 'entity'},
                 {name: 'vm'},
@@ -597,10 +593,6 @@ ZC.oVirtVmDiskPanel = Ext.extend(ZC.oVirtComponentGridPanel, {
                 {name: 'format'},
                 {name: 'locking'}
             ],
-            sortInfo: {
-                field: 'entity',
-                direction: 'ASC'
-            },
             columns: [{
                 id: 'severity',
                 dataIndex: 'severity',
@@ -609,12 +601,12 @@ ZC.oVirtVmDiskPanel = Ext.extend(ZC.oVirtComponentGridPanel, {
                 sortable: true,
                 width: 50
             },{
-                id: 'entity',
-                dataIndex: 'entity',
+                id: 'name',
+                dataIndex: 'name',
                 header: _t('Disk'),
                 renderer: Zenoss.render.oVirt_entityLinkFromGrid,
-                sortable: true,
-                width: 70
+                panel: this,
+                sortable: true
             },{
                 id: 'vm',
                 dataIndex: 'vm',
@@ -670,17 +662,15 @@ ZC.oVirtVmDiskPanel = Ext.extend(ZC.oVirtComponentGridPanel, {
 Ext.reg('oVirtVmDiskPanel', ZC.oVirtVmDiskPanel);
 
 ZC.oVirtVmNicPanel = Ext.extend(ZC.oVirtComponentGridPanel, {
-
     constructor: function(config) {
         config = Ext.applyIf(config||{}, {
-            autoExpandColumn: 'entity',
             componentType: 'oVirtVmNic',
+            autoExpandColumn: 'name',
             fields: [
                 {name: 'meta_type'},
                 {name: 'uid'},
-                {name: 'title'},
+                {name: 'name'},
                 {name: 'severity'},
-                {name: 'entity'},
                 {name: 'vm'},
                 {name: 'interface'},
                 {name: 'mac'},
@@ -689,10 +679,6 @@ ZC.oVirtVmNicPanel = Ext.extend(ZC.oVirtComponentGridPanel, {
                 {name: 'format'},
                 {name: 'locking'}
             ],
-            sortInfo: {
-                field: 'entity',
-                direction: 'ASC'
-            },
             columns: [{
                 id: 'severity',
                 dataIndex: 'severity',
@@ -701,12 +687,12 @@ ZC.oVirtVmNicPanel = Ext.extend(ZC.oVirtComponentGridPanel, {
                 sortable: true,
                 width: 50
             },{
-                id: 'entity',
-                dataIndex: 'entity',
-                header: _t('Nic'),
+                id: 'name',
+                dataIndex: 'name',
+                header: _t('NIC'),
                 renderer: Zenoss.render.oVirt_entityLinkFromGrid,
-                sortable: true,
-                width: 70
+                panel: this,
+                sortable: true
             },{
                 id: 'vm',
                 dataIndex: 'vm',
@@ -748,17 +734,15 @@ ZC.oVirtVmNicPanel = Ext.extend(ZC.oVirtComponentGridPanel, {
 Ext.reg('oVirtVmNicPanel', ZC.oVirtVmNicPanel);
 
 ZC.oVirtHostNicPanel = Ext.extend(ZC.oVirtComponentGridPanel, {
-
     constructor: function(config) {
         config = Ext.applyIf(config||{}, {
-            autoExpandColumn: 'entity',
             componentType: 'oVirtHostNic',
+            autoExpandColumn: 'name',
             fields: [
                 {name: 'meta_type'},
                 {name: 'uid'},
-                {name: 'title'},
+                {name: 'name'},
                 {name: 'severity'},
-                {name: 'entity'},
                 {name: 'host'},
                 {name: 'ip'},
                 {name: 'netmask'},
@@ -770,10 +754,6 @@ ZC.oVirtHostNicPanel = Ext.extend(ZC.oVirtComponentGridPanel, {
                 {name: 'format'},
                 {name: 'locking'}
             ],
-            sortInfo: {
-                field: 'entity',
-                direction: 'ASC'
-            },
             columns: [{
                 id: 'severity',
                 dataIndex: 'severity',
@@ -782,12 +762,12 @@ ZC.oVirtHostNicPanel = Ext.extend(ZC.oVirtComponentGridPanel, {
                 sortable: true,
                 width: 50
             },{
-                id: 'entity',
-                dataIndex: 'entity',
-                header: _t('Nic'),
+                id: 'name',
+                dataIndex: 'name',
+                header: _t('NIC'),
                 renderer: Zenoss.render.oVirt_entityLinkFromGrid,
-                sortable: true,
-                width: 70
+                panel: this,
+                sortable: true
             },{
                 id: 'host',
                 dataIndex: 'host',
@@ -1021,7 +1001,7 @@ Zenoss.nav.appendTo('Component', [{
     text: _t('Dynamic View'),
     xtype: 'dynamicview',
     relationshipFilter: 'impacted_by',
-    viewName: 'subcomponent_view',
+    viewName: 'subcomponent_view'
 }]);
 
 })();

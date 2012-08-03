@@ -47,11 +47,10 @@ class StorageDomain(BaseComponent):
              'ZenPacks.zenoss.oVirt.DataCenter.DataCenter',
              'storagedomains')
               ),
-
         )
 
     def device(self):
-        return self.system().device()
+        return self.system()
 
     def setDatacenterId(self, ids):
         new_ids = set(ids)

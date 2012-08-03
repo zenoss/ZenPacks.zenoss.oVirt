@@ -32,16 +32,6 @@ class oVirtInfo(DeviceInfo):
 
 class BaseComponentInfo(ComponentInfo):
     """Abstract base component API (Info) adapter factory."""
-    title = ProxyProperty('title')
-    id = ProxyProperty('id')
-
-    @property
-    def entity(self):
-        return {
-           'uid': self._object.getPrimaryUrlPath(),
-           'title': self._object.titleOrId(),
-           'meta_type': self._object.meta_type,
-        }
 
     @property
     def icon(self):
@@ -58,12 +48,10 @@ class DatacenterInfo(BaseComponentInfo):
     storage_format = ProxyProperty('storage_format')
 
     @property
-    @info
     def cluster_count(self):
         return self._object.clusters.countObjects()
 
     @property
-    @info
     def storagedomain_count(self):
         return self._object.storagedomains.countObjects()
 
@@ -79,12 +67,10 @@ class ClusterInfo(BaseComponentInfo):
         return self._object.datacenter()
 
     @property
-    @info
     def host_count(self):
         return self._object.hosts.countObjects()
 
     @property
-    @info
     def vm_count(self):
         return self._object.vms.countObjects()
 
@@ -108,12 +94,10 @@ class HostInfo(BaseComponentInfo):
         return self._object.cluster()
 
     @property
-    @info
     def nic_count(self):
         return self._object.nics.countObjects()
 
     @property
-    @info
     def vm_count(self):
         return self._object.vms.countObjects()
 
@@ -139,15 +123,14 @@ class VmInfo(BaseComponentInfo):
         return self._object.cluster()
 
     @property
-    @info
     def nic_count(self):
         return self._object.nics.countObjects()
-    
+
     @property
     @info
     def host(self):
         return self._object.host()
-    
+
     @property
     @info
     def guest(self):
@@ -164,12 +147,10 @@ class StorageDomainInfo(BaseComponentInfo):
     storage_format = ProxyProperty('storage_format')
 
     @property
-    @info
     def disk_count(self):
         return self._object.disks.countObjects()
 
     @property
-    @info
     def datacenter_count(self):
         return self._object.datacenter.countObjects()
 
@@ -207,7 +188,6 @@ class HostNicInfo(BaseComponentInfo):
     speed = ProxyProperty('speed')
 
     @property
-    @info
     def nicespeed(self):
         """
         Return a string that expresses self.speed in reasonable units.

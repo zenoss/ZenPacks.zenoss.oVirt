@@ -48,7 +48,7 @@ class BaseComponent(DeviceComponent, ManagedEntity):
             },),
         },)
 
-    # Query for events by id instead of name.
+    # Query for events by id instead of name. (Zenoss 3 compatibility)
     event_key = "ComponentId"
 
     def getIconPath(self):
