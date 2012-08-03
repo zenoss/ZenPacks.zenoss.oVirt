@@ -35,7 +35,7 @@ class oVirt(PythonPlugin):
 
     # Order to collect from the ovirt server
     collector_map_order = ['data_centers', 'storage_domains', 'clusters', 'hosts', 'vms']
- 
+
     # Order to build the datamap
     data_map_order = ['data_centers', 'storage_domains', 'clusters', 'hosts', 'vms', 'disks', 'nics', 'host_nics']
 
@@ -199,7 +199,7 @@ class oVirt(PythonPlugin):
                              'os_type', 'os_boot', 'creation_time', 'setHostId',
                              'affinity', 'memory_policy_guaranteed'],  # This needs to have the guid first because its the id we are using else where
                                                                        # Took start_time out because it wasnt consistent from the api and it was causing
-                                                                       # the modeller to update objects on every run. 
+                                                                       # the modeller to update objects on every run.
                              'compname': '"datacenters/%s/clusters/%s" % self.vm_compname(data,id)',
                              'name': {'default': '',
                                           'lookup': "find('name').text",
@@ -499,7 +499,7 @@ class oVirt(PythonPlugin):
                             results = eval('entry.' + self.collector_map[key][attribute]['lookup'])
                     except Exception:
                         # The value couldnt be found, lets fall back to a default value.
-                        log.warn("attribute [%s] not found, using default" % attribute)
+                        log.debug("attribute [%s] not found, using default" % attribute)
                         # run the result through prepid if this field needs to be stored in that manner.
                         if 'prepId' in self.collector_map[key][attribute].keys():
                             results = self.prepId(self.collector_map[key][attribute]['default'])
