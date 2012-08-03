@@ -31,7 +31,7 @@ class VmNic(BaseComponent):
 
     _relations = BaseComponent._relations + (
         ('vm', ToOne(ToManyCont,
-             'ZenPacks.zenoss.oVirt.Vms.Vms',
+             'ZenPacks.zenoss.oVirt.Vm.Vm',
              'nics')
               ),
         )

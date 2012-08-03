@@ -23,9 +23,9 @@ from ZenPacks.zenoss.oVirt.DataCenter import DataCenter
 from ZenPacks.zenoss.oVirt.Cluster import Cluster
 from ZenPacks.zenoss.oVirt.Host import Host
 from ZenPacks.zenoss.oVirt.HostNic import HostNic
-from ZenPacks.zenoss.oVirt.Vms import Vms
+from ZenPacks.zenoss.oVirt.Vm import Vm
 from ZenPacks.zenoss.oVirt.VmNic import VmNic
-from ZenPacks.zenoss.oVirt.Disk import Disk
+from ZenPacks.zenoss.oVirt.VmDisk import VmDisk
 from ZenPacks.zenoss.oVirt.StorageDomain import StorageDomain
 
 
@@ -66,8 +66,8 @@ class HostNicRelatable(DeviceComponentRelatable):
     group = 'oVirt'
 
 
-class VmsRelatable(DeviceComponentRelatable):
-    adapts(Vms)
+class VmRelatable(DeviceComponentRelatable):
+    adapts(Vm)
 
     group = 'oVirt'
 
@@ -78,8 +78,8 @@ class VmNicRelatable(DeviceComponentRelatable):
     group = 'oVirt'
 
 
-class DiskRelatable(DeviceComponentRelatable):
-    adapts(Disk)
+class VmDiskRelatable(DeviceComponentRelatable):
+    adapts(VmDisk)
 
     group = 'oVirt'
 
@@ -117,8 +117,8 @@ class ClusterRelationsProvider(BaseRelationsProvider):
                 yield self.constructRelationTo(host, TAG_IMPACTED_BY)
 
 
-class VmsRelationsProvider(BaseRelationsProvider):
-    adapts(Vms)
+class VmRelationsProvider(BaseRelationsProvider):
+    adapts(Vm)
 
     def relations(self, type=TAG_ALL):
         if type in (TAG_ALL, TAG_IMPACTED_BY):
@@ -154,8 +154,8 @@ class VmNicRelationsProvider(BaseRelationsProvider):
             yield self.constructRelationTo(self._adapted.vm(), TAG_IMPACTS)
 
 
-class DiskRelationsProvider(BaseRelationsProvider):
-    adapts(Disk)
+class VmDiskRelationsProvider(BaseRelationsProvider):
+    adapts(VmDisk)
 
     def relations(self, type=TAG_ALL):
         if type in (TAG_ALL, TAG_IMPACTS):

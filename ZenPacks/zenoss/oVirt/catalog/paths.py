@@ -10,9 +10,9 @@ from Products.Zuul.catalog.paths import (
     )
 
 
-class DiskPathReporter(DefaultPathReporter):
+class VmDiskPathReporter(DefaultPathReporter):
     def getPaths(self):
-        paths = super(DiskPathReporter, self).getPaths()
+        paths = super(VmDiskPathReporter, self).getPaths()
         vm = self.context.vm()
         if vm:
             paths.extend(relPath(vm, 'cluster'))
@@ -45,9 +45,9 @@ class HostPathReporter(DefaultPathReporter):
             paths.extend(relPath(vm, 'cluster'))
         return paths
 
-class VmsPathReporter(DefaultPathReporter):
+class VmPathReporter(DefaultPathReporter):
     def getPaths(self):
-        paths = super(VmsPathReporter, self).getPaths()
+        paths = super(VmPathReporter, self).getPaths()
         host = self.context.host()
         if host:
             paths.extend(relPath(host, 'cluster'))

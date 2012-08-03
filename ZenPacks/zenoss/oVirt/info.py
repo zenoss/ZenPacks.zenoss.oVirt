@@ -20,7 +20,7 @@ from Products.Zuul.infos.component import ComponentInfo
 
 from ZenPacks.zenoss.oVirt.interfaces import (
     IoVirtInfo, IDatacenterInfo, IClusterInfo,
-    IVmInfo, IHostInfo, IStorageDomainInfo, IDiskInfo,
+    IVmInfo, IHostInfo, IStorageDomainInfo, IVmDiskInfo,
     IHostNicInfo, IVmNicInfo)
 
 
@@ -174,10 +174,10 @@ class StorageDomainInfo(BaseComponentInfo):
         return self._object.datacenter.countObjects()
 
 
-class DiskInfo(BaseComponentInfo):
-    """Disk API (Info) adapter factory."""
+class VmDiskInfo(BaseComponentInfo):
+    """VmDisk API (Info) adapter factory."""
 
-    implements(IDiskInfo)
+    implements(IVmDiskInfo)
 
     bootable = ProxyProperty('bootable')
     interface = ProxyProperty('interface')

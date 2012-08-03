@@ -78,7 +78,7 @@ GAUGE
 True
 </property>
 </object>
-<object id='vmsCount' module='Products.ZenModel.RRDDataPoint' class='RRDDataPoint'>
+<object id='vmCount' module='Products.ZenModel.RRDDataPoint' class='RRDDataPoint'>
 <property select_variable="rrdtypes" type="selection" id="rrdtype" mode="w" >
 GAUGE
 </property>
@@ -148,7 +148,7 @@ oVirt_hostCount
 AVERAGE
 </property>
 </object>
-<object id='vmsCount' module='Products.ZenModel.DataPointGraphPoint' class='DataPointGraphPoint'>
+<object id='vmCount' module='Products.ZenModel.DataPointGraphPoint' class='DataPointGraphPoint'>
 <property type="long" id="sequence" mode="w" >
 1
 </property>
@@ -171,7 +171,7 @@ VMs
 -1
 </property>
 <property type="string" id="dpName" mode="w" >
-oVirt_vmsCount
+oVirt_vmCount
 </property>
 <property type="string" id="cFunc" mode="w" >
 AVERAGE
@@ -249,7 +249,7 @@ True
 Gather performance metrics for oVirt System.
 </property>
 </object>
-<object id='vmsCount' module='Products.ZenModel.RRDDataPoint' class='RRDDataPoint'>
+<object id='vmCount' module='Products.ZenModel.RRDDataPoint' class='RRDDataPoint'>
 <property id='zendoc' type='string'>
 Gather performance metrics for oVirt System.
 </property>
@@ -354,7 +354,7 @@ oVirt_hostCount
 AVERAGE
 </property>
 </object>
-<object id='vmsCount' module='Products.ZenModel.DataPointGraphPoint' class='DataPointGraphPoint'>
+<object id='vmCount' module='Products.ZenModel.DataPointGraphPoint' class='DataPointGraphPoint'>
 <property type="long" id="sequence" mode="w" >
 2
 </property>
@@ -377,7 +377,7 @@ VMs
 -1
 </property>
 <property type="string" id="dpName" mode="w" >
-oVirt_vmsCount
+oVirt_vmCount
 </property>
 <property type="string" id="cFunc" mode="w" >
 AVERAGE
@@ -673,7 +673,7 @@ False
 ZenPacks.zenoss.oVirt.parsers.JSONParser
 </property>
 <tomanycont id='datapoints'>
-<object id='vmsCount' module='Products.ZenModel.RRDDataPoint' class='RRDDataPoint'>
+<object id='vmCount' module='Products.ZenModel.RRDDataPoint' class='RRDDataPoint'>
 <property select_variable="rrdtypes" type="selection" id="rrdtype" mode="w" >
 GAUGE
 </property>
@@ -714,7 +714,7 @@ True
 3
 </property>
 <tomanycont id='graphPoints'>
-<object id='vmsCount' module='Products.ZenModel.DataPointGraphPoint' class='DataPointGraphPoint'>
+<object id='vmCount' module='Products.ZenModel.DataPointGraphPoint' class='DataPointGraphPoint'>
 <property type="long" id="sequence" mode="w" >
 0
 </property>
@@ -737,7 +737,7 @@ VMs
 -1
 </property>
 <property type="string" id="dpName" mode="w" >
-ovirtCounts_vmsCount
+ovirtCounts_vmCount
 </property>
 <property type="string" id="cFunc" mode="w" >
 AVERAGE
@@ -1793,7 +1793,7 @@ True
 Gather performance metrics for oVirt System.
 </property>
 </object>
-<object id='vmsCount' module='Products.ZenModel.RRDDataPoint' class='RRDDataPoint'>
+<object id='vmCount' module='Products.ZenModel.RRDDataPoint' class='RRDDataPoint'>
 <property id='zendoc' type='string'>
 Gather performance metrics for oVirt System.
 </property>
@@ -1985,7 +1985,7 @@ oVirt_storagedomainCount
 AVERAGE
 </property>
 </object>
-<object id='vmsCount' module='Products.ZenModel.DataPointGraphPoint' class='DataPointGraphPoint'>
+<object id='vmCount' module='Products.ZenModel.DataPointGraphPoint' class='DataPointGraphPoint'>
 <property type="long" id="sequence" mode="w" >
 4
 </property>
@@ -2008,7 +2008,7 @@ VMs
 -1
 </property>
 <property type="string" id="dpName" mode="w" >
-oVirt_vmsCount
+oVirt_vmCount
 </property>
 <property type="string" id="cFunc" mode="w" >
 AVERAGE
@@ -2026,7 +2026,7 @@ oVirt Virtual Machine Disk
 oVirt Virtual Machine Disk
 </property>
 <property type="string" id="targetPythonClass" mode="w" >
-ZenPacks.zenoss.oVirt.Disk
+ZenPacks.zenoss.oVirt.VmDisk
 </property>
 <tomanycont id='datasources'>
 <object id='oVirt' module='Products.ZenModel.BasicDataSource' class='BasicDataSource'>
@@ -2431,7 +2431,7 @@ AVERAGE
 </object>
 </tomanycont>
 </object>
-<object id='oVirtVms' module='Products.ZenModel.RRDTemplate' class='RRDTemplate'>
+<object id='oVirtVm' module='Products.ZenModel.RRDTemplate' class='RRDTemplate'>
 <property id='zendoc' type='string'>
 Gather performance metrics for oVirt Vm components.
 </property>
@@ -2439,7 +2439,7 @@ Gather performance metrics for oVirt Vm components.
 Gather performance metrics for oVirt Vm components.
 </property>
 <property type="string" id="targetPythonClass" mode="w" >
-ZenPacks.zenoss.oVirt.Vms
+ZenPacks.zenoss.oVirt.Vm
 </property>
 <tomanycont id='datasources'>
 <object id='oVirt' module='Products.ZenModel.BasicDataSource' class='BasicDataSource'>
@@ -2459,7 +2459,7 @@ ${here/id}
 4
 </property>
 <property type="string" id="commandTemplate" mode="w" >
-${here/ZenPackManager/packs/ZenPacks.zenoss.oVirt/path}/poll_ovirt.py "${here/zOVirtUrl}"  "${here/zOVirtUser}" "${here/zOVirtDomain}" "${here/zOVirtPassword}" vms
+${here/ZenPackManager/packs/ZenPacks.zenoss.oVirt/path}/poll_ovirt.py "${here/zOVirtUrl}"  "${here/zOVirtUser}" "${here/zOVirtDomain}" "${here/zOVirtPassword}" vm
 </property>
 <property type="int" id="cycletime" mode="w" >
 300

@@ -110,8 +110,8 @@ class IStorageDomainInfo(IComponentInfo):
     datacenter_count = schema.Int(title=_t(u"DataCenter Count"))
 
 
-class IDiskInfo(IComponentInfo):
-    """Interface for the Disk API (Info) Adapter."""
+class IVmDiskInfo(IComponentInfo):
+    """Interface for the VmDisk API (Info) Adapter."""
 
     id = SingleLineText(title=_t(u"ID"))
     bootable = SingleLineText(title=_t(u"Bootable"))

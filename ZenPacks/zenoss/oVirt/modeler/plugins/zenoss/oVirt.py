@@ -193,7 +193,7 @@ class oVirt(PythonPlugin):
                       'vms':
                             {'command': 'vms',
                              'relname': 'vms',
-                             'modname': 'ZenPacks.zenoss.oVirt.Vms',
+                             'modname': 'ZenPacks.zenoss.oVirt.Vm',
                              'attributes': ['guid', 'name', 'cluster_guid',
                              'vm_type', 'state', 'memory', 'cpu_cores', 'cpu_sockets',
                              'os_type', 'os_boot', 'creation_time', 'setHostId',
@@ -282,7 +282,7 @@ class oVirt(PythonPlugin):
                       'disks':
                             {'command': 'disks',
                              'relname': 'disks',
-                             'modname': 'ZenPacks.zenoss.oVirt.Disk',
+                             'modname': 'ZenPacks.zenoss.oVirt.VmDisk',
                              'attributes': ['guid', 'name',
                                             'vm_guid', 'storagedomain_guid',
                                             'setVmId', 'bootable', 'format',

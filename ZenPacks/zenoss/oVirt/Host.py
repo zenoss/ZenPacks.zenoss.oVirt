@@ -55,7 +55,7 @@ class Host(BaseComponent):
               ),
         
         ('vms', ToMany(ToOne,
-             'ZenPacks.zenoss.oVirt.Vms.Vms',
+             'ZenPacks.zenoss.oVirt.Vm.Vm',
              'host')
               ),
         )
