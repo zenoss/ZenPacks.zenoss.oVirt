@@ -10,18 +10,23 @@
 # For complete information please visit: http://www.zenoss.com/oss/
 #
 ###########################################################################
+
 __all__ = ['Client']
+
 
 import twisted.web.client
 import sys
 from xml.etree import ElementTree
 
+
 def CamelCase(data, separator='.'):
     temp = [x.title() for x in data.split(separator)]
-    result=temp[0].lower()
+    result = temp[0].lower()
     if len(temp) > 1:
         result += ''.join(temp[1:])
+
     return result
+
 
 def getText(element):
     return element.childNodes[0].data
@@ -31,7 +36,7 @@ class Client(object):
     """oVirt Client"""
 
     def __init__(self, base_url, username, domain, password):
-        self.base_url = base_url
+        self.base_url = base_url.rstrip('/')
         self.username = username
         self.domain = domain
         self.password = password
@@ -40,8 +45,8 @@ class Client(object):
         creds = creds.encode('Base64').strip('\r\n')
         self.headers = {
             'Authorization': 'Basic %s' % creds,
-            'Accept': 'application/xml'
-        }
+            'Accept': 'application/xml',
+            }
 
     def request(self, command, **kwargs):
         def process_result(results):
@@ -49,7 +54,6 @@ class Client(object):
             return doc
 
         url = '%s/api/%s' % (self.base_url, command)
-        #print url
         return twisted.web.client.getPage(url, headers=self.headers).addCallback(process_result)
 
     def listEvents(self, last=None, **kwargs):
@@ -64,10 +68,10 @@ if __name__ == '__main__':
     from twisted.internet.defer import DeferredList
 
     client = Client(
-        os.environ.get('OVIRT_URL', 'http://10.175.213.149:8080'),
+        os.environ.get('OVIRT_URL', 'http://127.0.0.1:8080'),
         os.environ.get('OVIRT_USERNAME', 'admin'),
         os.environ.get('OVIRT_DOMAIN', 'internal'),
-        os.environ.get('OVIRT_PASSWORD', 'zenoss'))
+        os.environ.get('OVIRT_PASSWORD', 'password'))
 
     def callback(results):
         reactor.stop()
@@ -92,8 +96,8 @@ if __name__ == '__main__':
             client.request('groups'),
             client.request('domains'),
             client.request('vmpools'),
-            client.request('vms')
-        ))
+            client.request('vms'),
+            ))
     else:
         for command in sys.argv[1:]:
             deferreds.append(client.request(command))
