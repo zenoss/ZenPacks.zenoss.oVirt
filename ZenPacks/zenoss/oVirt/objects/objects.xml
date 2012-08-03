@@ -6,7 +6,7 @@
 oVirt virtualization engine
 </property>
 <property type="string" id="description" mode="w" >
-oVirt virtualization engine
+oVirt Virtualization Engine
 </property>
 <property visible="True" type="string" id="zPythonClass" >
 ZenPacks.zenoss.oVirt.System
@@ -90,7 +90,7 @@ True
 </object>
 </tomanycont>
 <tomanycont id='graphDefs'>
-<object id='Counts' module='Products.ZenModel.GraphDefinition' class='GraphDefinition'>
+<object id='Hosted Objects' module='Products.ZenModel.GraphDefinition' class='GraphDefinition'>
 <property type="int" id="height" mode="w" >
 100
 </property>
@@ -98,7 +98,7 @@ True
 500
 </property>
 <property type="string" id="units" mode="w" >
-#
+objects
 </property>
 <property type="boolean" id="log" mode="w" >
 False
@@ -119,7 +119,7 @@ True
 0
 </property>
 <tomanycont id='graphPoints'>
-<object id='hostCount' module='Products.ZenModel.DataPointGraphPoint' class='DataPointGraphPoint'>
+<object id='Hosts' module='Products.ZenModel.DataPointGraphPoint' class='DataPointGraphPoint'>
 <property type="long" id="sequence" mode="w" >
 0
 </property>
@@ -133,10 +133,10 @@ LINE
 False
 </property>
 <property type="string" id="format" mode="w" >
-%5.2lf%s
+%8.0lf
 </property>
 <property type="string" id="legend" mode="w" >
-Hosts
+${graphPoint/id}
 </property>
 <property type="long" id="limit" mode="w" >
 -1
@@ -148,7 +148,7 @@ oVirt_hostCount
 AVERAGE
 </property>
 </object>
-<object id='vmCount' module='Products.ZenModel.DataPointGraphPoint' class='DataPointGraphPoint'>
+<object id='VMs' module='Products.ZenModel.DataPointGraphPoint' class='DataPointGraphPoint'>
 <property type="long" id="sequence" mode="w" >
 1
 </property>
@@ -162,10 +162,10 @@ LINE
 False
 </property>
 <property type="string" id="format" mode="w" >
-%5.2lf%s
+%8.0lf
 </property>
 <property type="string" id="legend" mode="w" >
-VMs
+${graphPoint/id}
 </property>
 <property type="long" id="limit" mode="w" >
 -1
@@ -267,7 +267,7 @@ Gather performance metrics for oVirt System.
 </object>
 </tomanycont>
 <tomanycont id='graphDefs'>
-<object id='Counts' module='Products.ZenModel.GraphDefinition' class='GraphDefinition'>
+<object id='Hosted Objects' module='Products.ZenModel.GraphDefinition' class='GraphDefinition'>
 <property type="int" id="height" mode="w" >
 100
 </property>
@@ -275,7 +275,7 @@ Gather performance metrics for oVirt System.
 500
 </property>
 <property type="string" id="units" mode="w" >
-#
+objects
 </property>
 <property type="boolean" id="log" mode="w" >
 False
@@ -296,7 +296,7 @@ True
 0
 </property>
 <tomanycont id='graphPoints'>
-<object id='clusterCount' module='Products.ZenModel.DataPointGraphPoint' class='DataPointGraphPoint'>
+<object id='Clusters' module='Products.ZenModel.DataPointGraphPoint' class='DataPointGraphPoint'>
 <property type="long" id="sequence" mode="w" >
 0
 </property>
@@ -310,10 +310,10 @@ LINE
 False
 </property>
 <property type="string" id="format" mode="w" >
-%5.2lf%s
+%8.0lf
 </property>
 <property type="string" id="legend" mode="w" >
-Clusters
+${graphPoint/id}
 </property>
 <property type="long" id="limit" mode="w" >
 -1
@@ -325,7 +325,7 @@ oVirt_clusterCount
 AVERAGE
 </property>
 </object>
-<object id='hostCount' module='Products.ZenModel.DataPointGraphPoint' class='DataPointGraphPoint'>
+<object id='Hosts' module='Products.ZenModel.DataPointGraphPoint' class='DataPointGraphPoint'>
 <property type="long" id="sequence" mode="w" >
 1
 </property>
@@ -339,10 +339,10 @@ LINE
 False
 </property>
 <property type="string" id="format" mode="w" >
-%5.2lf%s
+%8.0lf
 </property>
 <property type="string" id="legend" mode="w" >
-Hosts
+${graphPoint/id}
 </property>
 <property type="long" id="limit" mode="w" >
 -1
@@ -354,7 +354,7 @@ oVirt_hostCount
 AVERAGE
 </property>
 </object>
-<object id='vmCount' module='Products.ZenModel.DataPointGraphPoint' class='DataPointGraphPoint'>
+<object id='VMs' module='Products.ZenModel.DataPointGraphPoint' class='DataPointGraphPoint'>
 <property type="long" id="sequence" mode="w" >
 2
 </property>
@@ -368,10 +368,10 @@ LINE
 False
 </property>
 <property type="string" id="format" mode="w" >
-%5.2lf%s
+%8.0lf
 </property>
 <property type="string" id="legend" mode="w" >
-VMs
+${graphPoint/id}
 </property>
 <property type="long" id="limit" mode="w" >
 -1
@@ -685,7 +685,7 @@ True
 </object>
 </tomanycont>
 <tomanycont id='graphDefs'>
-<object id='Counts' module='Products.ZenModel.GraphDefinition' class='GraphDefinition'>
+<object id='CPU Utilization' module='Products.ZenModel.GraphDefinition' class='GraphDefinition'>
 <property type="int" id="height" mode="w" >
 100
 </property>
@@ -693,7 +693,7 @@ True
 500
 </property>
 <property type="string" id="units" mode="w" >
-#
+percent
 </property>
 <property type="boolean" id="log" mode="w" >
 False
@@ -705,76 +705,16 @@ False
 0
 </property>
 <property type="int" id="maxy" mode="w" >
--1
+100
 </property>
 <property type="boolean" id="hasSummary" mode="w" >
 True
 </property>
 <property type="long" id="sequence" mode="w" >
-3
-</property>
-<tomanycont id='graphPoints'>
-<object id='vmCount' module='Products.ZenModel.DataPointGraphPoint' class='DataPointGraphPoint'>
-<property type="long" id="sequence" mode="w" >
-0
-</property>
-<property select_variable="lineTypes" type="selection" id="lineType" mode="w" >
-LINE
-</property>
-<property type="long" id="lineWidth" mode="w" >
 1
 </property>
-<property type="boolean" id="stacked" mode="w" >
-False
-</property>
-<property type="string" id="format" mode="w" >
-%5.2lf%s
-</property>
-<property type="string" id="legend" mode="w" >
-VMs
-</property>
-<property type="long" id="limit" mode="w" >
--1
-</property>
-<property type="string" id="dpName" mode="w" >
-ovirtCounts_vmCount
-</property>
-<property type="string" id="cFunc" mode="w" >
-AVERAGE
-</property>
-</object>
-</tomanycont>
-</object>
-<object id='Cpu' module='Products.ZenModel.GraphDefinition' class='GraphDefinition'>
-<property type="int" id="height" mode="w" >
-100
-</property>
-<property type="int" id="width" mode="w" >
-500
-</property>
-<property type="string" id="units" mode="w" >
-Percent
-</property>
-<property type="boolean" id="log" mode="w" >
-False
-</property>
-<property type="boolean" id="base" mode="w" >
-False
-</property>
-<property type="int" id="miny" mode="w" >
--1
-</property>
-<property type="int" id="maxy" mode="w" >
--1
-</property>
-<property type="boolean" id="hasSummary" mode="w" >
-True
-</property>
-<property type="long" id="sequence" mode="w" >
-0
-</property>
 <tomanycont id='graphPoints'>
-<object id='cpuCurrentIdle' module='Products.ZenModel.DataPointGraphPoint' class='DataPointGraphPoint'>
+<object id='Idle' module='Products.ZenModel.DataPointGraphPoint' class='DataPointGraphPoint'>
 <property type="long" id="sequence" mode="w" >
 3
 </property>
@@ -788,10 +728,10 @@ LINE
 False
 </property>
 <property type="string" id="format" mode="w" >
-%5.2lf%s
+%7.2lf%%
 </property>
 <property type="string" id="legend" mode="w" >
-Idle
+${graphPoint/id}
 </property>
 <property type="long" id="limit" mode="w" >
 -1
@@ -803,94 +743,7 @@ oVirt_cpuCurrentIdle
 AVERAGE
 </property>
 </object>
-<object id='cpuCurrentSystem' module='Products.ZenModel.DataPointGraphPoint' class='DataPointGraphPoint'>
-<property type="long" id="sequence" mode="w" >
-0
-</property>
-<property select_variable="lineTypes" type="selection" id="lineType" mode="w" >
-LINE
-</property>
-<property type="long" id="lineWidth" mode="w" >
-1
-</property>
-<property type="boolean" id="stacked" mode="w" >
-False
-</property>
-<property type="string" id="format" mode="w" >
-%5.2lf%s
-</property>
-<property type="string" id="legend" mode="w" >
-System
-</property>
-<property type="long" id="limit" mode="w" >
--1
-</property>
-<property type="string" id="dpName" mode="w" >
-oVirt_cpuCurrentSystem
-</property>
-<property type="string" id="cFunc" mode="w" >
-AVERAGE
-</property>
-</object>
-<object id='cpuCurrentUser' module='Products.ZenModel.DataPointGraphPoint' class='DataPointGraphPoint'>
-<property type="long" id="sequence" mode="w" >
-1
-</property>
-<property select_variable="lineTypes" type="selection" id="lineType" mode="w" >
-LINE
-</property>
-<property type="long" id="lineWidth" mode="w" >
-1
-</property>
-<property type="boolean" id="stacked" mode="w" >
-False
-</property>
-<property type="string" id="format" mode="w" >
-%5.2lf%s
-</property>
-<property type="string" id="legend" mode="w" >
-User
-</property>
-<property type="long" id="limit" mode="w" >
--1
-</property>
-<property type="string" id="dpName" mode="w" >
-oVirt_cpuCurrentUser
-</property>
-<property type="string" id="cFunc" mode="w" >
-AVERAGE
-</property>
-</object>
-<object id='cpuLoadAvg5M' module='Products.ZenModel.DataPointGraphPoint' class='DataPointGraphPoint'>
-<property type="long" id="sequence" mode="w" >
-4
-</property>
-<property select_variable="lineTypes" type="selection" id="lineType" mode="w" >
-LINE
-</property>
-<property type="long" id="lineWidth" mode="w" >
-1
-</property>
-<property type="boolean" id="stacked" mode="w" >
-False
-</property>
-<property type="string" id="format" mode="w" >
-%5.2lf%s
-</property>
-<property type="string" id="legend" mode="w" >
-5 Minute Load Average
-</property>
-<property type="long" id="limit" mode="w" >
--1
-</property>
-<property type="string" id="dpName" mode="w" >
-oVirt_cpuLoadAvg5M
-</property>
-<property type="string" id="cFunc" mode="w" >
-AVERAGE
-</property>
-</object>
-<object id='ksmCpuCurrent' module='Products.ZenModel.DataPointGraphPoint' class='DataPointGraphPoint'>
+<object id='KSM' module='Products.ZenModel.DataPointGraphPoint' class='DataPointGraphPoint'>
 <property type="long" id="sequence" mode="w" >
 2
 </property>
@@ -904,16 +757,194 @@ LINE
 False
 </property>
 <property type="string" id="format" mode="w" >
-%5.2lf%s
+%7.2lf%%
 </property>
 <property type="string" id="legend" mode="w" >
-KSM Current
+${graphPoint/id}
 </property>
 <property type="long" id="limit" mode="w" >
 -1
 </property>
 <property type="string" id="dpName" mode="w" >
 oVirt_ksmCpuCurrent
+</property>
+<property type="string" id="cFunc" mode="w" >
+AVERAGE
+</property>
+</object>
+<object id='System' module='Products.ZenModel.DataPointGraphPoint' class='DataPointGraphPoint'>
+<property type="long" id="sequence" mode="w" >
+0
+</property>
+<property select_variable="lineTypes" type="selection" id="lineType" mode="w" >
+LINE
+</property>
+<property type="long" id="lineWidth" mode="w" >
+1
+</property>
+<property type="boolean" id="stacked" mode="w" >
+False
+</property>
+<property type="string" id="format" mode="w" >
+%7.2lf%%
+</property>
+<property type="string" id="legend" mode="w" >
+${graphPoint/id}
+</property>
+<property type="long" id="limit" mode="w" >
+-1
+</property>
+<property type="string" id="dpName" mode="w" >
+oVirt_cpuCurrentSystem
+</property>
+<property type="string" id="cFunc" mode="w" >
+AVERAGE
+</property>
+</object>
+<object id='User' module='Products.ZenModel.DataPointGraphPoint' class='DataPointGraphPoint'>
+<property type="long" id="sequence" mode="w" >
+1
+</property>
+<property select_variable="lineTypes" type="selection" id="lineType" mode="w" >
+LINE
+</property>
+<property type="long" id="lineWidth" mode="w" >
+1
+</property>
+<property type="boolean" id="stacked" mode="w" >
+False
+</property>
+<property type="string" id="format" mode="w" >
+%7.2lf%%
+</property>
+<property type="string" id="legend" mode="w" >
+${graphPoint/id}
+</property>
+<property type="long" id="limit" mode="w" >
+-1
+</property>
+<property type="string" id="dpName" mode="w" >
+oVirt_cpuCurrentUser
+</property>
+<property type="string" id="cFunc" mode="w" >
+AVERAGE
+</property>
+</object>
+</tomanycont>
+</object>
+<object id='Hosted Objects' module='Products.ZenModel.GraphDefinition' class='GraphDefinition'>
+<property type="int" id="height" mode="w" >
+100
+</property>
+<property type="int" id="width" mode="w" >
+500
+</property>
+<property type="string" id="units" mode="w" >
+objects
+</property>
+<property type="boolean" id="log" mode="w" >
+False
+</property>
+<property type="boolean" id="base" mode="w" >
+False
+</property>
+<property type="int" id="miny" mode="w" >
+0
+</property>
+<property type="int" id="maxy" mode="w" >
+-1
+</property>
+<property type="boolean" id="hasSummary" mode="w" >
+True
+</property>
+<property type="long" id="sequence" mode="w" >
+0
+</property>
+<tomanycont id='graphPoints'>
+<object id='VMs' module='Products.ZenModel.DataPointGraphPoint' class='DataPointGraphPoint'>
+<property type="long" id="sequence" mode="w" >
+0
+</property>
+<property select_variable="lineTypes" type="selection" id="lineType" mode="w" >
+LINE
+</property>
+<property type="long" id="lineWidth" mode="w" >
+1
+</property>
+<property type="boolean" id="stacked" mode="w" >
+False
+</property>
+<property type="string" id="format" mode="w" >
+%8.0lf
+</property>
+<property type="string" id="legend" mode="w" >
+${graphPoint/id}
+</property>
+<property type="long" id="limit" mode="w" >
+-1
+</property>
+<property type="string" id="dpName" mode="w" >
+ovirtCounts_vmCount
+</property>
+<property type="string" id="cFunc" mode="w" >
+AVERAGE
+</property>
+</object>
+</tomanycont>
+</object>
+<object id='Load Average' module='Products.ZenModel.GraphDefinition' class='GraphDefinition'>
+<property type="int" id="height" mode="w" >
+100
+</property>
+<property type="int" id="width" mode="w" >
+500
+</property>
+<property type="string" id="units" mode="w" >
+processes
+</property>
+<property type="boolean" id="log" mode="w" >
+False
+</property>
+<property type="boolean" id="base" mode="w" >
+False
+</property>
+<property type="int" id="miny" mode="w" >
+0
+</property>
+<property type="int" id="maxy" mode="w" >
+-1
+</property>
+<property type="boolean" id="hasSummary" mode="w" >
+True
+</property>
+<property type="long" id="sequence" mode="w" >
+2
+</property>
+<tomanycont id='graphPoints'>
+<object id='5 Minute' module='Products.ZenModel.DataPointGraphPoint' class='DataPointGraphPoint'>
+<property type="long" id="sequence" mode="w" >
+0
+</property>
+<property select_variable="lineTypes" type="selection" id="lineType" mode="w" >
+LINE
+</property>
+<property type="long" id="lineWidth" mode="w" >
+1
+</property>
+<property type="boolean" id="stacked" mode="w" >
+False
+</property>
+<property type="string" id="format" mode="w" >
+%8.2lf
+</property>
+<property type="string" id="legend" mode="w" >
+${graphPoint/id}
+</property>
+<property type="long" id="limit" mode="w" >
+-1
+</property>
+<property type="string" id="dpName" mode="w" >
+oVirt_cpuLoadAvg5M
 </property>
 <property type="string" id="cFunc" mode="w" >
 AVERAGE
@@ -929,7 +960,7 @@ AVERAGE
 500
 </property>
 <property type="string" id="units" mode="w" >
-Bytes
+bytes
 </property>
 <property type="boolean" id="log" mode="w" >
 False
@@ -947,68 +978,10 @@ True
 True
 </property>
 <property type="long" id="sequence" mode="w" >
-1
+3
 </property>
 <tomanycont id='graphPoints'>
-<object id='memoryBuffers' module='Products.ZenModel.DataPointGraphPoint' class='DataPointGraphPoint'>
-<property type="long" id="sequence" mode="w" >
-0
-</property>
-<property select_variable="lineTypes" type="selection" id="lineType" mode="w" >
-LINE
-</property>
-<property type="long" id="lineWidth" mode="w" >
-1
-</property>
-<property type="boolean" id="stacked" mode="w" >
-False
-</property>
-<property type="string" id="format" mode="w" >
-%5.2lf%s
-</property>
-<property type="string" id="legend" mode="w" >
-Buffers
-</property>
-<property type="long" id="limit" mode="w" >
--1
-</property>
-<property type="string" id="dpName" mode="w" >
-oVirt_memoryBuffers
-</property>
-<property type="string" id="cFunc" mode="w" >
-AVERAGE
-</property>
-</object>
-<object id='memoryCached' module='Products.ZenModel.DataPointGraphPoint' class='DataPointGraphPoint'>
-<property type="long" id="sequence" mode="w" >
-1
-</property>
-<property select_variable="lineTypes" type="selection" id="lineType" mode="w" >
-LINE
-</property>
-<property type="long" id="lineWidth" mode="w" >
-1
-</property>
-<property type="boolean" id="stacked" mode="w" >
-False
-</property>
-<property type="string" id="format" mode="w" >
-%5.2lf%s
-</property>
-<property type="string" id="legend" mode="w" >
-Cached
-</property>
-<property type="long" id="limit" mode="w" >
--1
-</property>
-<property type="string" id="dpName" mode="w" >
-oVirt_memoryCached
-</property>
-<property type="string" id="cFunc" mode="w" >
-AVERAGE
-</property>
-</object>
-<object id='memoryFree' module='Products.ZenModel.DataPointGraphPoint' class='DataPointGraphPoint'>
+<object id='Buffers' module='Products.ZenModel.DataPointGraphPoint' class='DataPointGraphPoint'>
 <property type="long" id="sequence" mode="w" >
 2
 </property>
@@ -1022,24 +995,24 @@ LINE
 False
 </property>
 <property type="string" id="format" mode="w" >
-%5.2lf%s
+%7.2lf%s
 </property>
 <property type="string" id="legend" mode="w" >
-Free
+${graphPoint/id}
 </property>
 <property type="long" id="limit" mode="w" >
 -1
 </property>
 <property type="string" id="dpName" mode="w" >
-oVirt_memoryFree
+oVirt_memoryBuffers
 </property>
 <property type="string" id="cFunc" mode="w" >
 AVERAGE
 </property>
 </object>
-<object id='memoryTotal' module='Products.ZenModel.DataPointGraphPoint' class='DataPointGraphPoint'>
+<object id='Cached' module='Products.ZenModel.DataPointGraphPoint' class='DataPointGraphPoint'>
 <property type="long" id="sequence" mode="w" >
-4
+3
 </property>
 <property select_variable="lineTypes" type="selection" id="lineType" mode="w" >
 LINE
@@ -1051,7 +1024,39 @@ LINE
 False
 </property>
 <property type="string" id="format" mode="w" >
-%5.2lf%s
+%7.2lf%s
+</property>
+<property type="string" id="legend" mode="w" >
+${graphPoint/id}
+</property>
+<property type="long" id="limit" mode="w" >
+-1
+</property>
+<property type="string" id="dpName" mode="w" >
+oVirt_memoryCached
+</property>
+<property type="string" id="cFunc" mode="w" >
+AVERAGE
+</property>
+</object>
+<object id='Total' module='Products.ZenModel.DataPointGraphPoint' class='DataPointGraphPoint'>
+<property type="long" id="sequence" mode="w" >
+0
+</property>
+<property type="string" id="color" mode="w" >
+000000
+</property>
+<property select_variable="lineTypes" type="selection" id="lineType" mode="w" >
+LINE
+</property>
+<property type="long" id="lineWidth" mode="w" >
+1
+</property>
+<property type="boolean" id="stacked" mode="w" >
+False
+</property>
+<property type="string" id="format" mode="w" >
+%7.2lf%s
 </property>
 <property type="string" id="legend" mode="w" >
 Total
@@ -1066,9 +1071,9 @@ oVirt_memoryTotal
 AVERAGE
 </property>
 </object>
-<object id='memoryUsed' module='Products.ZenModel.DataPointGraphPoint' class='DataPointGraphPoint'>
+<object id='Used' module='Products.ZenModel.DataPointGraphPoint' class='DataPointGraphPoint'>
 <property type="long" id="sequence" mode="w" >
-3
+1
 </property>
 <property select_variable="lineTypes" type="selection" id="lineType" mode="w" >
 LINE
@@ -1080,10 +1085,10 @@ LINE
 False
 </property>
 <property type="string" id="format" mode="w" >
-%5.2lf%s
+%7.2lf%s
 </property>
 <property type="string" id="legend" mode="w" >
-Used
+${graphPoint/id}
 </property>
 <property type="long" id="limit" mode="w" >
 -1
@@ -1104,14 +1109,17 @@ AVERAGE
 <property type="int" id="width" mode="w" >
 500
 </property>
+<property type="string" id="units" mode="w" >
+bytes
+</property>
 <property type="boolean" id="log" mode="w" >
 False
 </property>
 <property type="boolean" id="base" mode="w" >
-False
+True
 </property>
 <property type="int" id="miny" mode="w" >
--1
+0
 </property>
 <property type="int" id="maxy" mode="w" >
 -1
@@ -1120,12 +1128,12 @@ False
 True
 </property>
 <property type="long" id="sequence" mode="w" >
-2
+4
 </property>
 <tomanycont id='graphPoints'>
-<object id='swapCached' module='Products.ZenModel.DataPointGraphPoint' class='DataPointGraphPoint'>
+<object id='Cached' module='Products.ZenModel.DataPointGraphPoint' class='DataPointGraphPoint'>
 <property type="long" id="sequence" mode="w" >
-0
+2
 </property>
 <property select_variable="lineTypes" type="selection" id="lineType" mode="w" >
 LINE
@@ -1137,10 +1145,10 @@ LINE
 False
 </property>
 <property type="string" id="format" mode="w" >
-%5.2lf%s
+%7.2lf%s
 </property>
 <property type="string" id="legend" mode="w" >
-Cached
+${graphPoint/id}
 </property>
 <property type="long" id="limit" mode="w" >
 -1
@@ -1152,9 +1160,12 @@ oVirt_swapCached
 AVERAGE
 </property>
 </object>
-<object id='swapFree' module='Products.ZenModel.DataPointGraphPoint' class='DataPointGraphPoint'>
+<object id='Total' module='Products.ZenModel.DataPointGraphPoint' class='DataPointGraphPoint'>
 <property type="long" id="sequence" mode="w" >
-1
+0
+</property>
+<property type="string" id="color" mode="w" >
+000000
 </property>
 <property select_variable="lineTypes" type="selection" id="lineType" mode="w" >
 LINE
@@ -1166,45 +1177,45 @@ LINE
 False
 </property>
 <property type="string" id="format" mode="w" >
-%5.2lf%s
+%7.2lf%s
 </property>
 <property type="string" id="legend" mode="w" >
-Free
-</property>
-<property type="long" id="limit" mode="w" >
--1
-</property>
-<property type="string" id="dpName" mode="w" >
-oVirt_swapFree
-</property>
-<property type="string" id="cFunc" mode="w" >
-AVERAGE
-</property>
-</object>
-<object id='swapTotal' module='Products.ZenModel.DataPointGraphPoint' class='DataPointGraphPoint'>
-<property type="long" id="sequence" mode="w" >
-2
-</property>
-<property select_variable="lineTypes" type="selection" id="lineType" mode="w" >
-LINE
-</property>
-<property type="long" id="lineWidth" mode="w" >
-1
-</property>
-<property type="boolean" id="stacked" mode="w" >
-False
-</property>
-<property type="string" id="format" mode="w" >
-%5.2lf%s
-</property>
-<property type="string" id="legend" mode="w" >
-Total
+${graphPoint/id}
 </property>
 <property type="long" id="limit" mode="w" >
 -1
 </property>
 <property type="string" id="dpName" mode="w" >
 oVirt_swapTotal
+</property>
+<property type="string" id="cFunc" mode="w" >
+AVERAGE
+</property>
+</object>
+<object id='Used' module='Products.ZenModel.DataPointGraphPoint' class='DataPointGraphPoint'>
+<property type="long" id="sequence" mode="w" >
+1
+</property>
+<property select_variable="lineTypes" type="selection" id="lineType" mode="w" >
+LINE
+</property>
+<property type="long" id="lineWidth" mode="w" >
+1
+</property>
+<property type="boolean" id="stacked" mode="w" >
+False
+</property>
+<property type="string" id="format" mode="w" >
+%7.2lf%s
+</property>
+<property type="string" id="legend" mode="w" >
+${graphPoint/id}
+</property>
+<property type="long" id="limit" mode="w" >
+-1
+</property>
+<property type="string" id="dpName" mode="w" >
+oVirt_swapUsed
 </property>
 <property type="string" id="cFunc" mode="w" >
 AVERAGE
@@ -1287,10 +1298,13 @@ Gather performance metrics for oVirt Vm Nic components.
 Gather performance metrics for oVirt Vm Nic components.
 </property>
 <property select_variable="rrdtypes" type="selection" id="rrdtype" mode="w" >
-GAUGE
+DERIVE
 </property>
 <property type="boolean" id="isrow" mode="w" >
 True
+</property>
+<property type="string" id="rrdmin" mode="w" >
+0
 </property>
 <property type="string" id="description" mode="w" >
 Gather performance metrics for oVirt Vm Nic components.
@@ -1301,10 +1315,13 @@ Gather performance metrics for oVirt Vm Nic components.
 Gather performance metrics for oVirt Vm Nic components.
 </property>
 <property select_variable="rrdtypes" type="selection" id="rrdtype" mode="w" >
-GAUGE
+DERIVE
 </property>
 <property type="boolean" id="isrow" mode="w" >
 True
+</property>
+<property type="string" id="rrdmin" mode="w" >
+0
 </property>
 <property type="string" id="description" mode="w" >
 Gather performance metrics for oVirt Vm Nic components.
@@ -1322,7 +1339,7 @@ Gather performance metrics for oVirt Vm Nic components.
 500
 </property>
 <property type="string" id="units" mode="w" >
-bytes/sec
+errors/sec
 </property>
 <property type="boolean" id="log" mode="w" >
 False
@@ -1343,12 +1360,12 @@ True
 1
 </property>
 <tomanycont id='graphPoints'>
-<object id='errorsTotalRx' module='Products.ZenModel.DataPointGraphPoint' class='DataPointGraphPoint'>
+<object id='Recieve' module='Products.ZenModel.DataPointGraphPoint' class='DataPointGraphPoint'>
 <property type="long" id="sequence" mode="w" >
 1
 </property>
 <property select_variable="lineTypes" type="selection" id="lineType" mode="w" >
-AREA
+LINE
 </property>
 <property type="long" id="lineWidth" mode="w" >
 1
@@ -1357,10 +1374,10 @@ AREA
 False
 </property>
 <property type="string" id="format" mode="w" >
-%5.2lf%s
+%7.2lf%s
 </property>
 <property type="string" id="legend" mode="w" >
-Recieve
+${graphPoint/id}
 </property>
 <property type="long" id="limit" mode="w" >
 -1
@@ -1372,7 +1389,7 @@ oVirt_errorsTotalRx
 AVERAGE
 </property>
 </object>
-<object id='errorsTotalTx' module='Products.ZenModel.DataPointGraphPoint' class='DataPointGraphPoint'>
+<object id='Send' module='Products.ZenModel.DataPointGraphPoint' class='DataPointGraphPoint'>
 <property type="long" id="sequence" mode="w" >
 0
 </property>
@@ -1386,10 +1403,10 @@ LINE
 False
 </property>
 <property type="string" id="format" mode="w" >
-%5.2lf%s
+%7.2lf%s
 </property>
 <property type="string" id="legend" mode="w" >
-Send
+${graphPoint/id}
 </property>
 <property type="long" id="limit" mode="w" >
 -1
@@ -1432,12 +1449,12 @@ True
 0
 </property>
 <tomanycont id='graphPoints'>
-<object id='dataCurrentRx' module='Products.ZenModel.DataPointGraphPoint' class='DataPointGraphPoint'>
+<object id='Inbound' module='Products.ZenModel.DataPointGraphPoint' class='DataPointGraphPoint'>
 <property type="long" id="sequence" mode="w" >
 0
 </property>
 <property select_variable="lineTypes" type="selection" id="lineType" mode="w" >
-AREA
+LINE
 </property>
 <property type="long" id="lineWidth" mode="w" >
 1
@@ -1446,10 +1463,10 @@ AREA
 False
 </property>
 <property type="string" id="format" mode="w" >
-%5.2lf%s
+%7.2lf%s
 </property>
 <property type="string" id="legend" mode="w" >
-Inbound
+${graphPoint/id}
 </property>
 <property type="long" id="limit" mode="w" >
 -1
@@ -1464,7 +1481,7 @@ oVirt_dataCurrentRx
 AVERAGE
 </property>
 </object>
-<object id='dataCurrentTx' module='Products.ZenModel.DataPointGraphPoint' class='DataPointGraphPoint'>
+<object id='Outbound' module='Products.ZenModel.DataPointGraphPoint' class='DataPointGraphPoint'>
 <property type="long" id="sequence" mode="w" >
 1
 </property>
@@ -1478,10 +1495,10 @@ LINE
 False
 </property>
 <property type="string" id="format" mode="w" >
-%5.2lf%s
+%7.2lf%s
 </property>
 <property type="string" id="legend" mode="w" >
-Outbound
+${graphPoint/id}
 </property>
 <property type="long" id="limit" mode="w" >
 -1
@@ -1585,7 +1602,7 @@ True
 500
 </property>
 <property type="string" id="units" mode="w" >
-Bytes
+bytes
 </property>
 <property type="boolean" id="log" mode="w" >
 False
@@ -1594,7 +1611,7 @@ False
 False
 </property>
 <property type="int" id="miny" mode="w" >
--1
+0
 </property>
 <property type="int" id="maxy" mode="w" >
 -1
@@ -1606,7 +1623,7 @@ True
 0
 </property>
 <tomanycont id='graphPoints'>
-<object id='available' module='Products.ZenModel.DataPointGraphPoint' class='DataPointGraphPoint'>
+<object id='Available' module='Products.ZenModel.DataPointGraphPoint' class='DataPointGraphPoint'>
 <property type="long" id="sequence" mode="w" >
 0
 </property>
@@ -1620,7 +1637,7 @@ LINE
 False
 </property>
 <property type="string" id="format" mode="w" >
-%5.2lf%s
+%7.2lf%s
 </property>
 <property type="string" id="legend" mode="w" >
 ${graphPoint/id}
@@ -1635,7 +1652,7 @@ oVirt_available
 AVERAGE
 </property>
 </object>
-<object id='committed' module='Products.ZenModel.DataPointGraphPoint' class='DataPointGraphPoint'>
+<object id='Committed' module='Products.ZenModel.DataPointGraphPoint' class='DataPointGraphPoint'>
 <property type="long" id="sequence" mode="w" >
 2
 </property>
@@ -1649,7 +1666,7 @@ LINE
 False
 </property>
 <property type="string" id="format" mode="w" >
-%5.2lf%s
+%7.2lf%s
 </property>
 <property type="string" id="legend" mode="w" >
 ${graphPoint/id}
@@ -1664,7 +1681,7 @@ oVirt_committed
 AVERAGE
 </property>
 </object>
-<object id='used' module='Products.ZenModel.DataPointGraphPoint' class='DataPointGraphPoint'>
+<object id='Used' module='Products.ZenModel.DataPointGraphPoint' class='DataPointGraphPoint'>
 <property type="long" id="sequence" mode="w" >
 1
 </property>
@@ -1678,7 +1695,7 @@ LINE
 False
 </property>
 <property type="string" id="format" mode="w" >
-%5.2lf%s
+%7.2lf%s
 </property>
 <property type="string" id="legend" mode="w" >
 ${graphPoint/id}
@@ -1840,7 +1857,7 @@ ZenPacks.zenoss.oVirt.parsers.JSONParser
 </object>
 </tomanycont>
 <tomanycont id='graphDefs'>
-<object id='Counts' module='Products.ZenModel.GraphDefinition' class='GraphDefinition'>
+<object id='Hosted Objects' module='Products.ZenModel.GraphDefinition' class='GraphDefinition'>
 <property type="int" id="height" mode="w" >
 100
 </property>
@@ -1848,7 +1865,7 @@ ZenPacks.zenoss.oVirt.parsers.JSONParser
 500
 </property>
 <property type="string" id="units" mode="w" >
-#
+objects
 </property>
 <property type="boolean" id="log" mode="w" >
 False
@@ -1869,94 +1886,7 @@ True
 0
 </property>
 <tomanycont id='graphPoints'>
-<object id='clusterCount' module='Products.ZenModel.DataPointGraphPoint' class='DataPointGraphPoint'>
-<property type="long" id="sequence" mode="w" >
-0
-</property>
-<property select_variable="lineTypes" type="selection" id="lineType" mode="w" >
-LINE
-</property>
-<property type="long" id="lineWidth" mode="w" >
-1
-</property>
-<property type="boolean" id="stacked" mode="w" >
-False
-</property>
-<property type="string" id="format" mode="w" >
-%5.2lf%s
-</property>
-<property type="string" id="legend" mode="w" >
-Clusters
-</property>
-<property type="long" id="limit" mode="w" >
--1
-</property>
-<property type="string" id="dpName" mode="w" >
-oVirt_clusterCount
-</property>
-<property type="string" id="cFunc" mode="w" >
-AVERAGE
-</property>
-</object>
-<object id='datacenterCount' module='Products.ZenModel.DataPointGraphPoint' class='DataPointGraphPoint'>
-<property type="long" id="sequence" mode="w" >
-1
-</property>
-<property select_variable="lineTypes" type="selection" id="lineType" mode="w" >
-LINE
-</property>
-<property type="long" id="lineWidth" mode="w" >
-1
-</property>
-<property type="boolean" id="stacked" mode="w" >
-False
-</property>
-<property type="string" id="format" mode="w" >
-%5.2lf%s
-</property>
-<property type="string" id="legend" mode="w" >
-DataCenters
-</property>
-<property type="long" id="limit" mode="w" >
--1
-</property>
-<property type="string" id="dpName" mode="w" >
-oVirt_datacenterCount
-</property>
-<property type="string" id="cFunc" mode="w" >
-AVERAGE
-</property>
-</object>
-<object id='hostCount' module='Products.ZenModel.DataPointGraphPoint' class='DataPointGraphPoint'>
-<property type="long" id="sequence" mode="w" >
-3
-</property>
-<property select_variable="lineTypes" type="selection" id="lineType" mode="w" >
-LINE
-</property>
-<property type="long" id="lineWidth" mode="w" >
-1
-</property>
-<property type="boolean" id="stacked" mode="w" >
-False
-</property>
-<property type="string" id="format" mode="w" >
-%5.2lf%s
-</property>
-<property type="string" id="legend" mode="w" >
-Hosts
-</property>
-<property type="long" id="limit" mode="w" >
--1
-</property>
-<property type="string" id="dpName" mode="w" >
-oVirt_hostCount
-</property>
-<property type="string" id="cFunc" mode="w" >
-AVERAGE
-</property>
-</object>
-<object id='storagedomainCount' module='Products.ZenModel.DataPointGraphPoint' class='DataPointGraphPoint'>
+<object id='Clusters' module='Products.ZenModel.DataPointGraphPoint' class='DataPointGraphPoint'>
 <property type="long" id="sequence" mode="w" >
 2
 </property>
@@ -1970,10 +1900,97 @@ LINE
 False
 </property>
 <property type="string" id="format" mode="w" >
-%5.2lf%s
+%8.0lf
 </property>
 <property type="string" id="legend" mode="w" >
-storageDomains
+${graphPoint/id}
+</property>
+<property type="long" id="limit" mode="w" >
+-1
+</property>
+<property type="string" id="dpName" mode="w" >
+oVirt_clusterCount
+</property>
+<property type="string" id="cFunc" mode="w" >
+AVERAGE
+</property>
+</object>
+<object id='Datacenters' module='Products.ZenModel.DataPointGraphPoint' class='DataPointGraphPoint'>
+<property type="long" id="sequence" mode="w" >
+0
+</property>
+<property select_variable="lineTypes" type="selection" id="lineType" mode="w" >
+LINE
+</property>
+<property type="long" id="lineWidth" mode="w" >
+1
+</property>
+<property type="boolean" id="stacked" mode="w" >
+False
+</property>
+<property type="string" id="format" mode="w" >
+%8.0lf
+</property>
+<property type="string" id="legend" mode="w" >
+${graphPoint/id}
+</property>
+<property type="long" id="limit" mode="w" >
+-1
+</property>
+<property type="string" id="dpName" mode="w" >
+oVirt_datacenterCount
+</property>
+<property type="string" id="cFunc" mode="w" >
+AVERAGE
+</property>
+</object>
+<object id='Hosts' module='Products.ZenModel.DataPointGraphPoint' class='DataPointGraphPoint'>
+<property type="long" id="sequence" mode="w" >
+3
+</property>
+<property select_variable="lineTypes" type="selection" id="lineType" mode="w" >
+LINE
+</property>
+<property type="long" id="lineWidth" mode="w" >
+1
+</property>
+<property type="boolean" id="stacked" mode="w" >
+False
+</property>
+<property type="string" id="format" mode="w" >
+%8.0lf
+</property>
+<property type="string" id="legend" mode="w" >
+${graphPoint/id}
+</property>
+<property type="long" id="limit" mode="w" >
+-1
+</property>
+<property type="string" id="dpName" mode="w" >
+oVirt_hostCount
+</property>
+<property type="string" id="cFunc" mode="w" >
+AVERAGE
+</property>
+</object>
+<object id='Stg. Domains' module='Products.ZenModel.DataPointGraphPoint' class='DataPointGraphPoint'>
+<property type="long" id="sequence" mode="w" >
+1
+</property>
+<property select_variable="lineTypes" type="selection" id="lineType" mode="w" >
+LINE
+</property>
+<property type="long" id="lineWidth" mode="w" >
+1
+</property>
+<property type="boolean" id="stacked" mode="w" >
+False
+</property>
+<property type="string" id="format" mode="w" >
+%8.0lf
+</property>
+<property type="string" id="legend" mode="w" >
+${graphPoint/id}
 </property>
 <property type="long" id="limit" mode="w" >
 -1
@@ -1985,7 +2002,7 @@ oVirt_storagedomainCount
 AVERAGE
 </property>
 </object>
-<object id='vmCount' module='Products.ZenModel.DataPointGraphPoint' class='DataPointGraphPoint'>
+<object id='VMs' module='Products.ZenModel.DataPointGraphPoint' class='DataPointGraphPoint'>
 <property type="long" id="sequence" mode="w" >
 4
 </property>
@@ -1999,10 +2016,10 @@ LINE
 False
 </property>
 <property type="string" id="format" mode="w" >
-%5.2lf%s
+%8.0lf
 </property>
 <property type="string" id="legend" mode="w" >
-VMs
+${graphPoint/id}
 </property>
 <property type="long" id="limit" mode="w" >
 -1
@@ -2102,7 +2119,7 @@ True
 </object>
 </tomanycont>
 <tomanycont id='graphDefs'>
-<object id='VM Cpu' module='Products.ZenModel.GraphDefinition' class='GraphDefinition'>
+<object id='CPU Utilization' module='Products.ZenModel.GraphDefinition' class='GraphDefinition'>
 <property type="int" id="height" mode="w" >
 100
 </property>
@@ -2110,7 +2127,7 @@ True
 500
 </property>
 <property type="string" id="units" mode="w" >
-Percent
+percent
 </property>
 <property type="boolean" id="log" mode="w" >
 False
@@ -2122,16 +2139,16 @@ False
 0
 </property>
 <property type="int" id="maxy" mode="w" >
--1
+100
 </property>
 <property type="boolean" id="hasSummary" mode="w" >
 True
 </property>
 <property type="long" id="sequence" mode="w" >
-1
+0
 </property>
 <tomanycont id='graphPoints'>
-<object id='cpuCurrentGuest' module='Products.ZenModel.DataPointGraphPoint' class='DataPointGraphPoint'>
+<object id='Guest' module='Products.ZenModel.DataPointGraphPoint' class='DataPointGraphPoint'>
 <property type="long" id="sequence" mode="w" >
 1
 </property>
@@ -2145,10 +2162,10 @@ LINE
 False
 </property>
 <property type="string" id="format" mode="w" >
-%5.2lf%s
+%7.2lf%%
 </property>
 <property type="string" id="legend" mode="w" >
-CPU Used by guest
+${graphPoint/id}
 </property>
 <property type="long" id="limit" mode="w" >
 -1
@@ -2160,7 +2177,7 @@ oVirt_cpuCurrentGuest
 AVERAGE
 </property>
 </object>
-<object id='cpuCurrentHypervisor' module='Products.ZenModel.DataPointGraphPoint' class='DataPointGraphPoint'>
+<object id='Hypervisor' module='Products.ZenModel.DataPointGraphPoint' class='DataPointGraphPoint'>
 <property type="long" id="sequence" mode="w" >
 2
 </property>
@@ -2174,10 +2191,10 @@ LINE
 False
 </property>
 <property type="string" id="format" mode="w" >
-%5.2lf%s
+%7.2lf%%
 </property>
 <property type="string" id="legend" mode="w" >
-CPU hypervisor overhead
+${graphPoint/id}
 </property>
 <property type="long" id="limit" mode="w" >
 -1
@@ -2189,7 +2206,7 @@ oVirt_cpuCurrentHypervisor
 AVERAGE
 </property>
 </object>
-<object id='cpuCurrentTotal' module='Products.ZenModel.DataPointGraphPoint' class='DataPointGraphPoint'>
+<object id='Total' module='Products.ZenModel.DataPointGraphPoint' class='DataPointGraphPoint'>
 <property type="long" id="sequence" mode="w" >
 0
 </property>
@@ -2203,10 +2220,10 @@ LINE
 False
 </property>
 <property type="string" id="format" mode="w" >
-%5.2lf%s
+%7.2lf%%
 </property>
 <property type="string" id="legend" mode="w" >
-Total CPU Used
+${graphPoint/id}
 </property>
 <property type="long" id="limit" mode="w" >
 -1
@@ -2220,7 +2237,7 @@ AVERAGE
 </object>
 </tomanycont>
 </object>
-<object id='VM Memory' module='Products.ZenModel.GraphDefinition' class='GraphDefinition'>
+<object id='Memory Usage' module='Products.ZenModel.GraphDefinition' class='GraphDefinition'>
 <property type="int" id="height" mode="w" >
 100
 </property>
@@ -2228,13 +2245,13 @@ AVERAGE
 500
 </property>
 <property type="string" id="units" mode="w" >
-Bytes
+bytes
 </property>
 <property type="boolean" id="log" mode="w" >
 False
 </property>
 <property type="boolean" id="base" mode="w" >
-False
+True
 </property>
 <property type="int" id="miny" mode="w" >
 0
@@ -2246,12 +2263,15 @@ False
 True
 </property>
 <property type="long" id="sequence" mode="w" >
-0
+1
 </property>
 <tomanycont id='graphPoints'>
-<object id='memoryInstalled' module='Products.ZenModel.DataPointGraphPoint' class='DataPointGraphPoint'>
+<object id='Installed' module='Products.ZenModel.DataPointGraphPoint' class='DataPointGraphPoint'>
 <property type="long" id="sequence" mode="w" >
-1
+0
+</property>
+<property type="string" id="color" mode="w" >
+000000
 </property>
 <property select_variable="lineTypes" type="selection" id="lineType" mode="w" >
 LINE
@@ -2263,10 +2283,10 @@ LINE
 False
 </property>
 <property type="string" id="format" mode="w" >
-%5.2lf%s
+%7.2lf%s
 </property>
 <property type="string" id="legend" mode="w" >
-Installed
+${graphPoint/id}
 </property>
 <property type="long" id="limit" mode="w" >
 -1
@@ -2278,9 +2298,9 @@ oVirt_memoryInstalled
 AVERAGE
 </property>
 </object>
-<object id='memoryUsed' module='Products.ZenModel.DataPointGraphPoint' class='DataPointGraphPoint'>
+<object id='Used' module='Products.ZenModel.DataPointGraphPoint' class='DataPointGraphPoint'>
 <property type="long" id="sequence" mode="w" >
-0
+1
 </property>
 <property select_variable="lineTypes" type="selection" id="lineType" mode="w" >
 LINE
@@ -2292,10 +2312,10 @@ LINE
 False
 </property>
 <property type="string" id="format" mode="w" >
-%5.2lf%s
+%7.2lf%s
 </property>
 <property type="string" id="legend" mode="w" >
-Used
+${graphPoint/id}
 </property>
 <property type="long" id="limit" mode="w" >
 -1
@@ -2371,7 +2391,7 @@ True
 </object>
 </tomanycont>
 <tomanycont id='graphDefs'>
-<object id='oVirt - Disk Throughput' module='Products.ZenModel.GraphDefinition' class='GraphDefinition'>
+<object id='Disk Throughput' module='Products.ZenModel.GraphDefinition' class='GraphDefinition'>
 <property type="int" id="height" mode="w" >
 100
 </property>
@@ -2400,7 +2420,7 @@ True
 0
 </property>
 <tomanycont id='graphPoints'>
-<object id='dataCurrentRead' module='Products.ZenModel.DataPointGraphPoint' class='DataPointGraphPoint'>
+<object id='Read' module='Products.ZenModel.DataPointGraphPoint' class='DataPointGraphPoint'>
 <property type="long" id="sequence" mode="w" >
 0
 </property>
@@ -2414,10 +2434,10 @@ LINE
 False
 </property>
 <property type="string" id="format" mode="w" >
-%5.2lf%s
+%7.2lf%s
 </property>
 <property type="string" id="legend" mode="w" >
-Read
+${graphPoint/id}
 </property>
 <property type="long" id="limit" mode="w" >
 -1
@@ -2429,7 +2449,7 @@ oVirt_dataCurrentRead
 AVERAGE
 </property>
 </object>
-<object id='dataCurrentWrite' module='Products.ZenModel.DataPointGraphPoint' class='DataPointGraphPoint'>
+<object id='Write' module='Products.ZenModel.DataPointGraphPoint' class='DataPointGraphPoint'>
 <property type="long" id="sequence" mode="w" >
 1
 </property>
@@ -2443,10 +2463,10 @@ LINE
 False
 </property>
 <property type="string" id="format" mode="w" >
-%5.2lf%s
+%7.2lf%s
 </property>
 <property type="string" id="legend" mode="w" >
-Write
+${graphPoint/id}
 </property>
 <property type="long" id="limit" mode="w" >
 -1
@@ -2520,18 +2540,24 @@ True
 </object>
 <object id='errorsTotalRx' module='Products.ZenModel.RRDDataPoint' class='RRDDataPoint'>
 <property select_variable="rrdtypes" type="selection" id="rrdtype" mode="w" >
-GAUGE
+DERIVE
 </property>
 <property type="boolean" id="isrow" mode="w" >
 True
+</property>
+<property type="string" id="rrdmin" mode="w" >
+0
 </property>
 </object>
 <object id='errorsTotalTx' module='Products.ZenModel.RRDDataPoint' class='RRDDataPoint'>
 <property select_variable="rrdtypes" type="selection" id="rrdtype" mode="w" >
-GAUGE
+DERIVE
 </property>
 <property type="boolean" id="isrow" mode="w" >
 True
+</property>
+<property type="string" id="rrdmin" mode="w" >
+0
 </property>
 </object>
 </tomanycont>
@@ -2546,7 +2572,7 @@ True
 500
 </property>
 <property type="string" id="units" mode="w" >
-bytes/sec
+errors/sec
 </property>
 <property type="boolean" id="log" mode="w" >
 False
@@ -2567,12 +2593,12 @@ True
 1
 </property>
 <tomanycont id='graphPoints'>
-<object id='errorsTotalRx' module='Products.ZenModel.DataPointGraphPoint' class='DataPointGraphPoint'>
+<object id='Receive' module='Products.ZenModel.DataPointGraphPoint' class='DataPointGraphPoint'>
 <property type="long" id="sequence" mode="w" >
 1
 </property>
 <property select_variable="lineTypes" type="selection" id="lineType" mode="w" >
-AREA
+LINE
 </property>
 <property type="long" id="lineWidth" mode="w" >
 1
@@ -2581,10 +2607,10 @@ AREA
 False
 </property>
 <property type="string" id="format" mode="w" >
-%5.2lf%s
+%7.2lf%s
 </property>
 <property type="string" id="legend" mode="w" >
-Recieve
+${graphPoint/id}
 </property>
 <property type="long" id="limit" mode="w" >
 -1
@@ -2596,7 +2622,7 @@ oVirt_errorsTotalRx
 AVERAGE
 </property>
 </object>
-<object id='errorsTotalTx' module='Products.ZenModel.DataPointGraphPoint' class='DataPointGraphPoint'>
+<object id='Send' module='Products.ZenModel.DataPointGraphPoint' class='DataPointGraphPoint'>
 <property type="long" id="sequence" mode="w" >
 0
 </property>
@@ -2610,10 +2636,10 @@ LINE
 False
 </property>
 <property type="string" id="format" mode="w" >
-%5.2lf%s
+%7.2lf%s
 </property>
 <property type="string" id="legend" mode="w" >
-Send
+${graphPoint/id}
 </property>
 <property type="long" id="limit" mode="w" >
 -1
@@ -2656,12 +2682,12 @@ True
 0
 </property>
 <tomanycont id='graphPoints'>
-<object id='dataCurrentRx' module='Products.ZenModel.DataPointGraphPoint' class='DataPointGraphPoint'>
+<object id='Inbound' module='Products.ZenModel.DataPointGraphPoint' class='DataPointGraphPoint'>
 <property type="long" id="sequence" mode="w" >
 0
 </property>
 <property select_variable="lineTypes" type="selection" id="lineType" mode="w" >
-AREA
+LINE
 </property>
 <property type="long" id="lineWidth" mode="w" >
 1
@@ -2670,10 +2696,10 @@ AREA
 False
 </property>
 <property type="string" id="format" mode="w" >
-%5.2lf%s
+%7.2lf%s
 </property>
 <property type="string" id="legend" mode="w" >
-Inbound
+${graphPoint/id}
 </property>
 <property type="long" id="limit" mode="w" >
 -1
@@ -2688,7 +2714,7 @@ oVirt_dataCurrentRx
 AVERAGE
 </property>
 </object>
-<object id='dataCurrentTx' module='Products.ZenModel.DataPointGraphPoint' class='DataPointGraphPoint'>
+<object id='Outbound' module='Products.ZenModel.DataPointGraphPoint' class='DataPointGraphPoint'>
 <property type="long" id="sequence" mode="w" >
 1
 </property>
@@ -2702,10 +2728,10 @@ LINE
 False
 </property>
 <property type="string" id="format" mode="w" >
-%5.2lf%s
+%7.2lf%s
 </property>
 <property type="string" id="legend" mode="w" >
-Outbound
+${graphPoint/id}
 </property>
 <property type="long" id="limit" mode="w" >
 -1
