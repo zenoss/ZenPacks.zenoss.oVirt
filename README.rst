@@ -107,8 +107,8 @@ Add an ovirt server via zendmd.
 
 Add an oVirt Server via zenbatchload
 +++++++++++++++++++++++++++++++++
-> /Devices/oVirt loader='oVirt', loader_arg_keys=['url', 'username', 'domain', 'password']
-> ovirt.zenosslabs.com url='http://ovirt.zenosslabs.com', username='admin', domain='internal', password='zenoss'
+/Devices/oVirt loader='oVirt', loader_arg_keys=['url', 'username', 'domain', 'password']
+ovirt.zenosslabs.com url='http://ovirt.zenosslabs.com', username='admin', domain='internal', password='zenoss'
 
 #. add the above two lines to a txt file
 #. Run ``zenbatchload txtfile``
