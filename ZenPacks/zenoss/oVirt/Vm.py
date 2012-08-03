@@ -81,17 +81,24 @@ class Vm(BaseComponent):
             return host.id
 
     def guest(self):
-        macAddress = [nic.get('mac') for nic in self.nics()]
+        macAddress = [nic.mac for nic in self.nics()]
         if not macAddress:
             return None
 
         cat = self.dmd.ZenLinkManager._getCatalog(layer=2)
         if cat is not None:
-            # Use the first nic on a device, if we modelled the vm
-            # this nic should already exist
-            brains = cat(macaddress=macAddress[0])
-            if brains:
-                return brains[0].getObject().device()
+            for nic in self.nics():
+                if not nic.mac:
+                    continue
+
+                # Use the first nic on a device, if we modelled the vm
+                # this nic should already exist
+                brains = cat(macaddress=nic.mac)
+                if brains:
+                    for brain in brains:
+                        device = brain.getObject().device()
+                        if device:
+                            return device
 
         return None
 

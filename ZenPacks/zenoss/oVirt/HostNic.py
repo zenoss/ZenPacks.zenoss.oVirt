@@ -11,11 +11,9 @@
 #
 ###########################################################################
 
-from Products.ZenRelations.RelSchema import ToManyCont, ToMany, ToOne
+from Products.ZenRelations.RelSchema import ToManyCont, ToOne
 
 from ZenPacks.zenoss.oVirt import BaseComponent
-from Products.Zuul.catalog.events import IndexingEvent
-from zope.event import notify
 
 
 class HostNic(BaseComponent):

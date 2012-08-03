@@ -83,6 +83,8 @@ class IVmInfo(IComponentInfo):
     os_boot = SingleLineText(title=_t(u"OS Boot Device"))
     affinity = SingleLineText(title=_t(u"Affinity"))
     nic_count = schema.Int(title=_t(u"Nic Count"))
+    host = schema.Entity(title=_t(u"Host"))
+    guest = schema.Entity(title=_t(u"Guest Device"))
 
 
 class IHostInfo(IComponentInfo):
@@ -98,6 +100,7 @@ class IHostInfo(IComponentInfo):
     cpu_speed = SingleLineText(title=_t(u"Cpu Speed"))
     nic_count = schema.Int(title=_t(u"Nic Count"))
     vm_count = schema.Int(title=_t(u"Vm Count"))
+    managed_device = schema.Entity(title=_t(u"Managed Device"))
 
 
 class IStorageDomainInfo(IComponentInfo):

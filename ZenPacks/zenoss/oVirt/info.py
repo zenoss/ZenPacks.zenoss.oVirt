@@ -101,6 +101,11 @@ class HostInfo(BaseComponentInfo):
     def vm_count(self):
         return self._object.vms.countObjects()
 
+    @property
+    @info
+    def managed_device(self):
+        return self._object.managed_device()
+
 
 class VmInfo(BaseComponentInfo):
     """VM API (Info) adapter factory."""
