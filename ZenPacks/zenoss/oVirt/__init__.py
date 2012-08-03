@@ -26,6 +26,8 @@ from Products.ZenModel.DeviceComponent import DeviceComponent
 from Products.ZenModel.ManagedEntity import ManagedEntity
 from Products.ZenModel.ZenossSecurity import ZEN_CHANGE_DEVICE
 
+from Products.ZenRelations.zPropertyCategory import setzPropertyCategory
+
 unused(Globals)
 
 
@@ -41,6 +43,13 @@ productNames = (
     'VmNic',
     'VmDisk',
     )
+
+
+# Add categories to our contributed zProperties.
+setzPropertyCategory('zOVirtUrl', 'oVirt')
+setzPropertyCategory('zOVirtUser', 'oVirt')
+setzPropertyCategory('zOVirtPassword', 'oVirt')
+setzPropertyCategory('zOVirtDomain', 'oVirt')
 
 
 class BaseComponent(DeviceComponent, ManagedEntity):
