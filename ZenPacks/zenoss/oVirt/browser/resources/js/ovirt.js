@@ -96,8 +96,13 @@ var addOVirtInfra = new Zenoss.Action({
                         Zenoss.remote.oVirtRouter.add_ovirt(opts,
                         function(response) {
                             if (response.success) {
-                                Zenoss.message.success(_t('Add oVirt Infrastructure job submitted. <a href="/zport/dmd/JobManager/jobs/{0}/viewlog">View Job Log</a>'),
-                                    response.jobId);
+                                if (Zenoss.JobsWidget) {
+                                    Zenoss.message.success(_t('Add oVirt Infrastructure job submitted.'));
+                                } else {
+                                    Zenoss.message.success(
+                                        _t('Add oVirt Infrastructure job submitted. <a href="/zport/dmd/JobManager/jobs/{0}/viewlog">View Job Log</a>'),
+                                        response.jobId);
+                                }
                             }
                             else {
                                 Zenoss.message.error(_t('Error adding oVirt Infrastructure: {0}'),
