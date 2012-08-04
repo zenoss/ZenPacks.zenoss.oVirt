@@ -148,7 +148,7 @@ class oVirtCounter(object):
                 results[self._id]['clusterCount'] = len(data[key][0].getchildren())
                 for cluster in data[key][0].getchildren():
                     if cluster.find('data_center') is not None:
-                        results.setdefault(cluster.find('data_center').attrib['id'], {'clusterCount': 0, 'hostCount': 0, 'vmsCount': 0, 'clusterids': []})
+                        results.setdefault(cluster.find('data_center').attrib['id'], {'clusterCount': 0, 'hostCount': 0, 'vmCount': 0, 'clusterids': []})
                         results[cluster.find('data_center').attrib['id']]['clusterCount'] += 1
                         results[cluster.find('data_center').attrib['id']]['clusterids'].append(cluster.attrib['id'])
 
@@ -157,19 +157,19 @@ class oVirtCounter(object):
             if 'hosts' in key:
                 results[self._id]['hostCount'] = len(data[key][0].getchildren())
                 for host in data[key][0].getchildren():
-                    results.setdefault(host.attrib['id'], {'vmsCount': 0})
+                    results.setdefault(host.attrib['id'], {'vmCount': 0})
                     if host.find('cluster') is not None:
-                        results.setdefault(host.find('cluster').attrib['id'], {'vmsCount': 0, 'hostCount': 0})
+                        results.setdefault(host.find('cluster').attrib['id'], {'vmCount': 0, 'hostCount': 0})
                         results[host.find('cluster').attrib['id']]['hostCount'] += 1
             if 'vms' in key:
-                results[self._id]['vmsCount'] = len(data[key][0].getchildren())
+                results[self._id]['vmCount'] = len(data[key][0].getchildren())
                 for vm in data[key][0].getchildren():
                     if vm.find('cluster') is not None:
-                        results.setdefault(vm.find('cluster').attrib['id'], {'vmsCount': 0, 'hostCount': 0})
-                        results[vm.find('cluster').attrib['id']]['vmsCount'] += 1
+                        results.setdefault(vm.find('cluster').attrib['id'], {'vmCount': 0, 'hostCount': 0})
+                        results[vm.find('cluster').attrib['id']]['vmCount'] += 1
                     if vm.find('host') is not None:
-                        results.setdefault(vm.find('host').attrib['id'], {'vmsCount': 0, 'clusterCount': 0})
-                        results[vm.find('host').attrib['id']]['vmsCount'] += 1
+                        results.setdefault(vm.find('host').attrib['id'], {'vmCount': 0, 'clusterCount': 0})
+                        results[vm.find('host').attrib['id']]['vmCount'] += 1
 
         # post process the resulting dictionary to copy the cluster counts inside a datacenter.
         # remove the temporary clusterids key.
