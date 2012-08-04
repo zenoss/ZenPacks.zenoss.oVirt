@@ -48,6 +48,22 @@ Ext.apply(Zenoss.render, {
         } else {
             return '<input type="checkbox" disabled="true">';
         }
+    },
+
+    interface_speed: function(speed) {
+        if (!speed)
+            return speed;
+
+        var units = ['bps', 'Kbps', 'Mbps', 'Gbps', 'Tbps', 'Pbps'];
+        var i;
+        for (i = 0; i < units.length ; i++) {
+            if (speed < 1000)
+                break;
+
+            speed = speed / 1000;
+        }
+
+        return speed.toFixed(0) + ' ' + units[i];
     }
 });
 
@@ -117,9 +133,11 @@ ZC.oVirtDataCenterPanel = Ext.extend(ZC.oVirtComponentGridPanel, {
                 {name: 'severity'},
                 {name: 'description'},
                 {name: 'storagedomain_count'},
-                {name: 'cluster_count'},
                 {name: 'storage_type'},
                 {name: 'storage_format'},
+                {name: 'cluster_count'},
+                {name: 'host_count'},
+                {name: 'vm_count'},
                 {name: 'monitor'},
                 {name: 'monitored'},
                 {name: 'locking'}
@@ -149,25 +167,37 @@ ZC.oVirtDataCenterPanel = Ext.extend(ZC.oVirtComponentGridPanel, {
                 dataIndex: 'storage_type',
                 header: _t('Storage Type'),
                 sortable: true,
-                width: 80
+                width: 100
             },{
                 id: 'storage_format',
                 dataIndex: 'storage_format',
                 header: _t('Storage Format'),
                 sortable: true,
-                width: 90
+                width: 100
             },{
                 id: 'storagedomain_count',
                 dataIndex: 'storagedomain_count',
-                header: _t('# StorageDomains'),
+                header: _t('# Storage Domains'),
                 sortable: true,
-                width: 100
+                width: 115
             },{
                 id: 'cluster_count',
                 dataIndex: 'cluster_count',
                 header: _t('# Clusters'),
                 sortable: true,
+                width: 80
+            },{
+                id: 'host_count',
+                dataIndex: 'host_count',
+                header: _t('# Hosts'),
+                sortable: true,
                 width: 70
+            },{
+                id: 'vm_count',
+                dataIndex: 'vm_count',
+                header: _t('# VMs'),
+                sortable: true,
+                width: 60
             },{
                 id: 'monitored',
                 dataIndex: 'monitored',
@@ -270,7 +300,6 @@ ZC.oVirtStorageDomainPanel = Ext.extend(ZC.oVirtComponentGridPanel, {
                 {name: 'uid'},
                 {name: 'name'},
                 {name: 'severity'},
-                {name: 'datacenter'},
                 {name: 'storagedomain_type'},
                 {name: 'storage_type'},
                 {name: 'storage_format'},
@@ -308,7 +337,7 @@ ZC.oVirtStorageDomainPanel = Ext.extend(ZC.oVirtComponentGridPanel, {
                 id: 'datacenter_count',
                 dataIndex: 'datacenter_count',
                 header: _t('# Datacenters'),
-                width: 80
+                width: 100
             },{
                 id: 'disk_count',
                 dataIndex: 'disk_count',
@@ -351,12 +380,12 @@ ZC.oVirtVmPanel = Ext.extend(ZC.oVirtComponentGridPanel, {
                 {name: 'state'},
                 {name: 'memory'},
                 {name: 'cpu_cores'},
-                {name: 'cpu_sockets'},
                 {name: 'os_type'},
                 {name: 'os_boot'},
                 {name: 'host'},
                 {name: 'guest'},
                 {name: 'nic_count'},
+                {name: 'disk_count'},
                 {name: 'creation_time'},
                 {name: 'affinity'},
                 {name: 'memory_policy_guaranteed'},
@@ -410,13 +439,8 @@ ZC.oVirtVmPanel = Ext.extend(ZC.oVirtComponentGridPanel, {
             },{
                 id: 'cpu_cores',
                 dataIndex: 'cpu_cores',
-                header: _t('Cpu Cores'),
-                width: 70
-            },{
-                id: 'cpu_sockets',
-                dataIndex: 'cpu_sockets',
-                header: _t('Cpu Sockets'),
-                width: 73
+                header: _t('# Cores'),
+                width: 65
             },{
                 id: 'memory',
                 dataIndex: 'memory',
@@ -426,18 +450,18 @@ ZC.oVirtVmPanel = Ext.extend(ZC.oVirtComponentGridPanel, {
             },{
                 id: 'memory_policy_guaranteed',
                 dataIndex: 'memory_policy_guaranteed',
-                header: _t('Guaranteed Memory'),
+                header: _t('Guaranteed'),
                 renderer: Zenoss.render.memory,
-                width: 115
+                width: 85
             },{
                 id: 'os_type',
                 dataIndex: 'os_type',
-                header: _t('OS Type'),
+                header: _t('OS'),
                 width: 60
             },{
                 id: 'os_boot',
                 dataIndex: 'os_boot',
-                header: _t('OS Boot'),
+                header: _t('Boot'),
                 width: 60
             },{
                 id: 'affinity',
@@ -447,7 +471,12 @@ ZC.oVirtVmPanel = Ext.extend(ZC.oVirtComponentGridPanel, {
             },{
                 id: 'nic_count',
                 dataIndex: 'nic_count',
-                header: _t('# Nics'),
+                header: _t('# NICs'),
+                width: 60
+            },{
+                id: 'disk_count',
+                dataIndex: 'disk_count',
+                header: _t('# Disks'),
                 width: 60
             },{
                 id: 'monitored',
@@ -519,18 +548,7 @@ ZC.oVirtHostPanel = Ext.extend(ZC.oVirtComponentGridPanel, {
                     }
                 },
                 sortable: true,
-                width: 100
-            },{
-                id: 'address',
-                dataIndex: 'address',
-                header: _t('Address'),
-                sortable: true,
-                width: 100
-            },{
-                id: 'storage_manager',
-                dataIndex: 'storage_manager',
-                header: _t('Storage Manager'),
-                width: 100
+                width: 120
             },{
                 id: 'cluster',
                 dataIndex: 'cluster',
@@ -539,15 +557,27 @@ ZC.oVirtHostPanel = Ext.extend(ZC.oVirtComponentGridPanel, {
                 sortable: true,
                 width: 100
             },{
+                id: 'storage_manager',
+                dataIndex: 'storage_manager',
+                header: _t('SPM'),
+                renderer: Zenoss.render.checkbox,
+                width: 60
+            },{
+                id: 'address',
+                dataIndex: 'address',
+                header: _t('IP Address'),
+                sortable: true,
+                width: 100
+            },{
                 id: 'cpu_cores',
                 dataIndex: 'cpu_cores',
-                header: _t('Cpu Cores'),
-                width: 70
+                header: _t('# Cores'),
+                width: 65
             },{
                 id: 'cpu_sockets',
                 dataIndex: 'cpu_sockets',
-                header: _t('Cpu Sockets'),
-                width: 73
+                header: _t('# Sockets'),
+                width: 75
             },{
                 id: 'memory',
                 dataIndex: 'memory',
@@ -555,14 +585,14 @@ ZC.oVirtHostPanel = Ext.extend(ZC.oVirtComponentGridPanel, {
                 renderer: Zenoss.render.memory,
                 width: 70
             },{
-                id: 'nic_count',
-                dataIndex: 'nic_count',
-                header: _t('# Nics'),
-                width: 60
-            },{
                 id: 'vm_count',
                 dataIndex: 'vm_count',
-                header: _t('# Vms'),
+                header: _t('# VMs'),
+                width: 60
+            },{
+                id: 'nic_count',
+                dataIndex: 'nic_count',
+                header: _t('# NICs'),
                 width: 60
             },{
                 id: 'monitored',
@@ -715,7 +745,7 @@ ZC.oVirtVmNicPanel = Ext.extend(ZC.oVirtComponentGridPanel, {
             },{
                 id: 'mac',
                 dataIndex: 'mac',
-                header: _t('Mac'),
+                header: _t('MAC Address'),
                 sortable: true,
                 width: 120
             },{
@@ -759,7 +789,7 @@ ZC.oVirtHostNicPanel = Ext.extend(ZC.oVirtComponentGridPanel, {
                 {name: 'ip'},
                 {name: 'netmask'},
                 {name: 'gateway'},
-                {name: 'nicespeed'},
+                {name: 'speed'},
                 {name: 'mac'},
                 {name: 'monitor'},
                 {name: 'monitored'},
@@ -790,13 +820,13 @@ ZC.oVirtHostNicPanel = Ext.extend(ZC.oVirtComponentGridPanel, {
             },{
                 id: 'mac',
                 dataIndex: 'mac',
-                header: _t('Mac'),
+                header: _t('MAC Address'),
                 sortable: true,
                 width: 120
             },{
                 id: 'ip',
                 dataIndex: 'ip',
-                header: _t('Ip'),
+                header: _t('IP Address'),
                 renderer: Zenoss.render.ipAddress,
                 sortable: true,
                 width: 120
@@ -807,7 +837,6 @@ ZC.oVirtHostNicPanel = Ext.extend(ZC.oVirtComponentGridPanel, {
                 renderer: Zenoss.render.ipAddress,
                 sortable: true,
                 width: 120
-
             },{
                 id: 'gateway',
                 dataIndex: 'gateway',
@@ -815,11 +844,11 @@ ZC.oVirtHostNicPanel = Ext.extend(ZC.oVirtComponentGridPanel, {
                 renderer: Zenoss.render.ipAddress,
                 sortable: true,
                 width: 120
-
             },{
                 id: 'speed',
-                dataIndex: 'nicespeed',
+                dataIndex: 'speed',
                 header: _t('Speed'),
+                renderer: Zenoss.render.interface_speed,
                 sortable: true,
                 width: 120
             },{
@@ -864,7 +893,7 @@ Zenoss.nav.appendTo('Component', [{
 //Add Storage Domain dropdown to the DataCenter Component.
 Zenoss.nav.appendTo('Component', [{
     id: 'component_storagedomain',
-    text: _t('Related StorageDomains'),
+    text: _t('Related Storage Domains'),
     xtype: 'oVirtStorageDomainPanel',
     subComponentGridPanel: true,
     filterNav: function(navpanel) {
@@ -886,10 +915,10 @@ Zenoss.nav.appendTo('Component', [{
     xtype: 'oVirtHostPanel',
     subComponentGridPanel: true,
     filterNav: function(navpanel) {
-        if (navpanel.refOwner.componentType == 'oVirtCluster') {
-            return true;
-        } else {
-            return false;
+        switch (navpanel.refOwner.componentType) {
+            case 'oVirtDataCenter': return true;
+            case 'oVirtCluster': return true;
+            default: return false;
         }
     },
     setContext: function(uid) {
@@ -900,14 +929,14 @@ Zenoss.nav.appendTo('Component', [{
 //Add vm dropdown to the cluster component
 Zenoss.nav.appendTo('Component', [{
     id: 'component_vm',
-    text: _t('Related Vms'),
+    text: _t('Related VMs'),
     xtype: 'oVirtVmPanel',
     subComponentGridPanel: true,
     filterNav: function(navpanel) {
-        if (navpanel.refOwner.componentType == 'oVirtCluster') {
-            return true;
-        } else {
-            return false;
+        switch (navpanel.refOwner.componentType) {
+            case 'oVirtDataCenter': return true;
+            case 'oVirtCluster': return true;
+            default: return false;
         }
     },
     setContext: function(uid) {
@@ -922,13 +951,10 @@ Zenoss.nav.appendTo('Component', [{
     xtype: 'oVirtVmDiskPanel',
     subComponentGridPanel: true,
     filterNav: function(navpanel) {
-        if (navpanel.refOwner.componentType == 'oVirtStorageDomain') {
-            return true;
-        }
-        else if (navpanel.refOwner.componentType == 'oVirtVm') {
-            return true;
-        } else {
-            return false;
+        switch (navpanel.refOwner.componentType) {
+            case 'oVirtStorageDomain': return true;
+            case 'oVirtVm': return true;
+            default: return false;
         }
     },
     setContext: function(uid) {
@@ -939,7 +965,7 @@ Zenoss.nav.appendTo('Component', [{
 //Add datacenters dropdown to the storage domain
 Zenoss.nav.appendTo('Component', [{
     id: 'component_datacenters',
-    text: _t('Related DataCenters'),
+    text: _t('Related Datacenters'),
     xtype: 'oVirtDataCenterPanel',
     subComponentGridPanel: true,
     filterNav: function(navpanel) {
@@ -957,7 +983,7 @@ Zenoss.nav.appendTo('Component', [{
 //Add vm nics dropdown to the vm component
 Zenoss.nav.appendTo('Component', [{
     id: 'component_vmnics',
-    text: _t('Related Nics'),
+    text: _t('Related NICs'),
     xtype: 'oVirtVmNicPanel',
     subComponentGridPanel: true,
     filterNav: function(navpanel) {
@@ -975,7 +1001,7 @@ Zenoss.nav.appendTo('Component', [{
 //Add host nics dropdown to the hosts component
 Zenoss.nav.appendTo('Component', [{
     id: 'component_hostnics',
-    text: _t('Related Nics'),
+    text: _t('Related NICs'),
     xtype: 'oVirtHostNicPanel',
     subComponentGridPanel: true,
     filterNav: function(navpanel) {
@@ -987,24 +1013,6 @@ Zenoss.nav.appendTo('Component', [{
     },
     setContext: function(uid) {
         ZC.oVirtHostNicPanel.superclass.setContext.apply(this, [uid]);
-    }
-}]);
-
-//Add vm dropdown to the hosts component
-Zenoss.nav.appendTo('Component', [{
-    id: 'component_hostvm',
-    text: _t('Related Vms'),
-    xtype: 'oVirtVmPanel',
-    subComponentGridPanel: true,
-    filterNav: function(navpanel) {
-        if (navpanel.refOwner.componentType == 'oVirtHost') {
-            return true;
-        } else {
-            return false;
-        }
-    },
-    setContext: function(uid) {
-        ZC.oVirtVmPanel.superclass.setContext.apply(this, [uid]);
     }
 }]);
 

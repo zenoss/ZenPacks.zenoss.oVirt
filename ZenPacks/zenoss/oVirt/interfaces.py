@@ -57,16 +57,18 @@ class IDatacenterInfo(IComponentInfo):
     description = SingleLineText(title=_t(u"Description"))
     storage_type = SingleLineText(title=_t(u"Storage Type"))
     storage_format = SingleLineText(title=_t(u"Storage Format"))
-    cluster_count = schema.Int(title=_t(u"Cluster Count"))
-    storagedomain_count = schema.Int(title=_t(u"StorageDomain Count"))
+    cluster_count = schema.Int(title=_t(u"# Clusters"))
+    storagedomain_count = schema.Int(title=_t(u"# Storage Domains"))
+    host_count = schema.Int(title=_t(u"# Hosts"))
+    vm_count = schema.Int(title=_t(u"# VMs"))
 
 
 class IClusterInfo(IComponentInfo):
     """Interface for the Cluster API (Info) Adapter."""
 
     id = SingleLineText(title=_t(u"ID"))
-    host_count = schema.Int(title=_t(u"Host Count"))
-    vm_count = schema.Int(title=_t(u"VM Count"))
+    host_count = schema.Int(title=_t(u"# Hosts"))
+    vm_count = schema.Int(title=_t(u"# VMs"))
 
 
 class IVmInfo(IComponentInfo):
@@ -77,12 +79,13 @@ class IVmInfo(IComponentInfo):
     creation_time = SingleLineText(title=_t(u"Creation Time"))
     memory = SingleLineText(title=_t(u"Memory"))
     memory_policy_guaranteed = SingleLineText(title=_t(u"Guaranteed Memory Policy"))
-    cpu_cores = SingleLineText(title=_t(u"Cpu Cores"))
-    cpu_sockets = SingleLineText(title=_t(u"Cpu Sockets"))
+    cpu_cores = SingleLineText(title=_t(u"# CPU Cores"))
+    cpu_sockets = SingleLineText(title=_t(u"# CPU Sockets"))
     os_type = SingleLineText(title=_t(u"OS Type"))
     os_boot = SingleLineText(title=_t(u"OS Boot Device"))
     affinity = SingleLineText(title=_t(u"Affinity"))
-    nic_count = schema.Int(title=_t(u"Nic Count"))
+    nic_count = schema.Int(title=_t(u"# NICs"))
+    disk_count = schema.Int(title=_t(u"# Disks"))
     host = schema.Entity(title=_t(u"Host"))
     guest = schema.Entity(title=_t(u"Guest Device"))
 
@@ -94,12 +97,12 @@ class IHostInfo(IComponentInfo):
     storage_manager = schema.Int(title=_t(u"Storage Manager"))
     address = SingleLineText(title=_t(u"IP Address"))
     memory = SingleLineText(title=_t(u"Memory"))
-    cpu_sockets = SingleLineText(title=_t(u"Cpu Sockets"))
-    cpu_cores = SingleLineText(title=_t(u"Cpu Cores"))
-    cpu_name = SingleLineText(title=_t(u"Cpu Type"))
-    cpu_speed = SingleLineText(title=_t(u"Cpu Speed"))
-    nic_count = schema.Int(title=_t(u"Nic Count"))
-    vm_count = schema.Int(title=_t(u"Vm Count"))
+    cpu_sockets = SingleLineText(title=_t(u"# CPU Sockets"))
+    cpu_cores = SingleLineText(title=_t(u"# CPU Cores"))
+    cpu_name = SingleLineText(title=_t(u"CPU Type"))
+    cpu_speed = SingleLineText(title=_t(u"CPU Speed"))
+    nic_count = schema.Int(title=_t(u"# NICs"))
+    vm_count = schema.Int(title=_t(u"# VMs"))
     managed_device = schema.Entity(title=_t(u"Managed Device"))
 
 
@@ -110,7 +113,7 @@ class IStorageDomainInfo(IComponentInfo):
     storagedomain_type = SingleLineText(title=_t(u"StorageDomain Type"))
     storage_type = SingleLineText(title=_t(u"Storage Type"))
     storage_format = SingleLineText(title=_t(u"Storage Format"))
-    datacenter_count = schema.Int(title=_t(u"DataCenter Count"))
+    datacenter_count = schema.Int(title=_t(u"# Datacenters"))
 
 
 class IVmDiskInfo(IComponentInfo):
@@ -139,4 +142,4 @@ class IVmNicInfo(IComponentInfo):
 
     id = SingleLineText(title=_t(u"ID"))
     interface = SingleLineText(title=_t(u"Interface"))
-    mac = SingleLineText(title=_t(u"Mac"))
+    mac = SingleLineText(title=_t(u"MAC Address"))

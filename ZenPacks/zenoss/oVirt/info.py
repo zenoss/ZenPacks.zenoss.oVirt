@@ -17,6 +17,7 @@ from Products.Zuul.decorators import info
 from Products.Zuul.infos import ProxyProperty
 from Products.Zuul.infos.device import DeviceInfo
 from Products.Zuul.infos.component import ComponentInfo
+from Products.Zuul.interfaces import ICatalogTool
 
 from ZenPacks.zenoss.oVirt.interfaces import (
     IoVirtInfo, IDatacenterInfo, IClusterInfo,
@@ -54,6 +55,16 @@ class DatacenterInfo(BaseComponentInfo):
     @property
     def storagedomain_count(self):
         return self._object.storagedomains.countObjects()
+
+    @property
+    def host_count(self):
+        return ICatalogTool(self._object).search(
+            'ZenPacks.zenoss.oVirt.Host.Host').total
+
+    @property
+    def vm_count(self):
+        return ICatalogTool(self._object).search(
+            'ZenPacks.zenoss.oVirt.Vm.Vm').total
 
 
 class ClusterInfo(BaseComponentInfo):
@@ -132,6 +143,10 @@ class VmInfo(BaseComponentInfo):
         return self._object.nics.countObjects()
 
     @property
+    def disk_count(self):
+        return self._object.disks.countObjects()
+
+    @property
     @info
     def host(self):
         return self._object.host()
@@ -157,7 +172,7 @@ class StorageDomainInfo(BaseComponentInfo):
 
     @property
     def datacenter_count(self):
-        return self._object.datacenter.countObjects()
+        return self._object.datacenters.countObjects()
 
 
 class VmDiskInfo(BaseComponentInfo):
@@ -191,20 +206,6 @@ class HostNicInfo(BaseComponentInfo):
     netmask = ProxyProperty('netmask')
     gateway = ProxyProperty('gateway')
     speed = ProxyProperty('speed')
-
-    @property
-    def nicespeed(self):
-        """
-        Return a string that expresses self.speed in reasonable units.
-        """
-        if not self.speed:
-            return 'Unknown'
-        speed = int(self.speed)
-        for unit in ('bps', 'Kbps', 'Mbps', 'Gbps'):
-            if speed < 1000:
-                break
-            speed /= 1000.0
-        return "%.0f %s" % (speed, unit)
 
     @property
     @info
