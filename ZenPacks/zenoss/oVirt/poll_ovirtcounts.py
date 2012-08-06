@@ -178,13 +178,14 @@ class oVirtCounter(object):
                         results.setdefault(vm.find('host').attrib['id'], {'vmCount': 0, 'clusterCount': 0,'type': 'host'})
                         results[vm.find('host').attrib['id']]['vmCount'] += 1
 
+
         # post process the resulting dictionary to copy the cluster counts inside a datacenter.
         # remove the temporary clusterids key.
         for key in results:
             if 'clusterids' in results[key].keys():
                 for clusterid in results[key]['clusterids']:
                     for clusterkeys in results[clusterid].keys():
-                        results[key][clusterkeys] = results[clusterid][clusterkeys]
+                        results[key][clusterkeys] += results[clusterid][clusterkeys]
                 del results[key]['clusterids']
 
         self._values.update(results)
