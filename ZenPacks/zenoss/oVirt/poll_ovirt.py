@@ -565,7 +565,10 @@ class oVirtPoller(object):
 
         # Make sure temporary data isn't too stale.
         if os.stat(tmpfile).st_mtime < (time.time() - 50):
-            os.unlink(tmpfile)
+            try:
+                os.unlink(tmpfile)
+            except Exception:
+                pass
             return None
 
         try:
@@ -573,8 +576,11 @@ class oVirtPoller(object):
             values = json.load(tmp)
             tmp.close()
         except ValueError:
-            # Error loading the json out of the cache, lets remove the cache.
-            os.unlink(tmpfile)
+            try:
+                # Error loading the json out of the cache, lets remove the cache.
+                os.unlink(tmpfile)
+            except Exception:
+                pass
             return None
 
         return values

@@ -97,7 +97,10 @@ class oVirtCounter(object):
 
         # Make sure temporary data isn't too stale.
         if os.stat(tmpfile).st_mtime < (time.time() - 50):
-            os.unlink(tmpfile)
+            try:
+                os.unlink(tmpfile)
+            except Exception:
+                pass
             return None
 
         try:
