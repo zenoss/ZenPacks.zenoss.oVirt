@@ -524,6 +524,7 @@ class oVirt(PythonPlugin):
                         data[key][id][skey] = results
 
         for key in self.data_map_order:
+            log.info("[%s] %s found: %s" % (device.zOVirtUrl, key, len(data[key].keys())))
             # objmaps are a dictionary if we are processing a component
             if 'compname' in self.collector_map[key].keys():
                 objmaps = {}
