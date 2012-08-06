@@ -161,6 +161,8 @@ class oVirtCounter(object):
 
             if 'data_centers' in key:
                 results[self._id]['datacenterCount'] = len(data[key][0].getchildren())
+                for datacenter in data[key][0].getchildren():
+                    results.setdefault(datacenter.attrib['id'], {'clusterCount': 0, 'hostCount': 0, 'vmCount': 0, 'clusterids': [], 'type': 'datacenter'})
             if 'hosts' in key:
                 results[self._id]['hostCount'] = len(data[key][0].getchildren())
                 for host in data[key][0].getchildren():
@@ -185,6 +187,7 @@ class oVirtCounter(object):
             if 'clusterids' in results[key].keys():
                 for clusterid in results[key]['clusterids']:
                     for clusterkeys in results[clusterid].keys():
+                        if clusterkeys == 'type': continue
                         results[key][clusterkeys] += results[clusterid][clusterkeys]
                 del results[key]['clusterids']
 
