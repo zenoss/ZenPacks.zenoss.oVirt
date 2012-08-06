@@ -105,9 +105,12 @@ class oVirtCounter(object):
             values = json.load(tmp)
             tmp.close()
         except ValueError:
-            # Error loading the json out of the cache, lets remove the cache.
-            os.unlink(tmpfile)
-            return None
+            try:
+                # Error loading the json out of the cache, lets remove the cache.
+                os.unlink(tmpfile)
+                return None
+            except Exception:
+                return None
 
         return values
 
@@ -142,13 +145,14 @@ class oVirtCounter(object):
         # increment the cluster, hosts, vms etc as we find them.
         # liberal use of setdefault to set the nested datastructures properly.
         for key in data.keys():
+            results[self._id]['type'] = 'system'
             if 'storage_domains' in key:
                 results[self._id]['storagedomainCount'] = len(data[key][0].getchildren())
             if 'clusters' in key:
                 results[self._id]['clusterCount'] = len(data[key][0].getchildren())
                 for cluster in data[key][0].getchildren():
                     if cluster.find('data_center') is not None:
-                        results.setdefault(cluster.find('data_center').attrib['id'], {'clusterCount': 0, 'hostCount': 0, 'vmCount': 0, 'clusterids': []})
+                        results.setdefault(cluster.find('data_center').attrib['id'], {'clusterCount': 0, 'hostCount': 0, 'vmCount': 0, 'clusterids': [], 'type': 'datacenter'})
                         results[cluster.find('data_center').attrib['id']]['clusterCount'] += 1
                         results[cluster.find('data_center').attrib['id']]['clusterids'].append(cluster.attrib['id'])
 
@@ -157,24 +161,24 @@ class oVirtCounter(object):
             if 'hosts' in key:
                 results[self._id]['hostCount'] = len(data[key][0].getchildren())
                 for host in data[key][0].getchildren():
-                    results.setdefault(host.attrib['id'], {'vmCount': 0})
+                    results.setdefault(host.attrib['id'], {'vmCount': 0, 'type': 'host'})
                     if host.find('cluster') is not None:
-                        results.setdefault(host.find('cluster').attrib['id'], {'vmCount': 0, 'hostCount': 0})
+                        results.setdefault(host.find('cluster').attrib['id'], {'vmCount': 0, 'hostCount': 0,'type': 'cluster'})
                         results[host.find('cluster').attrib['id']]['hostCount'] += 1
             if 'vms' in key:
                 results[self._id]['vmCount'] = len(data[key][0].getchildren())
                 for vm in data[key][0].getchildren():
                     if vm.find('cluster') is not None:
-                        results.setdefault(vm.find('cluster').attrib['id'], {'vmCount': 0, 'hostCount': 0})
+                        results.setdefault(vm.find('cluster').attrib['id'], {'vmCount': 0, 'hostCount': 0,'type': 'cluster'})
                         results[vm.find('cluster').attrib['id']]['vmCount'] += 1
                     if vm.find('host') is not None:
-                        results.setdefault(vm.find('host').attrib['id'], {'vmCount': 0, 'clusterCount': 0})
+                        results.setdefault(vm.find('host').attrib['id'], {'vmCount': 0, 'clusterCount': 0,'type': 'host'})
                         results[vm.find('host').attrib['id']]['vmCount'] += 1
 
         # post process the resulting dictionary to copy the cluster counts inside a datacenter.
         # remove the temporary clusterids key.
         for key in results:
-            if 'cluster_ids' in results[key].keys():
+            if 'clusterids' in results[key].keys():
                 for clusterid in results[key]['clusterids']:
                     for clusterkeys in results[clusterid].keys():
                         results[key][clusterkeys] = results[clusterid][clusterkeys]
