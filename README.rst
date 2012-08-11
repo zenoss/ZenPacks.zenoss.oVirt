@@ -250,6 +250,8 @@ Change Log
 
 * First fully-featured release.
 
+* No longer dependent on Liberator ZenPack.
+
 
 1.0.1 - 2012-03-21
 ------------------
