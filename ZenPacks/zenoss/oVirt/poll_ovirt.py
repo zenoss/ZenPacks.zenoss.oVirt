@@ -626,7 +626,7 @@ class oVirtPoller(object):
 
             #Process severity
             severity = SEVERITY_MAP.get(event.get('severity',3), 3)
-          
+
             # if the component type is in the event_type use that to set the component for the event.
             component = None
             for key in [key for key in event.keys() if key not in ['code', 'description', 'time', 'text', 'href', 'user', 'time', 'id', 'severity']]:
@@ -634,10 +634,10 @@ class oVirtPoller(object):
                     component = event[key]['id']
                     continue
 
-            # If we dont have a component at this point try and map it out to known component types. 
+            # If we dont have a component at this point try and map it out to known component types.
             # vm -> cluster -> host
-           
-  
+
+
             if not component:
                 if 'vm' in event.keys():
                     component = event['vm']['id']
@@ -653,7 +653,7 @@ class oVirtPoller(object):
                     # No component set this will be a device level event.
                     #print event_type
                     #print [key for key in event.keys() if key not in ['code', 'description', 'time', 'text', 'href', 'user', 'time', 'id', 'severity']]
-    
+
             evt=dict(
                 severity=severity,
                 summary=event['description'],
@@ -664,7 +664,7 @@ class oVirtPoller(object):
                 component=component,
                 ovirt_type=event_type
                 )
-            
+
             # Don't add null components
             if not component:
                del evt['component']
@@ -673,7 +673,7 @@ class oVirtPoller(object):
 
         # Send clear events for events that no longer exist.
         # If ovirt had event lifecycle management we could send clears here.
-        
+
         self._save(new_events, key='events')
         return events
 
@@ -711,9 +711,10 @@ class oVirtPoller(object):
         deferred_statistics = []
 
         # Gather the Host Statistics and send them to a DeferredList to be processed later.
-        if 'hosts' in data.keys():
-            hosts = elementtree_to_dict(data['hosts'][0])['host']
+        if 'hosts' in data:
+            hosts = data['hosts'][0].findall('host')
             for host in hosts:
+                host = elementtree_to_dict(host)
                 # Host statistics to be processed later.
                 deferred_statistics.append(self.client.request(host['link'][4]['href'].split('/api/')[1]))
 
@@ -737,9 +738,10 @@ class oVirtPoller(object):
                 deferred_statistics.append(self.client.request(elementtree_to_dict(nic.getchildren()[0])['link']['href'].split('/api/')[1]))
 
         # Gather the VM statistics and its disk/network component statistics.
-        if 'vms' in data.keys():
-            vms = elementtree_to_dict(data['vms'][0])['vm']
+        if 'vms' in data:
+            vms = data['vms'][0].findall('vm')
             for vm in vms:
+                vm = elementtree_to_dict(vm)
                 # VM statistics to be processed later.
                 deferred_statistics.append(self.client.request(vm['link'][6]['href'].split('/api/')[1]))
 
