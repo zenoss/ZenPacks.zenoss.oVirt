@@ -61,6 +61,9 @@ class Host(BaseComponent):
     def device(self):
         return self.cluster().device()
 
+    def getIconPath(self):
+        return '/++resource++ovirt/img/host.png'
+
     def managed_device(self):
         macAddress = [nic.mac for nic in self.nics()]
         if not macAddress:

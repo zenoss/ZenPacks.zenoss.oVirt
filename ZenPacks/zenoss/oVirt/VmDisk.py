@@ -72,3 +72,6 @@ class VmDisk(BaseComponent):
             return self.vm().id
         else:
             return ''
+
+    def getIconPath(self):
+        return '/++resource++ovirt/img/storage.png'

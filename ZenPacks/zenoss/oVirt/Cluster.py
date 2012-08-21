@@ -59,3 +59,6 @@ class Cluster(BaseComponent):
 
     def device(self):
         return self.datacenter().device()
+
+    def getIconPath(self):
+        return '/++resource++ovirt/img/cluster.png'

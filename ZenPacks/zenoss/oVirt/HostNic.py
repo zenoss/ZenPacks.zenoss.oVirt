@@ -44,3 +44,6 @@ class HostNic(BaseComponent):
 
     def device(self):
         return self.host().device()
+
+    def getIconPath(self):
+        return '/++resource++ovirt/img/network.png'

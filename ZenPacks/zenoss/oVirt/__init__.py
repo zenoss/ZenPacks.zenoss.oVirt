@@ -74,9 +74,6 @@ class BaseComponent(DeviceComponent, ManagedEntity):
     # Query for events by id instead of name. (Zenoss 3 compatibility)
     event_key = "ComponentId"
 
-    def getIconPath(self):
-        return '/++resource++ovirt/img/oVirt-icon.png'
-
 
 class ZenPack(ZenPackBase):
     packZProperties = [

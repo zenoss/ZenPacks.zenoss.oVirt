@@ -38,3 +38,6 @@ class VmNic(BaseComponent):
 
     def device(self):
         return self.vm().device()
+
+    def getIconPath(self):
+        return '/++resource++ovirt/img/network.png'

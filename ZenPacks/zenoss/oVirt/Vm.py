@@ -104,3 +104,6 @@ class Vm(BaseComponent):
 
     def device(self):
         return self.cluster().device()
+
+    def getIconPath(self):
+        return '/++resource++ovirt/img/vm.png'

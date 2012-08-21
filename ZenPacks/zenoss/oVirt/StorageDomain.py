@@ -67,3 +67,6 @@ class StorageDomain(BaseComponent):
 
     def getDatacenterId(self):
         return sorted([x.id for x in self.datacenters()])
+
+    def getIconPath(self):
+        return '/++resource++ovirt/img/storage.png'

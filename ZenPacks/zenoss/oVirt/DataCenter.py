@@ -50,3 +50,6 @@ class DataCenter(BaseComponent):
 
     def device(self):
         return self.system()
+
+    def getIconPath(self):
+        return '/++resource++ovirt/img/datacenter.png'
