@@ -173,13 +173,13 @@ class HostRelationsProvider(BaseRelationsProvider):
             for cluster in self._adapted.clusters():
                 yield self.constructRelationTo(cluster, TAG_IMPACTS)
 
-            device = self._adapted.managed_device()
-            if device:
-                yield self.constructRelationTo(device, TAG_IMPACTS)
-
         if type in (TAG_ALL, TAG_IMPACTED_BY):
             for nic in self._adapted.nics():
                 yield self.constructRelationTo(nic, TAG_IMPACTED_BY)
+
+            device = self._adapted.managed_device()
+            if device:
+                yield self.constructRelationTo(device, TAG_IMPACTED_BY)
 
 
 class HostNicRelationsProvider(BaseRelationsProvider):
