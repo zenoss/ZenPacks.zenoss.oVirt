@@ -65,6 +65,12 @@
 
     <subscriber
         provides="ZenPacks.zenoss.DynamicView.interfaces.IRelationsProvider"
+        for="..StorageDomain.StorageDomain"
+        factory=".adapters.StorageDomainRelationsProvider"
+        />
+
+    <subscriber
+        provides="ZenPacks.zenoss.DynamicView.interfaces.IRelationsProvider"
         for="..DataCenter.DataCenter"
         factory=".adapters.DataCenterRelationsProvider"
         />
@@ -85,6 +91,24 @@
         provides="ZenPacks.zenoss.DynamicView.interfaces.IRelationsProvider"
         for="..Vm.Vm"
         factory=".adapters.VmRelationsProvider"
+        />
+
+    <subscriber
+        provides="ZenPacks.zenoss.DynamicView.interfaces.IRelationsProvider"
+        for="..HostNic.HostNic"
+        factory=".adapters.HostNicRelationsProvider"
+        />
+
+    <subscriber
+        provides="ZenPacks.zenoss.DynamicView.interfaces.IRelationsProvider"
+        for="..VmNic.VmNic"
+        factory=".adapters.VmNicRelationsProvider"
+        />
+
+    <subscriber
+        provides="ZenPacks.zenoss.DynamicView.interfaces.IRelationsProvider"
+        for="..VmDisk.VmDisk"
+        factory=".adapters.VmDiskRelationsProvider"
         />
 
     <!-- Dynamic View -->
