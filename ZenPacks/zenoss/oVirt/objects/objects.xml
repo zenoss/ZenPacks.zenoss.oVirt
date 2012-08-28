@@ -24,7 +24,7 @@ True
 ['oVirtSystem']
 </property>
 <property visible="True" type="string" id="zIcon" >
-/++resource++ovirt/img/oVirt-icon.png
+/++resource++ovirt/img/ovirt-system.png
 </property>
 <property visible="True" type="boolean" id="zSnmpMonitorIgnore" >
 True

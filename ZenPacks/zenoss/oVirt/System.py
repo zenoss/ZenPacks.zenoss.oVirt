@@ -14,6 +14,8 @@
 from Products.ZenModel.Device import Device
 from Products.ZenRelations.RelSchema import ToManyCont, ToOne
 
+from ZenPacks.zenoss.oVirt.utils import icon_for
+
 
 class System(Device):
     meta_type = portal_type = "oVirtSystem"
@@ -22,3 +24,6 @@ class System(Device):
         ('datacenters', ToManyCont(ToOne, 'ZenPacks.zenoss.oVirt.DataCenter.DataCenter', 'system')),
         ('storagedomains', ToManyCont(ToOne, 'ZenPacks.zenoss.oVirt.StorageDomain.StorageDomain', 'system')),
         )
+
+    def getIconPath(self):
+        return icon_for(self, 'system')

@@ -117,7 +117,7 @@
     <relatableGroup
        name="oVirt"
        groupType="system"
-       icon="/++resource++ovirt/img/oVirt-icon.png"
+       icon="/++resource++ovirt/img/ovirt-system.png"
        weight="11"
        />
 

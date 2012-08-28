@@ -14,6 +14,7 @@
 from Products.ZenRelations.RelSchema import ToManyCont, ToMany, ToOne
 
 from ZenPacks.zenoss.oVirt import BaseComponent
+from ZenPacks.zenoss.oVirt.utils import icon_for
 
 
 class Host(BaseComponent):
@@ -62,7 +63,7 @@ class Host(BaseComponent):
         return self.cluster().device()
 
     def getIconPath(self):
-        return '/++resource++ovirt/img/host.png'
+        return icon_for(self.device(), 'host')
 
     def managed_device(self):
         macAddress = [nic.mac for nic in self.nics()]

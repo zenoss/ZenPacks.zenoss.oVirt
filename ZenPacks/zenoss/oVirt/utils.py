@@ -18,3 +18,19 @@ def add_local_lib_path():
     import site
 
     site.addsitedir(os.path.join(os.path.dirname(__file__), 'lib'))
+
+
+def icon_for(device, icon):
+    """Return the icon path for device and icon.
+
+    This allows RHEV icons to be used when the oVirt system is a RHEV product
+    and oVirt icons to be used when it isn't.
+
+    """
+
+    icon_template = '/++resource++ovirt/img/%%s-%s.png' % icon
+
+    if 'oVirt' in device.os.getProductName():
+        return icon_template % 'ovirt'
+
+    return icon_template % 'rhev'

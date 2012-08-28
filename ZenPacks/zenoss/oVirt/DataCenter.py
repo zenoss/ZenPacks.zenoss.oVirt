@@ -14,6 +14,7 @@
 from Products.ZenRelations.RelSchema import ToManyCont, ToOne, ToMany
 
 from ZenPacks.zenoss.oVirt import BaseComponent
+from ZenPacks.zenoss.oVirt.utils import icon_for
 
 
 class DataCenter(BaseComponent):
@@ -52,4 +53,4 @@ class DataCenter(BaseComponent):
         return self.system()
 
     def getIconPath(self):
-        return '/++resource++ovirt/img/datacenter.png'
+        return icon_for(self.device(), 'data-center')

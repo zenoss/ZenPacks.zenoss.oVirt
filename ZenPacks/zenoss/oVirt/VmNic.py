@@ -11,11 +11,10 @@
 #
 ###########################################################################
 
-from Products.ZenRelations.RelSchema import ToManyCont, ToMany, ToOne
+from Products.ZenRelations.RelSchema import ToManyCont, ToOne
 
 from ZenPacks.zenoss.oVirt import BaseComponent
-from Products.Zuul.catalog.events import IndexingEvent
-from zope.event import notify
+from ZenPacks.zenoss.oVirt.utils import icon_for
 
 
 class VmNic(BaseComponent):
@@ -40,4 +39,4 @@ class VmNic(BaseComponent):
         return self.vm().device()
 
     def getIconPath(self):
-        return '/++resource++ovirt/img/network.png'
+        return icon_for(self.device(), 'virtual-network-interface')

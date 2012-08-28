@@ -11,11 +11,13 @@
 #
 ###########################################################################
 
+from zope.event import notify
+
 from Products.ZenRelations.RelSchema import ToManyCont, ToMany, ToOne
+from Products.Zuul.catalog.events import IndexingEvent
 
 from ZenPacks.zenoss.oVirt import BaseComponent
-from Products.Zuul.catalog.events import IndexingEvent
-from zope.event import notify
+from ZenPacks.zenoss.oVirt.utils import icon_for
 
 
 class VmDisk(BaseComponent):
@@ -74,4 +76,4 @@ class VmDisk(BaseComponent):
             return ''
 
     def getIconPath(self):
-        return '/++resource++ovirt/img/storage.png'
+        return icon_for(self.device(), 'virtual-disk')

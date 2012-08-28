@@ -14,6 +14,7 @@
 from Products.ZenRelations.RelSchema import ToManyCont, ToOne
 
 from ZenPacks.zenoss.oVirt import BaseComponent
+from ZenPacks.zenoss.oVirt.utils import icon_for
 
 
 class Cluster(BaseComponent):
@@ -61,4 +62,4 @@ class Cluster(BaseComponent):
         return self.datacenter().device()
 
     def getIconPath(self):
-        return '/++resource++ovirt/img/cluster.png'
+        return icon_for(self.device(), 'cluster')

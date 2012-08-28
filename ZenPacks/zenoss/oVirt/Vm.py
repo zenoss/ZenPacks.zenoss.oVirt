@@ -11,10 +11,13 @@
 #
 ###########################################################################
 
-from Products.ZenRelations.RelSchema import ToManyCont, ToMany, ToOne
-from ZenPacks.zenoss.oVirt import BaseComponent
-from Products.Zuul.catalog.events import IndexingEvent
 from zope.event import notify
+
+from Products.ZenRelations.RelSchema import ToManyCont, ToMany, ToOne
+from Products.Zuul.catalog.events import IndexingEvent
+
+from ZenPacks.zenoss.oVirt import BaseComponent
+from ZenPacks.zenoss.oVirt.utils import icon_for
 
 
 class Vm(BaseComponent):
@@ -106,4 +109,7 @@ class Vm(BaseComponent):
         return self.cluster().device()
 
     def getIconPath(self):
-        return '/++resource++ovirt/img/vm.png'
+        if self.vm_type and 'server' in self.vm_type.lower():
+            return icon_for(self.device(), 'virtual-server')
+        else:
+            return icon_for(self.device(), 'virtual-desktop')

@@ -11,10 +11,13 @@
 #
 ###########################################################################
 
-from Products.ZenRelations.RelSchema import ToManyCont, ToOne, ToMany
-from ZenPacks.zenoss.oVirt import BaseComponent
-from Products.Zuul.catalog.events import IndexingEvent
 from zope.event import notify
+
+from Products.ZenRelations.RelSchema import ToManyCont, ToOne, ToMany
+from Products.Zuul.catalog.events import IndexingEvent
+
+from ZenPacks.zenoss.oVirt import BaseComponent
+from ZenPacks.zenoss.oVirt.utils import icon_for
 
 
 class StorageDomain(BaseComponent):
@@ -69,4 +72,4 @@ class StorageDomain(BaseComponent):
         return sorted([x.id for x in self.datacenters()])
 
     def getIconPath(self):
-        return '/++resource++ovirt/img/storage.png'
+        return icon_for(self.device(), 'storage-domain')
