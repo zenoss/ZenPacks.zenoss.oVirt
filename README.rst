@@ -245,8 +245,20 @@ as the ``zenoss`` user::
 Change Log
 -----------------------------------------------------------------------------
 
+1.1.0 - 2012-08-28
+~~~~~~~~~~~~~~~~~~
+
+* Support for RHEV 3.
+
+* Discovery of oVirt or RHEV product and version information.
+
+* RHEV and oVirt Icons for all component types.
+
+* Fix for "No data returned for command" events.
+
+
 1.0.3 - 2012-08-06
-------------------
+~~~~~~~~~~~~~~~~~~
 
 * First fully-featured release.
 
@@ -254,6 +266,6 @@ Change Log
 
 
 1.0.1 - 2012-03-21
-------------------
+~~~~~~~~~~~~~~~~~~
 
 * Initial demonstration release.
