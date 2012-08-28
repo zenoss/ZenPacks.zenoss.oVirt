@@ -17,7 +17,8 @@ log = logging.getLogger('zen.oVirt')
 from twisted.internet.defer import DeferredList, inlineCallbacks, returnValue
 
 from Products.DataCollector.plugins.CollectorPlugin import PythonPlugin
-from Products.DataCollector.plugins.DataMaps import ObjectMap, RelationshipMap
+from Products.DataCollector.plugins.DataMaps \
+    import ObjectMap, RelationshipMap, MultiArgs
 
 from ZenPacks.zenoss.oVirt.utils import add_local_lib_path
 add_local_lib_path()
@@ -394,6 +395,31 @@ class oVirt(PythonPlugin):
         #datacenter_guid = self.prepId(data["storage_domains"][storagedomain_guid]["datacenter_guid"])
         return (storagedomain_guid)
 
+    def product_key(self, product_info):
+        """Return a Zenoss product key from oVirt product_info element."""
+
+        vendor = product_info.find('vendor')
+        name = product_info.find('name')
+        version = product_info.find('version')
+
+        product_key = None
+        if name is not None and name.text:
+            if version is not None and version.get('major') is not None:
+                product_key = '%s %s.%s.%s-%s' % (
+                    name.text,
+                    version.get('major'),
+                    version.get('minor', 0),
+                    version.get('revision', 0),
+                    version.get('build', 0))
+            else:
+                product_key = name
+
+        if vendor is not None and vendor.text:
+            return MultiArgs(product_key, vendor.text)
+
+        return product_key
+
+
     @inlineCallbacks
     def collect(self, device, unused):
         """Collect model-related information using the txovirt library."""
@@ -422,6 +448,9 @@ class oVirt(PythonPlugin):
 
         deferreds = []
         data_centers = None
+
+        # Get the /api overview.
+        deferreds.append(client.request(''))
 
         for key in self.collector_map_order:
             if key == 'data_centers':
@@ -478,6 +507,18 @@ class oVirt(PythonPlugin):
         data = {}
         for result in results:  # an array of Elements from the txovirt library.
             key = result.tag
+
+            # Special processing for /api overview.
+            if key == 'api':
+                product_info = result.find('product_info')
+                if product_info is not None:
+                    relmap.append(ObjectMap(compname='os', data={
+                        'setProductKey': self.product_key(product_info),
+                        }))
+
+                # Skip to next result after processing /api.
+                continue
+
             data.setdefault(key, {})
             for entry in result.getchildren():
                 skey = None
