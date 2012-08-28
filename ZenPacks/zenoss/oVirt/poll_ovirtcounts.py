@@ -96,12 +96,12 @@ class oVirtCounter(object):
             return None
 
         # Make sure temporary data isn't too stale.
-        if os.stat(tmpfile).st_mtime < (time.time() - 50):
-            try:
+        try:
+            if os.stat(tmpfile).st_mtime < (time.time() - 50):
                 os.unlink(tmpfile)
-            except Exception:
-                pass
-            return None
+                return None
+        except Exception:
+            pass
 
         try:
             tmp = open(tmpfile, 'r')
@@ -252,5 +252,16 @@ if __name__ == '__main__':
         sys.exit(1)
 
     #time.sleep(random.randint(1, 5))
-    counter = oVirtCounter(url, username, domain, password, ovirt_id)
-    counter.run()
+    try:
+        counter = oVirtCounter(url, username, domain, password, ovirt_id)
+        counter.run()
+    except Exception, e:
+        print json.dumps({
+            'events': [{
+                'severity': 4,
+                'summary': 'oVirt error: %s' % e,
+                'eventKey': 'ovirt_failure',
+                'eventClassKey': 'ovirt_error',
+                }],
+            'values': {},
+            }, sort_keys=True, indent=4)

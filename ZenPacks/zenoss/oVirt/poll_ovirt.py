@@ -913,5 +913,16 @@ if __name__ == '__main__':
         events = True
 
     #time.sleep(random.randint(1, 5))
-    poller = oVirtPoller(url, username, domain, password, collect_events=events)
-    poller.run()
+    try:
+        poller = oVirtPoller(url, username, domain, password, collect_events=events)
+        poller.run()
+    except Exception, e:
+        print json.dumps({
+            'events': [{
+                'severity': 4,
+                'summary': 'oVirt error: %s' % e,
+                'eventKey': 'ovirt_failure',
+                'eventClassKey': 'ovirt_error',
+                }],
+            'values': {},
+            }, sort_keys=True, indent=4)
