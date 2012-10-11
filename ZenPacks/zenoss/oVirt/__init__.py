@@ -86,6 +86,7 @@ class ZenPack(ZenPackBase):
     # Placeholder for future plugin installation
     _plugins = (
          'poll_ovirt.py',
+         'poll_ovirtcounts.py',
          )
 
     def install(self, app):
