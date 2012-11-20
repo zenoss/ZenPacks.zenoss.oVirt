@@ -735,7 +735,11 @@ class oVirtPoller(object):
                     os._exit(1)
 
                 # Nic statistics to be processed later.
-                deferred_statistics.append(self.client.request(elementtree_to_dict(nic.getchildren()[0])['link']['href'].split('/api/')[1]))
+                try:
+                    deferred_statistics.append(self.client.request(elementtree_to_dict(nic.getchildren()[0])['link']['href'].split('/api/')[1]))
+                except Exception:
+                    # There may be 0 nic's attached.  
+                    pass
 
         # Gather the VM statistics and its disk/network component statistics.
         if 'vms' in data:
@@ -762,7 +766,11 @@ class oVirtPoller(object):
                     os._exit(1)
 
                 # Disk statistics to be processed later.
-                deferred_statistics.append(self.client.request(elementtree_to_dict(disk.getchildren()[0])['link']['href'].split('/api/')[1]))
+                try:
+                    deferred_statistics.append(self.client.request(elementtree_to_dict(disk.getchildren()[0])['link']['href'].split('/api/')[1]))
+                except Exception:
+                    # There may be 0 disks attached.
+                    pass
 
                 # Grab Nic statistics
                 try:
@@ -781,7 +789,11 @@ class oVirtPoller(object):
                     os._exit(1)
 
                 # Nic statistics to be processed later.
-                deferred_statistics.append(self.client.request(elementtree_to_dict(nic.getchildren()[0])['link']['href'].split('/api/')[1]))
+                try:
+                    deferred_statistics.append(self.client.request(elementtree_to_dict(nic.getchildren()[0])['link']['href'].split('/api/')[1]))
+                except Exception:
+                    # There may be 0 nic's attached.
+                    pass
 
         """DeferredLists do NOT need try/except handling when consumeErrors are True
            We check its results for problems later.
