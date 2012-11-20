@@ -737,7 +737,7 @@ class oVirtPoller(object):
                 # Nic statistics to be processed later.
                 try:
                     deferred_statistics.append(self.client.request(elementtree_to_dict(nic.getchildren()[0])['link']['href'].split('/api/')[1]))
-                except Exception:
+                except IndexError:
                     # There may be 0 nic's attached.  
                     pass
 
@@ -768,7 +768,7 @@ class oVirtPoller(object):
                 # Disk statistics to be processed later.
                 try:
                     deferred_statistics.append(self.client.request(elementtree_to_dict(disk.getchildren()[0])['link']['href'].split('/api/')[1]))
-                except Exception:
+                except IndexError:
                     # There may be 0 disks attached.
                     pass
 
@@ -791,7 +791,7 @@ class oVirtPoller(object):
                 # Nic statistics to be processed later.
                 try:
                     deferred_statistics.append(self.client.request(elementtree_to_dict(nic.getchildren()[0])['link']['href'].split('/api/')[1]))
-                except Exception:
+                except IndexError:
                     # There may be 0 nic's attached.
                     pass
 
