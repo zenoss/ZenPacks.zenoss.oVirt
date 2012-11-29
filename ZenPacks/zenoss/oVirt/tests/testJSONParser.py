@@ -16,7 +16,8 @@ import json
 from Products.ZenTestCase.BaseTestCase import BaseTestCase
 from Products.ZenRRD.tests.BaseParsersTestCase import Object
 from Products.ZenRRD.CommandParser import ParsedResults
-from Products.ZenRRD.parsers.JSON import JSON
+
+from ZenPacks.zenoss.oVirt.parsers.JSONParser import JSONParser
 
 
 class TestJSONParser(BaseTestCase):
@@ -32,10 +33,11 @@ class TestJSONParser(BaseTestCase):
         self.cmd.result = Object()
         self.cmd.result.exitCode = 0
         self.cmd.severity = 2
+        self.cmd.eventKey = 'oVirt'
         self.cmd.eventClass = '/Cmd'
         self.cmd.command = "testJSONCommand"
         self.cmd.points = []
-        self.parser = JSON()
+        self.parser = JSONParser()
         self.results = ParsedResults()
 
     def test_json_parse_error(self):
@@ -52,7 +54,7 @@ class TestJSONParser(BaseTestCase):
 
         self.assertEquals(event['severity'], self.cmd.severity)
         self.assertEquals(event['summary'], 'error parsing command output')
-        self.assertEquals(event['eventKey'], self.cmd.command)
+        self.assertEquals(event['eventKey'], self.cmd.eventKey)
         self.assertEquals(event['eventClass'], self.cmd.eventClass)
         self.assertEquals(event['command_output'], self.cmd.result.output)
         self.assertTrue('exception' in event)
@@ -168,4 +170,3 @@ def test_suite():
     suite = TestSuite()
     suite.addTest(makeSuite(TestJSONParser))
     return suite
-
