@@ -1,5 +1,6 @@
 *.pyc
 *.swp
+*.svn
 build
 dist
 *.txt
