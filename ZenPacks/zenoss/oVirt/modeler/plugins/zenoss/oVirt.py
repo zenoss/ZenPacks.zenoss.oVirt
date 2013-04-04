@@ -521,6 +521,10 @@ class oVirt(PythonPlugin):
 
             data.setdefault(key, {})
             for entry in result.getchildren():
+                # Skip any action sub elements
+                if entry.tag == 'actions':
+                    continue
+
                 skey = None
                 id = None
                 # Rewrite the key based on the name in the configuration dictionary above, if it exists.
