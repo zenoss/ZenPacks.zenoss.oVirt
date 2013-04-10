@@ -19,6 +19,8 @@ def add_local_lib_path():
 
     site.addsitedir(os.path.join(os.path.dirname(__file__), 'lib'))
 
+add_local_lib_path()
+import txovirt
 
 def icon_for(device, icon):
     """Return the icon path for device and icon.
@@ -34,3 +36,18 @@ def icon_for(device, icon):
         return icon_template % 'ovirt'
 
     return icon_template % 'rhev'
+
+def createClient(config):
+    '''return a client object based on the passed in parameters'''
+    ds0 = config.datasources[0]
+    client = txovirt.Client(
+        ds0.zOVirtUrl,
+        ds0.zOVirtUser,
+        ds0.zOVirtDomain,
+        ds0.zOVirtPassword)
+    return client
+
+def eventKey(config):
+    '''Given a config, return an appropriate eventKey.'''
+    ds0 = config.datasources[0]
+    return '%s|%s' % (ds0.plugin_classname, ds0.cycletime)

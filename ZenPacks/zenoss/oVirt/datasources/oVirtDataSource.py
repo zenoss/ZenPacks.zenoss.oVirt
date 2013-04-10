@@ -35,24 +35,19 @@ class oVirtDataSource(PythonDataSource):
     security = ClassSecurityInfo()
     plugin_classname = 'ZenPacks.zenoss.oVirt.datasource_plugins.oVirtDataSourcePlugin.oVirtDataSourcePlugin'
 
-    zapicall = ''
-    instance_uuid = '${here/zapi_uuid}'
-    instance = ''
-    xpath = '${here/zapi_perf_xpath}'
+    instance_uuid = '${here/ovirt_uuid}'
+    xpath = '//*[*/@id="${here/id}"]'
     delay = 0
 
     def getDescription(self):
-        return self.zapicall
+        return ""
 
     _properties = PythonDataSource._properties + (
-        {'id': 'zapicall', 'type': 'string'},
         {'id': 'instance_uuid', 'type': 'string'},
-        {'id': 'instance', 'type': 'string'},
         {'id': 'xpath', 'type': 'string'},
         {'id': 'delay', 'type': 'string'},
     )
 
-    '''
     def addDataPoints(self):
         """Abstract hook method, to be overridden in derived classes."""
         pass
@@ -74,13 +69,10 @@ class oVirtDataSource(PythonDataSource):
                 REQUEST['RESPONSE'].redirect(url)
             return self.callZenScreen(REQUEST)
         return dp
-    '''
 
 class IoVirtDataSourceInfo(IPythonDataSourceInfo):
     """ Info adapter """
-    zapicall = schema.TextLine(title=_t(u'ZAPI Call'))
     instance_uuid = schema.TextLine(title=_t(u'Instance uuid'))
-    instance = schema.TextLine(title=_t(u'Instance'))
     xpath = schema.TextLine(title=_t(u'Xpath'))
     delay = schema.TextLine(title=_t(u'Delay'))
 
@@ -89,8 +81,6 @@ class oVirtDataSourceInfo(PythonDataSourceInfo):
     implements(IoVirtDataSourceInfo)
     adapts(oVirtDataSource)
 
-    zapicall = ProxyProperty('zapicall')
     delay = ProxyProperty('delay')
     instance_uuid = ProxyProperty('instance_uuid')
-    instance = ProxyProperty('instance')
     xpath = ProxyProperty('xpath')

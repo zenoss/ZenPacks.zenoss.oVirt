@@ -122,13 +122,12 @@
         for=".datasources.oVirtDataSource.oVirtDataSource"
         factory=".datasources.oVirtDataSource.oVirtDataSourceInfo"
         />
-    <!---
+
     <adapter
         provides=".datapoints.oVirtDataPoint.IoVirtDataPointInfo"
         for=".datapoints.oVirtDataPoint.oVirtDataPoint"
         factory=".datapoints.oVirtDataPoint.oVirtDataPointInfo"
         />
-    -->
 
     <!-- Include Browser Code -->
     <include package=".browser"/>
