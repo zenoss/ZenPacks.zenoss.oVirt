@@ -702,13 +702,6 @@
             eventKey: ''
             severity: 4
             type: 'oVirt'
-            datapoints:
-                eventsCollected:
-                    aliases: {}
-                    createCmd: ''
-                    rrdmax: null
-                    rrdmin: null
-                    rrdtype: GAUGE
     description: Gather performance metrics for oVirt
         System.
     graphs:
