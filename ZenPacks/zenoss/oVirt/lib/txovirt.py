@@ -13,10 +13,18 @@
 
 __all__ = ['Client']
 
+import logging
+log = logging.getLogger('zen.txovirt')
 
 import twisted.web.client
+#from twisted.internet.defer import inlineCallbacks, returnValue
 import sys
 from xml.etree import ElementTree
+
+import urllib2
+import cookielib
+
+txovirt_clients = {}
 
 
 def CamelCase(data, separator='.'):
@@ -32,6 +40,20 @@ def getText(element):
     return element.childNodes[0].data
 
 
+def getClient(url, user, domain, password):
+    '''return a client object based on the passed in parameters'''
+    key = "%s%s%s_%s" % (url, user, domain, password)
+
+    if key in txovirt_clients:
+        log.debug("Using txovirt client cache for %s %s %s" % (url, user, domain))
+        return txovirt_clients[key]
+    else:
+        log.debug("Creating a new txovirt client for %s %s %s" % (url, user, domain))
+        client = Client(url, user, domain, password)
+        txovirt_clients[key] = client
+        return client
+
+
 class Client(object):
     """oVirt Client"""
 
@@ -40,25 +62,64 @@ class Client(object):
         self.username = username
         self.domain = domain
         self.password = password
+        self.cookies = {}
+        self.login()
+
+    def reset(self):
+        ''' Reset login state so the next login will get a new cookie.'''
+
         #Build the credential string
         creds = '%s@%s:%s' % (self.username, self.domain, self.password)
         creds = creds.encode('Base64').strip('\r\n')
+
         self.headers = {
             'Authorization': 'Basic %s' % creds,
             'Accept': 'application/xml',
-            }
+            'Prefer': 'persistent-auth'
+        }
+        self.cookies = {}
 
-    def request(self, command, **kwargs):
+    def login(self):
+        self.reset()
+        url = '%s/api' % (self.base_url)
+
+        # Use urllib2 here so the login is syncronous and all other calls will use the same cookie
+        cookies = cookielib.LWPCookieJar()
+        handlers = [urllib2.HTTPHandler(), urllib2.HTTPSHandler(), urllib2.HTTPCookieProcessor(cookies)]
+        opener = urllib2.build_opener(*handlers)
+        req = urllib2.Request(url, headers=self.headers)
+        log.debug("login: %s %s %s" % (url, self.headers, self.cookies))
+        opener.open(req)
+        try:
+            self.cookies['JSESSIONID'] = [(c.name, c.value) for c in cookies if c.name == 'JSESSIONID'][0][1]
+        except:
+            self.cookies = {}
+
+        if self.cookies and 'Authorization' in self.headers:
+            del(self.headers['Authorization'])
+
+    def request_elementtree(self, command, **kwargs):
+        ''' return elementtree wrapped results.'''
+        ''' the modeler plugins still use element tree. '''
         def process_result(results):
             doc = ElementTree.fromstring(results)
             return doc
 
         url = '%s/api/%s' % (self.base_url, command)
-        return twisted.web.client.getPage(url, headers=self.headers).addCallback(process_result)
+        log.debug("request_elementtree: %s %s %s" % (url, self.headers, self.cookies))
+        result = twisted.web.client.getPage(url, headers=self.headers, cookies=self.cookies).addCallback(process_result)
+        return result
+
+    def request(self, command, **kwargs):
+        ''' return raw results.'''
+        url = '%s/api/%s' % (self.base_url, command)
+        log.debug("request: %s %s %s" % (url, self.headers, self.cookies))
+        result = twisted.web.client.getPage(url, headers=self.headers, cookies=self.cookies)
+        return result
 
     def listEvents(self, last=None, **kwargs):
         if not last:
-            return self.request('events', **kwargs)
+            return self.request_elementtree('events', **kwargs)
 
 
 if __name__ == '__main__':
@@ -84,23 +145,23 @@ if __name__ == '__main__':
     deferreds = []
     if len(sys.argv) < 2:
         deferreds.extend((
-            client.request('clusters'),
-            client.request('datacenters'),
-            client.request('hosts'),
-            client.request('networks'),
-            client.request('roles'),
-            client.request('storagedomains'),
-            client.request('templates'),
-            client.request('tags'),
-            client.request('users'),
-            client.request('groups'),
-            client.request('domains'),
-            client.request('vmpools'),
-            client.request('vms'),
-            ))
+            client.request_elementtree('clusters'),
+            client.request_elementtree('datacenters'),
+            client.request_elementtree('hosts'),
+            client.request_elementtree('networks'),
+            client.request_elementtree('roles'),
+            client.request_elementtree('storagedomains'),
+            client.request_elementtree('templates'),
+            client.request_elementtree('tags'),
+            client.request_elementtree('users'),
+            client.request_elementtree('groups'),
+            client.request_elementtree('domains'),
+            client.request_elementtree('vmpools'),
+            client.request_elementtree('vms'),
+        ))
     else:
         for command in sys.argv[1:]:
-            deferreds.append(client.request(command))
+            deferreds.append(client.request_elementtree(command))
 
     DeferredList(deferreds, consumeErrors=True).addCallback(callback)
     reactor.run()

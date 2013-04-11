@@ -440,7 +440,7 @@ class oVirt(PythonPlugin):
             log.error('zOVirtPassord is not set. Not discovering')
             returnValue(None)
 
-        client = txovirt.Client(
+        client = txovirt.getClient(
              device.zOVirtUrl,
              device.zOVirtUser,
              device.zOVirtDomain,
@@ -450,37 +450,37 @@ class oVirt(PythonPlugin):
         data_centers = None
 
         # Get the /api overview.
-        deferreds.append(client.request(''))
+        deferreds.append(client.request_elementtree(''))
 
         for key in self.collector_map_order:
             if key == 'data_centers':
-                data_centers = yield client.request(self.collector_map[key]['command'])
+                data_centers = yield client.request_elementtree(self.collector_map[key]['command'])
                 for datacenter in data_centers.getchildren():
                     for link in datacenter.findall('link'):
                         if 'storage' in link.attrib['href']:
                             command = link.attrib['href'].rsplit('/api/')[1]
-                            deferreds.append(client.request(command))
+                            deferreds.append(client.request_elementtree(command))
 
             elif key == 'vms':
-                vms = yield client.request(self.collector_map[key]['command'])
+                vms = yield client.request_elementtree(self.collector_map[key]['command'])
                 for vm in vms.getchildren():
                     for link in vm.findall('link'):
                         if 'disks' in link.attrib['href']:
                             command = link.attrib['href'].rsplit('/api/')[1]
-                            deferreds.append(client.request(command))
+                            deferreds.append(client.request_elementtree(command))
                         if 'nics' in link.attrib['href']:
                             command = link.attrib['href'].rsplit('/api/')[1]
-                            deferreds.append(client.request(command))
+                            deferreds.append(client.request_elementtree(command))
 
             elif key == 'hosts':
-                hosts = yield client.request(self.collector_map[key]['command'])
+                hosts = yield client.request_elementtree(self.collector_map[key]['command'])
                 for host in hosts.getchildren():
                     for link in host.findall('link'):
                         if 'nics' in link.attrib['href']:
                             command = link.attrib['href'].rsplit('/api/')[1]
-                            deferreds.append(client.request(command))
+                            deferreds.append(client.request_elementtree(command))
             else:
-                deferreds.append(client.request(self.collector_map[key]['command']))
+                deferreds.append(client.request_elementtree(self.collector_map[key]['command']))
 
         results = yield DeferredList(deferreds, consumeErrors=True)
 
@@ -497,7 +497,8 @@ class oVirt(PythonPlugin):
         for success, result in results:
             if not success:
                 log.error("API Error: %s", result.getErrorMessage())
-
+                # Try to reset the login connection on an error.
+                client.login()
             data.append(result)
 
         returnValue(data)
@@ -569,7 +570,10 @@ class oVirt(PythonPlugin):
                         data[key][id][skey] = results
 
         for key in self.data_map_order:
-            log.info("[%s] %s found: %s" % (device.zOVirtUrl, key, len(data[key].keys())))
+            try:
+                log.info("[%s] %s found: %s" % (device.zOVirtUrl, key, len(data[key].keys())))
+            except Exception,e:
+                 data[key] = {}
             # objmaps are a dictionary if we are processing a component
             if 'compname' in self.collector_map[key].keys():
                 objmaps = {}

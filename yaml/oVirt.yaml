@@ -1,0 +1,1059 @@
+/zport/dmd/Devices/oVirt|oVirtCluster:
+    datasources:
+        oVirt:
+            component: ${here/id}
+            cycletime: 300
+            xpath: '//*[@id="${here/id}"]'
+            datapoints:
+                hostCount:
+                    xpath: '[name/text()="hostCount"]/values/value/datum/text()'
+                    aliases: {}
+                    createCmd: ''
+                    description: Gather performance
+                        metrics for oVirt Cluster.
+                    rrdmax: null
+                    rrdmin: null
+                    rrdtype: GAUGE
+                vmCount:
+                    xpath: '[name/text()="vmCount"]/values/value/datum/text()'
+                    aliases: {}
+                    createCmd: ''
+                    description: Gather performance
+                        metrics for oVirt Cluster.
+                    rrdmax: null
+                    rrdmin: null
+                    rrdtype: GAUGE
+            description: Gather performance metrics
+                for oVirt Cluster.
+            enabled: true
+            eventClass: /Cmd/Fail
+            eventKey: ''
+            severity: 4
+            type: 'oVirt'
+    description: Gather performance metrics for oVirt
+        Cluster.
+    graphs:
+        Hosted Objects:
+            base: false
+            custom: ''
+            description: Gather performance metrics
+                for oVirt Cluster.
+            graphpoints:
+                Hosts: {cFunc: AVERAGE, color: '', description: oVirt_hostCount,
+                    dpName: oVirt_hostCount, format: '%8.0lf',
+                    legend: '${graphPoint/id}', limit: -1,
+                    lineType: LINE, lineWidth: 1, rpn: '',
+                    stacked: false, type: DataPoint}
+                VMs: {cFunc: AVERAGE, color: '', description: oVirt_vmCount,
+                    dpName: oVirt_vmCount, format: '%8.0lf',
+                    legend: '${graphPoint/id}', limit: -1,
+                    lineType: LINE, lineWidth: 1, rpn: '',
+                    stacked: false, type: DataPoint}
+            hasSummary: true
+            height: 100
+            log: false
+            maxy: -1
+            miny: 0
+            sequence: 0
+            units: objects
+            width: 500
+    targetPythonClass: ZenPacks.zenoss.oVirt.Cluster
+    thresholds: {}
+/zport/dmd/Devices/oVirt|oVirtDataCenter:
+    datasources:
+        oVirt:
+            component: ${here/id}
+            cycletime: 300
+            xpath: '//*[@id="${here/id}"]'
+            datapoints:
+                clusterCount:
+                    xpath: '[name/text()="clusterCount"]/values/value/datum/text()'
+                    aliases: {}
+                    createCmd: ''
+                    description: Gather performance
+                        metrics for oVirt System.
+                    rrdmax: null
+                    rrdmin: null
+                    rrdtype: GAUGE
+                hostCount:
+                    xpath: '[name/text()="hostCount"]/values/value/datum/text()'
+                    aliases: {}
+                    createCmd: ''
+                    description: Gather performance
+                        metrics for oVirt System.
+                    rrdmax: null
+                    rrdmin: null
+                    rrdtype: GAUGE
+                vmCount:
+                    xpath: '[name/text()="vmCount"]/values/value/datum/text()'
+                    aliases: {}
+                    createCmd: ''
+                    description: Gather performance
+                        metrics for oVirt System.
+                    rrdmax: null
+                    rrdmin: null
+                    rrdtype: GAUGE
+            description: Gather performance metrics
+                for oVirt DataCenter.
+            enabled: true
+            eventClass: /Cmd/Fail
+            eventKey: ''
+            severity: 4
+            type: 'oVirt'
+    description: Gather performance metrics for oVirt
+        DataCenter.
+    graphs:
+        Hosted Objects:
+            base: false
+            custom: ''
+            description: Gather performance metrics
+                for oVirt DataCenter.
+            graphpoints:
+                Clusters: {cFunc: AVERAGE, color: '',
+                    description: oVirt_clusterCount,
+                    dpName: oVirt_clusterCount, format: '%8.0lf',
+                    legend: '${graphPoint/id}', limit: -1,
+                    lineType: LINE, lineWidth: 1, rpn: '',
+                    stacked: false, type: DataPoint}
+                Hosts: {cFunc: AVERAGE, color: '', description: oVirt_hostCount,
+                    dpName: oVirt_hostCount, format: '%8.0lf',
+                    legend: '${graphPoint/id}', limit: -1,
+                    lineType: LINE, lineWidth: 1, rpn: '',
+                    stacked: false, type: DataPoint}
+                VMs: {cFunc: AVERAGE, color: '', description: oVirt_vmCount,
+                    dpName: oVirt_vmCount, format: '%8.0lf',
+                    legend: '${graphPoint/id}', limit: -1,
+                    lineType: LINE, lineWidth: 1, rpn: '',
+                    stacked: false, type: DataPoint}
+            hasSummary: true
+            height: 100
+            log: false
+            maxy: -1
+            miny: 0
+            sequence: 0
+            units: objects
+            width: 500
+    targetPythonClass: ZenPacks.zenoss.oVirt.DataCenter
+    thresholds: {}
+/zport/dmd/Devices/oVirt|oVirtHost:
+    datasources:
+        oVirt:
+            component: ${here/id}
+            cycletime: 300
+            datapoints:
+                cpuCurrentIdle:
+                    xpath: '[name/text()="cpu.current.idle"]/values/value/datum/text()'
+                    aliases: {}
+                    createCmd: ''
+                    description: Idle CPU usage
+                    rrdmax: null
+                    rrdmin: '0'
+                    rrdtype: GAUGE
+                cpuCurrentSystem:
+                    xpath: '[name/text()="cpu.current.system"]/values/value/datum/text()'
+                    aliases: {}
+                    createCmd: ''
+                    description: System CPU usage
+                    rrdmax: null
+                    rrdmin: null
+                    rrdtype: GAUGE
+                cpuCurrentUser:
+                    xpath: '[name/text()="cpu.current.user"]/values/value/datum/text()'
+                    aliases: {}
+                    aliases: {}
+                    createCmd: ''
+                    description: User CPU usage
+                    rrdmax: null
+                    rrdmin: null
+                    rrdtype: GAUGE
+                cpuLoadAvg5M:
+                    xpath: '[name/text()="cpu.load.avg.5m"]/values/value/datum/text()'
+                    aliases: {}
+                    createCmd: ''
+                    description: CPU 5 minute load average
+                    rrdmax: null
+                    rrdmin: null
+                    rrdtype: GAUGE
+                ksmCpuCurrent:
+                    xpath: '[name/text()="ksm.cpu.current"]/values/value/datum/text()'
+                    aliases: {}
+                    createCmd: ''
+                    description: KSM (Kernel Samepage
+                        Merging) CPU usage
+                    rrdmax: null
+                    rrdmin: null
+                    rrdtype: GAUGE
+                memoryBuffers:
+                    xpath: '[name/text()="memory.buffers"]/values/value/datum/text()'
+                    aliases: {}
+                    createCmd: ''
+                    description: IO buffers
+                    rrdmax: null
+                    rrdmin: null
+                    rrdtype: GAUGE
+                memoryCached:
+                    xpath: '[name/text()="memory.cached"]/values/value/datum/text()'
+                    aliases: {}
+                    createCmd: ''
+                    description: OS caches
+                    rrdmax: null
+                    rrdmin: null
+                    rrdtype: GAUGE
+                memoryFree:
+                    xpath: '[name/text()="memory.free"]/values/value/datum/text()'
+                    aliases: {}
+                    createCmd: ''
+                    description: Free memory
+                    rrdmax: null
+                    rrdmin: null
+                    rrdtype: GAUGE
+                memoryTotal:
+                    xpath: '[name/text()="memory.total"]/values/value/datum/text()'
+                    aliases: {}
+                    createCmd: ''
+                    description: Total memory
+                    rrdmax: null
+                    rrdmin: null
+                    rrdtype: GAUGE
+                memoryUsed:
+                    xpath: '[name/text()="memory.used"]/values/value/datum/text()'
+                    aliases: {}
+                    createCmd: ''
+                    description: Used memory
+                    rrdmax: null
+                    rrdmin: null
+                    rrdtype: GAUGE
+                percentMemoryUsed:
+                    xpath: 'ovirt:'
+                    rpn: '${here/memory.used},${here/memory.total},/,100,*'
+                    aliases: {}
+                    createCmd: ''
+                    description: Gather performance
+                        metrics for oVirt Host components.
+                    rrdmax: null
+                    rrdmin: null
+                    rrdtype: GAUGE
+                percentSwapUsed:
+                    xpath: 'ovirt:'
+                    rpn: '${here/swap.used},${here/swap.total},/,100,*'
+                    aliases: {}
+                    createCmd: ''
+                    description: Gather performance
+                        metrics for oVirt Host components.
+                    rrdmax: null
+                    rrdmin: null
+                    rrdtype: GAUGE
+                swapCached:
+                    xpath: '[name/text()="swap.cached"]/values/value/datum/text()'
+                    aliases: {}
+                    createCmd: ''
+                    description: Swap also in memory
+                    rrdmax: null
+                    rrdmin: null
+                    rrdtype: GAUGE
+                swapFree:
+                    xpath: '[name/text()="swap.free"]/values/value/datum/text()'
+                    aliases: {}
+                    createCmd: ''
+                    description: Free swap
+                    rrdmax: null
+                    rrdmin: null
+                    rrdtype: GAUGE
+                swapTotal:
+                    xpath: '[name/text()="swap.total"]/values/value/datum/text()'
+                    aliases: {}
+                    createCmd: ''
+                    description: Total swap
+                    rrdmax: null
+                    rrdmin: null
+                    rrdtype: GAUGE
+                swapUsed:
+                    xpath: '[name/text()="swap.used"]/values/value/datum/text()'
+                    aliases: {}
+                    createCmd: ''
+                    description: Used swap
+                    rrdmax: null
+                    rrdmin: null
+                    rrdtype: GAUGE
+            description: Gather performance metrics
+                for oVirt Host components.
+            enabled: true
+            eventClass: /Cmd/Fail
+            eventKey: ''
+            severity: 4
+            type: 'oVirt'
+        ovirtCounts:
+            component: ${here/id}
+            cycletime: 300
+            xpath: '//*[@id="${here/id}"]'
+            datapoints:
+                vmCount:
+                    xpath: '[name/text()="vmCount"]/values/value/datum/text()'
+                    aliases: {}
+                    createCmd: ''
+                    description: Gather performance
+                        metrics for oVirt Host components.
+                    rrdmax: null
+                    rrdmin: null
+                    rrdtype: GAUGE
+            description: Gather performance metrics
+                for oVirt Host components.
+            enabled: true
+            eventClass: /Cmd/Fail
+            eventKey: ''
+            severity: 4
+            type: 'oVirt'
+    description: Gather performance metrics for oVirt
+        Host components.
+    graphs:
+        CPU Utilization:
+            base: false
+            custom: ''
+            description: Gather performance metrics
+                for oVirt Host components.
+            graphpoints:
+                Idle: {cFunc: AVERAGE, color: '', description: oVirt_cpuCurrentIdle,
+                    dpName: oVirt_cpuCurrentIdle, format: '%7.2lf%%',
+                    legend: '${graphPoint/id}', limit: -1,
+                    lineType: LINE, lineWidth: 1, rpn: '',
+                    stacked: false, type: DataPoint}
+                KSM: {cFunc: AVERAGE, color: '', description: oVirt_ksmCpuCurrent,
+                    dpName: oVirt_ksmCpuCurrent, format: '%7.2lf%%',
+                    legend: '${graphPoint/id}', limit: -1,
+                    lineType: LINE, lineWidth: 1, rpn: '',
+                    stacked: false, type: DataPoint}
+                System: {cFunc: AVERAGE, color: '',
+                    description: oVirt_cpuCurrentSystem,
+                    dpName: oVirt_cpuCurrentSystem,
+                    format: '%7.2lf%%', legend: '${graphPoint/id}',
+                    limit: -1, lineType: LINE, lineWidth: 1,
+                    rpn: '', stacked: false, type: DataPoint}
+                User: {cFunc: AVERAGE, color: '', description: oVirt_cpuCurrentUser,
+                    dpName: oVirt_cpuCurrentUser, format: '%7.2lf%%',
+                    legend: '${graphPoint/id}', limit: -1,
+                    lineType: LINE, lineWidth: 1, rpn: '',
+                    stacked: false, type: DataPoint}
+            hasSummary: true
+            height: 100
+            log: false
+            maxy: 100
+            miny: 0
+            sequence: 1
+            units: percent
+            width: 500
+        Hosted Objects:
+            base: false
+            custom: ''
+            description: Gather performance metrics
+                for oVirt Host components.
+            graphpoints:
+                VMs: {cFunc: AVERAGE, color: '', description: ovirtCounts_vmCount,
+                    dpName: ovirtCounts_vmCount, format: '%8.0lf',
+                    legend: '${graphPoint/id}', limit: -1,
+                    lineType: LINE, lineWidth: 1, rpn: '',
+                    stacked: false, type: DataPoint}
+            hasSummary: true
+            height: 100
+            log: false
+            maxy: -1
+            miny: 0
+            sequence: 0
+            units: objects
+            width: 500
+        Load Average:
+            base: false
+            custom: ''
+            description: Gather performance metrics
+                for oVirt Host components.
+            graphpoints:
+                5 Minute: {cFunc: AVERAGE, color: '',
+                    description: oVirt_cpuLoadAvg5M,
+                    dpName: oVirt_cpuLoadAvg5M, format: '%8.2lf',
+                    legend: '${graphPoint/id}', limit: -1,
+                    lineType: LINE, lineWidth: 1, rpn: '',
+                    stacked: false, type: DataPoint}
+            hasSummary: true
+            height: 100
+            log: false
+            maxy: -1
+            miny: 0
+            sequence: 2
+            units: processes
+            width: 500
+        Memory:
+            base: true
+            custom: ''
+            description: Gather performance metrics
+                for oVirt Host components.
+            graphpoints:
+                Buffers: {cFunc: AVERAGE, color: '',
+                    description: oVirt_memoryBuffers,
+                    dpName: oVirt_memoryBuffers, format: '%7.2lf%s',
+                    legend: '${graphPoint/id}', limit: -1,
+                    lineType: LINE, lineWidth: 1, rpn: '',
+                    stacked: false, type: DataPoint}
+                Cached: {cFunc: AVERAGE, color: '',
+                    description: oVirt_memoryCached,
+                    dpName: oVirt_memoryCached, format: '%7.2lf%s',
+                    legend: '${graphPoint/id}', limit: -1,
+                    lineType: LINE, lineWidth: 1, rpn: '',
+                    stacked: false, type: DataPoint}
+                Total: {cFunc: AVERAGE, color: '000000',
+                    description: oVirt_memoryTotal,
+                    dpName: oVirt_memoryTotal, format: '%7.2lf%s',
+                    legend: Total, limit: -1, lineType: LINE,
+                    lineWidth: 1, rpn: '', stacked: false,
+                    type: DataPoint}
+                Used: {cFunc: AVERAGE, color: '', description: oVirt_memoryUsed,
+                    dpName: oVirt_memoryUsed, format: '%7.2lf%s',
+                    legend: '${graphPoint/id}', limit: -1,
+                    lineType: LINE, lineWidth: 1, rpn: '',
+                    stacked: false, type: DataPoint}
+            hasSummary: true
+            height: 100
+            log: false
+            maxy: -1
+            miny: 0
+            sequence: 3
+            units: bytes
+            width: 500
+        Swap:
+            base: true
+            custom: ''
+            description: Gather performance metrics
+                for oVirt Host components.
+            graphpoints:
+                Cached: {cFunc: AVERAGE, color: '',
+                    description: oVirt_swapCached, dpName: oVirt_swapCached,
+                    format: '%7.2lf%s', legend: '${graphPoint/id}',
+                    limit: -1, lineType: LINE, lineWidth: 1,
+                    rpn: '', stacked: false, type: DataPoint}
+                Total: {cFunc: AVERAGE, color: '000000',
+                    description: oVirt_swapTotal, dpName: oVirt_swapTotal,
+                    format: '%7.2lf%s', legend: '${graphPoint/id}',
+                    limit: -1, lineType: LINE, lineWidth: 1,
+                    rpn: '', stacked: false, type: DataPoint}
+                Used: {cFunc: AVERAGE, color: '', description: oVirt_swapUsed,
+                    dpName: oVirt_swapUsed, format: '%7.2lf%s',
+                    legend: '${graphPoint/id}', limit: -1,
+                    lineType: LINE, lineWidth: 1, rpn: '',
+                    stacked: false, type: DataPoint}
+            hasSummary: true
+            height: 100
+            log: false
+            maxy: -1
+            miny: 0
+            sequence: 4
+            units: bytes
+            width: 500
+    targetPythonClass: ZenPacks.zenoss.oVirt.Host
+    thresholds: {}
+/zport/dmd/Devices/oVirt|oVirtHostNic:
+    datasources:
+        oVirt:
+            component: ${here/id}
+            cycletime: 300
+            datapoints:
+                dataCurrentRx:
+                    xpath: '[name/text()="data.current.rx"]/values/value/datum/text()'
+                    aliases: {}
+                    createCmd: ''
+                    description: Gather performance
+                        metrics for oVirt Vm Nic components.
+                    rrdmax: null
+                    rrdmin: null
+                    rrdtype: GAUGE
+                dataCurrentTx:
+                    xpath: '[name/text()="data.current.tx"]/values/value/datum/text()'
+                    aliases: {}
+                    createCmd: ''
+                    description: Gather performance
+                        metrics for oVirt Vm Nic components.
+                    rrdmax: null
+                    rrdmin: null
+                    rrdtype: GAUGE
+                errorsTotalRx:
+                    xpath: '[name/text()="errors.total.rx"]/values/value/datum/text()'
+                    aliases: {}
+                    createCmd: ''
+                    description: Gather performance
+                        metrics for oVirt Vm Nic components.
+                    rrdmax: null
+                    rrdmin: '0'
+                    rrdtype: DERIVE
+                errorsTotalTx:
+                    xpath: '[name/text()="errors.total.tx"]/values/value/datum/text()'
+                    aliases: {}
+                    createCmd: ''
+                    description: Gather performance
+                        metrics for oVirt Vm Nic components.
+                    rrdmax: null
+                    rrdmin: '0'
+                    rrdtype: DERIVE
+            description: Gather performance metrics
+                for oVirt Host Nic components.
+            enabled: true
+            eventClass: /Cmd/Fail
+            eventKey: ''
+            severity: 4
+            type: 'oVirt'
+    description: Gather performance metrics for oVirt
+        Host Nic components.
+    graphs:
+        Errors:
+            base: false
+            custom: ''
+            description: Gather performance metrics
+                for oVirt Host Nic components.
+            graphpoints:
+                Recieve: {cFunc: AVERAGE, color: '',
+                    description: oVirt_errorsTotalRx,
+                    dpName: oVirt_errorsTotalRx, format: '%7.2lf%s',
+                    legend: '${graphPoint/id}', limit: -1,
+                    lineType: LINE, lineWidth: 1, rpn: '',
+                    stacked: false, type: DataPoint}
+                Send: {cFunc: AVERAGE, color: '', description: oVirt_errorsTotalTx,
+                    dpName: oVirt_errorsTotalTx, format: '%7.2lf%s',
+                    legend: '${graphPoint/id}', limit: -1,
+                    lineType: LINE, lineWidth: 1, rpn: '',
+                    stacked: false, type: DataPoint}
+            hasSummary: true
+            height: 100
+            log: false
+            maxy: -1
+            miny: 0
+            sequence: 1
+            units: errors/sec
+            width: 500
+        Throughput:
+            base: false
+            custom: ''
+            description: Gather performance metrics
+                for oVirt Host Nic components.
+            graphpoints:
+                Inbound: {cFunc: AVERAGE, color: '',
+                    description: oVirt_dataCurrentRx,
+                    dpName: oVirt_dataCurrentRx, format: '%7.2lf%s',
+                    legend: '${graphPoint/id}', limit: -1,
+                    lineType: LINE, lineWidth: 1, rpn: '8,*',
+                    stacked: false, type: DataPoint}
+                Outbound: {cFunc: AVERAGE, color: '',
+                    description: oVirt_dataCurrentTx,
+                    dpName: oVirt_dataCurrentTx, format: '%7.2lf%s',
+                    legend: '${graphPoint/id}', limit: -1,
+                    lineType: LINE, lineWidth: 1, rpn: '8,*',
+                    stacked: false, type: DataPoint}
+            hasSummary: true
+            height: 100
+            log: false
+            maxy: -1
+            miny: 0
+            sequence: 0
+            units: bits/sec
+            width: 500
+    targetPythonClass: ZenPacks.zenoss.oVirt.HostNic
+    thresholds: {}
+/zport/dmd/Devices/oVirt|oVirtStorageDomain:
+    datasources:
+        oVirt:
+            component: ${here/id}
+            cycletime: 300
+            xpath: '//*[@id="${here/id}"]'
+            datapoints:
+                available:
+                    xpath: '/available/text()'
+                    aliases: {}
+                    createCmd: ''
+                    description: Gather performance
+                        metrics for oVirt Storage Domain
+                        components.
+                    rrdmax: null
+                    rrdmin: '0'
+                    rrdtype: GAUGE
+                committed:
+                    xpath: '/committed/text()'
+                    aliases: {}
+                    createCmd: ''
+                    description: Gather performance
+                        metrics for oVirt Storage Domain
+                        components.
+                    rrdmax: null
+                    rrdmin: '0'
+                    rrdtype: GAUGE
+                used:
+                    xpath: '/used/text()'
+                    aliases: {}
+                    createCmd: ''
+                    description: Gather performance
+                        metrics for oVirt Storage Domain
+                        components.
+                    rrdmax: null
+                    rrdmin: '0'
+                    rrdtype: GAUGE
+            description: Gather performance metrics
+                for oVirt Storage Domain components.
+            enabled: true
+            eventClass: /Cmd/Fail
+            eventKey: ''
+            severity: 4
+            type: 'oVirt'
+    description: Gather performance metrics for oVirt
+        Storage Domain components.
+    graphs:
+        Usage:
+            base: false
+            custom: ''
+            description: Gather performance metrics
+                for oVirt Storage Domain components.
+            graphpoints:
+                Available: {cFunc: AVERAGE, color: '',
+                    description: oVirt_available, dpName: oVirt_available,
+                    format: '%7.2lf%s', legend: '${graphPoint/id}',
+                    limit: -1, lineType: LINE, lineWidth: 1,
+                    rpn: '', stacked: false, type: DataPoint}
+                Committed: {cFunc: AVERAGE, color: '',
+                    description: oVirt_committed, dpName: oVirt_committed,
+                    format: '%7.2lf%s', legend: '${graphPoint/id}',
+                    limit: -1, lineType: LINE, lineWidth: 1,
+                    rpn: '', stacked: false, type: DataPoint}
+                Used: {cFunc: AVERAGE, color: '', description: oVirt_used,
+                    dpName: oVirt_used, format: '%7.2lf%s',
+                    legend: '${graphPoint/id}', limit: -1,
+                    lineType: LINE, lineWidth: 1, rpn: '',
+                    stacked: false, type: DataPoint}
+            hasSummary: true
+            height: 100
+            log: false
+            maxy: -1
+            miny: 0
+            sequence: 0
+            units: bytes
+            width: 500
+    targetPythonClass: ZenPacks.zenoss.oVirt.StorageDomain
+    thresholds: {}
+/zport/dmd/Devices/oVirt|oVirtSystem:
+    datasources:
+        oVirt:
+            component: ${here/id}
+            cycletime: 300
+            xpath: '//*[@id="${here/id}"]'
+            datapoints:
+                clusterCount:
+                    xpath: '[name/text()="clusterCount"]/values/value/datum/text()'
+                    aliases: {}
+                    createCmd: ''
+                    description: Gather performance
+                        metrics for oVirt System.
+                    rrdmax: null
+                    rrdmin: null
+                    rrdtype: GAUGE
+                datacenterCount:
+                    xpath: '[name/text()="datacenterCount"]/values/value/datum/text()'
+                    aliases: {}
+                    createCmd: ''
+                    description: Gather performance
+                        metrics for oVirt System.
+                    rrdmax: null
+                    rrdmin: null
+                    rrdtype: GAUGE
+                hostCount:
+                    xpath: '[name/text()="hostCount"]/values/value/datum/text()'
+                    aliases: {}
+                    createCmd: ''
+                    description: Gather performance
+                        metrics for oVirt System.
+                    rrdmax: null
+                    rrdmin: null
+                    rrdtype: GAUGE
+                storagedomainCount:
+                    xpath: '[name/text()="storagedomainCount"]/values/value/datum/text()'
+                    aliases: {}
+                    createCmd: ''
+                    description: Gather performance
+                        metrics for oVirt System.
+                    rrdmax: null
+                    rrdmin: null
+                    rrdtype: GAUGE
+                vmCount:
+                    xpath: '[name/text()="vmCount"]/values/value/datum/text()'
+                    aliases: {}
+                    createCmd: ''
+                    description: Gather performance
+                        metrics for oVirt System.
+                    rrdmax: null
+                    rrdmin: null
+                    rrdtype: GAUGE
+            description: Gather performance metrics
+                for oVirt System.
+            enabled: true
+            eventClass: /Cmd/Fail
+            eventKey: ''
+            severity: 4
+            type: 'oVirt'
+        oVirtEvents:
+            plugin_classname: ZenPacks.zenoss.oVirt.datasource_plugins.oVirtDataSourceEventsPlugin.oVirtDataSourceEventsPlugin
+            component: ${here/id}
+            cycletime: 60
+            datapoints: {}
+            description: Gather performance metrics
+                for oVirt System.
+            enabled: true
+            eventClass: /Cmd/Fail
+            eventKey: ''
+            severity: 4
+            type: 'oVirt'
+    description: Gather performance metrics for oVirt
+        System.
+    graphs:
+        Hosted Objects:
+            base: false
+            custom: ''
+            description: Gather performance metrics
+                for oVirt System.
+            graphpoints:
+                Clusters: {cFunc: AVERAGE, color: '',
+                    description: oVirt_clusterCount,
+                    dpName: oVirt_clusterCount, format: '%8.0lf',
+                    legend: '${graphPoint/id}', limit: -1,
+                    lineType: LINE, lineWidth: 1, rpn: '',
+                    stacked: false, type: DataPoint}
+                Datacenters: {cFunc: AVERAGE, color: '',
+                    description: oVirt_datacenterCount,
+                    dpName: oVirt_datacenterCount, format: '%8.0lf',
+                    legend: '${graphPoint/id}', limit: -1,
+                    lineType: LINE, lineWidth: 1, rpn: '',
+                    stacked: false, type: DataPoint}
+                Hosts: {cFunc: AVERAGE, color: '', description: oVirt_hostCount,
+                    dpName: oVirt_hostCount, format: '%8.0lf',
+                    legend: '${graphPoint/id}', limit: -1,
+                    lineType: LINE, lineWidth: 1, rpn: '',
+                    stacked: false, type: DataPoint}
+                Stg. Domains: {cFunc: AVERAGE, color: '',
+                    description: oVirt_storagedomainCount,
+                    dpName: oVirt_storagedomainCount,
+                    format: '%8.0lf', legend: '${graphPoint/id}',
+                    limit: -1, lineType: LINE, lineWidth: 1,
+                    rpn: '', stacked: false, type: DataPoint}
+                VMs: {cFunc: AVERAGE, color: '', description: oVirt_vmCount,
+                    dpName: oVirt_vmCount, format: '%8.0lf',
+                    legend: '${graphPoint/id}', limit: -1,
+                    lineType: LINE, lineWidth: 1, rpn: '',
+                    stacked: false, type: DataPoint}
+            hasSummary: true
+            height: 100
+            log: false
+            maxy: -1
+            miny: 0
+            sequence: 0
+            units: objects
+            width: 500
+    targetPythonClass: ZenPacks.zenoss.oVirt.System
+    thresholds: {}
+/zport/dmd/Devices/oVirt|oVirtVm:
+    datasources:
+        oVirt:
+            component: ${here/id}
+            cycletime: 300
+            datapoints:
+                cpuCurrentGuest:
+                    xpath: '[name/text()="cpu.current.guest"]/values/value/datum/text()'
+                    aliases: {}
+                    createCmd: ''
+                    description: Gather performance
+                        metrics for oVirt Vm components.
+                    rrdmax: null
+                    rrdmin: null
+                    rrdtype: GAUGE
+                cpuCurrentHypervisor:
+                    xpath: '[name/text()="cpu.current.hypervisor"]/values/value/datum/text()'
+                    aliases: {}
+                    createCmd: ''
+                    description: Gather performance
+                        metrics for oVirt Vm components.
+                    rrdmax: null
+                    rrdmin: null
+                    rrdtype: GAUGE
+                cpuCurrentTotal:
+                    xpath: '[name/text()="cpu.current.total"]/values/value/datum/text()'
+                    aliases: {}
+                    createCmd: ''
+                    description: Gather performance
+                        metrics for oVirt Vm components.
+                    rrdmax: null
+                    rrdmin: null
+                    rrdtype: GAUGE
+                memoryInstalled:
+                    xpath: '[name/text()="memory.installed"]/values/value/datum/text()'
+                    aliases: {}
+                    createCmd: ''
+                    description: Gather performance
+                        metrics for oVirt Vm components.
+                    rrdmax: null
+                    rrdmin: null
+                    rrdtype: GAUGE
+                memoryUsed:
+                    xpath: '[name/text()="memory.used"]/values/value/datum/text()'
+                    aliases: {}
+                    createCmd: ''
+                    description: Gather performance
+                        metrics for oVirt Vm components.
+                    rrdmax: null
+                    rrdmin: null
+                    rrdtype: GAUGE
+            description: Gather performance metrics
+                for oVirt Vm components.
+            enabled: true
+            eventClass: /Cmd/Fail
+            eventKey: ''
+            severity: 4
+            type: 'oVirt'
+    description: Gather performance metrics for oVirt
+        Vm components.
+    graphs:
+        CPU Utilization:
+            base: false
+            custom: ''
+            description: Gather performance metrics
+                for oVirt Vm components.
+            graphpoints:
+                Guest: {cFunc: AVERAGE, color: '', description: oVirt_cpuCurrentGuest,
+                    dpName: oVirt_cpuCurrentGuest, format: '%7.2lf%%',
+                    legend: '${graphPoint/id}', limit: -1,
+                    lineType: LINE, lineWidth: 1, rpn: '',
+                    stacked: false, type: DataPoint}
+                Hypervisor: {cFunc: AVERAGE, color: '',
+                    description: oVirt_cpuCurrentHypervisor,
+                    dpName: oVirt_cpuCurrentHypervisor,
+                    format: '%7.2lf%%', legend: '${graphPoint/id}',
+                    limit: -1, lineType: LINE, lineWidth: 1,
+                    rpn: '', stacked: false, type: DataPoint}
+                Total: {cFunc: AVERAGE, color: '', description: oVirt_cpuCurrentTotal,
+                    dpName: oVirt_cpuCurrentTotal, format: '%7.2lf%%',
+                    legend: '${graphPoint/id}', limit: -1,
+                    lineType: LINE, lineWidth: 1, rpn: '',
+                    stacked: false, type: DataPoint}
+            hasSummary: true
+            height: 100
+            log: false
+            maxy: 100
+            miny: 0
+            sequence: 0
+            units: percent
+            width: 500
+        Memory Usage:
+            base: true
+            custom: ''
+            description: Gather performance metrics
+                for oVirt Vm components.
+            graphpoints:
+                Installed: {cFunc: AVERAGE, color: '000000',
+                    description: oVirt_memoryInstalled,
+                    dpName: oVirt_memoryInstalled, format: '%7.2lf%s',
+                    legend: '${graphPoint/id}', limit: -1,
+                    lineType: LINE, lineWidth: 1, rpn: '',
+                    stacked: false, type: DataPoint}
+                Used: {cFunc: AVERAGE, color: '', description: oVirt_memoryUsed,
+                    dpName: oVirt_memoryUsed, format: '%7.2lf%s',
+                    legend: '${graphPoint/id}', limit: -1,
+                    lineType: LINE, lineWidth: 1, rpn: '',
+                    stacked: false, type: DataPoint}
+            hasSummary: true
+            height: 100
+            log: false
+            maxy: -1
+            miny: 0
+            sequence: 1
+            units: bytes
+            width: 500
+    targetPythonClass: ZenPacks.zenoss.oVirt.Vm
+    thresholds: {}
+/zport/dmd/Devices/oVirt|oVirtVmDisk:
+    datasources:
+        oVirt:
+            component: ${here/id}
+            cycletime: 300
+            datapoints:
+                dataCurrentRead:
+                    xpath: '[name/text()="data.current.read"]/values/value/datum/text()'
+                    aliases: {}
+                    createCmd: ''
+                    description: oVirt Virtual Machine
+                        Disk
+                    rrdmax: null
+                    rrdmin: null
+                    rrdtype: GAUGE
+                dataCurrentWrite:
+                    xpath: '[name/text()="data.current.write"]/values/value/datum/text()'
+                    aliases: {}
+                    createCmd: ''
+                    description: oVirt Virtual Machine
+                        Disk
+                    rrdmax: null
+                    rrdmin: null
+                    rrdtype: GAUGE
+                diskReadLatency:
+                    xpath: '[name/text()="disk.read.latency"]/values/value/datum/text()'
+                    aliases: {}
+                    createCmd: ''
+                    description: oVirt Virtual Machine
+                        Disk
+                    rrdmax: null
+                    rrdmin: null
+                    rrdtype: GAUGE
+                diskWriteLatency:
+                    xpath: '[name/text()="disk.write.latency"]/values/value/datum/text()'
+                    aliases: {}
+                    createCmd: ''
+                    description: oVirt Virtual Machine
+                        Disk
+                    rrdmax: null
+                    rrdmin: null
+                    rrdtype: GAUGE
+                diskFlushLatency:
+                    xpath: '[name/text()="disk.flush.latency"]/values/value/datum/text()'
+                    aliases: {}
+                    createCmd: ''
+                    description: oVirt Virtual Machine
+                        Disk
+                    rrdmax: null
+                    rrdmin: null
+                    rrdtype: GAUGE
+            description: oVirt Virtual Machine Disk
+            enabled: true
+            eventClass: /Cmd/Fail
+            eventKey: ''
+            severity: 4
+            type: 'oVirt'
+    description: oVirt Virtual Machine Disk
+    graphs:
+        Disk Throughput:
+            base: false
+            custom: ''
+            description: oVirt Virtual Machine Disk
+            graphpoints:
+                Read: {cFunc: AVERAGE, color: '', description: oVirt_dataCurrentRead,
+                    dpName: oVirt_dataCurrentRead, format: '%7.2lf%s',
+                    legend: '${graphPoint/id}', limit: -1,
+                    lineType: LINE, lineWidth: 1, rpn: '',
+                    stacked: false, type: DataPoint}
+                Write: {cFunc: AVERAGE, color: '', description: oVirt_dataCurrentWrite,
+                    dpName: oVirt_dataCurrentWrite,
+                    format: '%7.2lf%s', legend: '${graphPoint/id}',
+                    limit: -1, lineType: LINE, lineWidth: 1,
+                    rpn: '', stacked: false, type: DataPoint}
+            hasSummary: true
+            height: 100
+            log: false
+            maxy: -1
+            miny: 0
+            sequence: 0
+            units: bytes/sec
+            width: 500
+    targetPythonClass: ZenPacks.zenoss.oVirt.VmDisk
+    thresholds: {}
+/zport/dmd/Devices/oVirt|oVirtVmNic:
+    datasources:
+        oVirt:
+            component: ${here/id}
+            cycletime: 300
+            datapoints:
+                dataCurrentRx:
+                    xpath: '[name/text()="data.current.rx"]/values/value/datum/text()'
+                    aliases: {}
+                    createCmd: ''
+                    description: Gather performance
+                        metrics for oVirt Vm Nic components.
+                    rrdmax: null
+                    rrdmin: null
+                    rrdtype: GAUGE
+                dataCurrentTx:
+                    xpath: '[name/text()="data.current.tx"]/values/value/datum/text()'
+                    aliases: {}
+                    createCmd: ''
+                    description: Gather performance
+                        metrics for oVirt Vm Nic components.
+                    rrdmax: null
+                    rrdmin: null
+                    rrdtype: GAUGE
+                errorsTotalRx:
+                    xpath: '[name/text()="errors.total.rx"]/values/value/datum/text()'
+                    aliases: {}
+                    createCmd: ''
+                    description: Gather performance
+                        metrics for oVirt Vm Nic components.
+                    rrdmax: null
+                    rrdmin: '0'
+                    rrdtype: DERIVE
+                errorsTotalTx:
+                    xpath: '[name/text()="errors.total.tx"]/values/value/datum/text()'
+                    aliases: {}
+                    createCmd: ''
+                    description: Gather performance
+                        metrics for oVirt Vm Nic components.
+                    rrdmax: null
+                    rrdmin: '0'
+                    rrdtype: DERIVE
+            description: Gather performance metrics
+                for oVirt Vm Nic components.
+            enabled: true
+            eventClass: /Cmd/Fail
+            eventKey: ''
+            severity: 4
+            type: 'oVirt'
+    description: Gather performance metrics for oVirt
+        Vm Nic components.
+    graphs:
+        Errors:
+            base: false
+            custom: ''
+            description: Gather performance metrics
+                for oVirt Vm Nic components.
+            graphpoints:
+                Receive: {cFunc: AVERAGE, color: '',
+                    description: oVirt_errorsTotalRx,
+                    dpName: oVirt_errorsTotalRx, format: '%7.2lf%s',
+                    legend: '${graphPoint/id}', limit: -1,
+                    lineType: LINE, lineWidth: 1, rpn: '',
+                    stacked: false, type: DataPoint}
+                Send: {cFunc: AVERAGE, color: '', description: oVirt_errorsTotalTx,
+                    dpName: oVirt_errorsTotalTx, format: '%7.2lf%s',
+                    legend: '${graphPoint/id}', limit: -1,
+                    lineType: LINE, lineWidth: 1, rpn: '',
+                    stacked: false, type: DataPoint}
+            hasSummary: true
+            height: 100
+            log: false
+            maxy: -1
+            miny: 0
+            sequence: 1
+            units: errors/sec
+            width: 500
+        Throughput:
+            base: false
+            custom: ''
+            description: Gather performance metrics
+                for oVirt Vm Nic components.
+            graphpoints:
+                Inbound: {cFunc: AVERAGE, color: '',
+                    description: oVirt_dataCurrentRx,
+                    dpName: oVirt_dataCurrentRx, format: '%7.2lf%s',
+                    legend: '${graphPoint/id}', limit: -1,
+                    lineType: LINE, lineWidth: 1, rpn: '8,*',
+                    stacked: false, type: DataPoint}
+                Outbound: {cFunc: AVERAGE, color: '',
+                    description: oVirt_dataCurrentTx,
+                    dpName: oVirt_dataCurrentTx, format: '%7.2lf%s',
+                    legend: '${graphPoint/id}', limit: -1,
+                    lineType: LINE, lineWidth: 1, rpn: '8,*',
+                    stacked: false, type: DataPoint}
+            hasSummary: true
+            height: 100
+            log: false
+            maxy: -1
+            miny: 0
+            sequence: 0
+            units: bits/sec
+            width: 500
+    targetPythonClass: ZenPacks.zenoss.oVirt.VmNic
+    thresholds: {}
+

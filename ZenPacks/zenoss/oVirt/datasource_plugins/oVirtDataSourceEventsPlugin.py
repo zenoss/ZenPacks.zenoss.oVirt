@@ -1,35 +1,30 @@
-#!/usr/bin/env python
-###########################################################################
+##############################################################################
 #
-# This program is part of Zenoss Core, an open source monitoring platform.
-# Copyright (C) 2011, 2012 Zenoss Inc.
+# Copyright (C) Zenoss, Inc. 2012, all rights reserved.
 #
-# This program is free software; you can redistribute it and/or modify it
-# under the terms of the GNU General Public License version 2 or (at your
-# option) any later version as published by the Free Software Foundation.
+# This content is made available according to terms specified in
+# License.zenoss under the directory where your Zenoss product is installed.
 #
-# For complete information please visit: http://www.zenoss.com/oss/
-#
-###########################################################################
+##############################################################################
 
-import os
-import sys
-import md5
-import tempfile
-import json
-import time
+import logging
+log = logging.getLogger('zen.oVirtDataSourceEventsPlugin')
 
-import xml.utils.iso8601
+from ZenPacks.zenoss.PythonCollector.datasources.PythonDataSource \
+    import PythonDataSourcePlugin
 
-from twisted.internet import reactor
-from twisted.internet.defer import DeferredList, inlineCallbacks
-
-from utils import add_local_lib_path
-
+from ZenPacks.zenoss.oVirt.utils import add_local_lib_path, eventKey
 add_local_lib_path()
-
 import txovirt
-from txovirt import CamelCase
+
+from cStringIO import StringIO
+from lxml import etree
+import xml.utils.iso8601
+import md5
+import os
+import tempfile
+import time
+import json
 
 # Map of ovirt severities to Zenoss Severity.
 SEVERITY_MAP = {
@@ -37,7 +32,7 @@ SEVERITY_MAP = {
     'warning': 3,
     'alert': 4,
     'error': 5,
-    }
+}
 
 #Map of ErrorCodes response parameter to textual description.
 EVENT_TYPE_MAP = {
@@ -498,78 +493,86 @@ EVENT_TYPE_MAP = {
 }
 
 
-def elementtree_to_dict(element):
-    """Recursively convert An ElementTree to a Dictionary.
-    This misses cases, but is good enough for event processing"""
+class oVirtDataSourceEventsPlugin(PythonDataSourcePlugin):
+    proxy_attributes = ('zOVirtUrl', 'zOVirtUser', 'zOVirtDomain', 'zOVirtPassword')
+    last_event = {}
+    request_map = []
+    stats_request_map = []
 
-    node = {}
+    @classmethod
+    def config_key(cls, datasource, context):
+            return (
+                context.device().id,
+                datasource.getCycleTime(context),
+                datasource.plugin_classname)
 
-    text = getattr(element, 'text', None)
-    if text is not None:
-        node['text'] = text
+    @classmethod
+    def params(cls, datasource, context):
+        params = {}
 
-    node.update(element.items())  # element's attributes
+        device = context.device()
+        d = {}
+        c = {}
+        for prop in device.propertyIds():
+            try:
+                d[prop] = float(device.getProperty(prop))
 
-    child_nodes = {}
-    for child in element:  # element's children
-        child_nodes.setdefault(child.tag, []).append(elementtree_to_dict(child))
+            except Exception:
+                pass
 
-    # convert all single-element lists into non-lists
-    # This makes major assumptions and simplifications
-    for key, value in child_nodes.items():
-        if len(value) == 1:
-            if 'text' in value[0].keys():
-                child_nodes[key] = value[0]['text']
-            else:
-                child_nodes[key] = value[0]
+        d['id'] = device.id
 
-    node.update(child_nodes.items())
-    return node
+        for prop in context.propertyIds():
+            try:
+                c[prop] = float(context.getProperty(prop))
+            except Exception:
+                pass
+        c['id'] = context.id
 
+        environ = {'dev': d,
+                   'device': d,
+                   'devname': device.id,
+                   'here': c,
+                   'nothing': None,
+                   }
+        params['context'] = environ
+        if hasattr(context, 'xpath'):
+            params['xpath'] = context.xpath
+        elif hasattr(datasource, 'xpath'):
+            params['xpath'] = datasource.xpath
+        params['delay'] = datasource.delay
+        return params
 
-class oVirtPoller(object):
-    """Caching poller that gathers events and statistics from an ovirt system"""
-
-    def __init__(self, url, username, domain, password, collect_events=False):
-        self._url = url
-        self._username = username
-        self._domain = domain
-        self._password = password
-        self._collect_events = collect_events
-        self._events = []
-        self._values = {}
-        self.client = txovirt.Client(
-            self._url,
-            self._username,
-            self._domain,
-            self._password)
-
-    def _temp_filename(self, key):
+    def _temp_filename(self, config, key):
         """Create a tempfile for the cache based on a key"""
-        target_hash = md5.md5('%s+%s+%s' % (self._url, self._username, self._domain)).hexdigest()
+        ds0 = config.datasources[0]
+        url = ds0.zOVirtUrl
+        user = ds0.zOVirtUser
+        domain = ds0.zOVirtDomain
+        target_hash = md5.md5('%s+%s+%s' % (url, user, domain)).hexdigest()
 
         return os.path.join(
             tempfile.gettempdir(),
             '.zenoss_ovirt_%s_%s' % (key, target_hash))
 
-    def _save(self, data, key):
-        tmpfile = self._temp_filename(key=key)
+    def _save(self, config, data, key):
+        tmpfile = self._temp_filename(config=config, key=key)
         tmp = open(tmpfile, 'w')
         json.dump(data, tmp)
         tmp.close()
 
-    def _saved(self, key):
-        tmpfile = self._temp_filename(key=key)
+    def _saved(self, config, key):
+        tmpfile = self._temp_filename(config=config, key=key)
         if not os.path.isfile(tmpfile):
-            return None
+            return {}
 
         # Make sure temporary data isn't too stale.
-        if os.stat(tmpfile).st_mtime < (time.time() - 50):
+        if os.stat(tmpfile).st_mtime < (time.time() - 100):
             try:
                 os.unlink(tmpfile)
             except Exception:
                 pass
-            return None
+            return {}
 
         try:
             tmp = open(tmpfile, 'r')
@@ -581,360 +584,169 @@ class oVirtPoller(object):
                 os.unlink(tmpfile)
             except Exception:
                 pass
-            return None
+            return {}
 
         return values
 
-    def _saved_values(self):
-        return self._saved(key='values')
+    def collect(self, config):
+        ds0 = config.datasources[0]
+        client = txovirt.getClient(ds0.zOVirtUrl,
+                                   ds0.zOVirtUser,
+                                   ds0.zOVirtDomain,
+                                   ds0.zOVirtPassword)
 
-    def _print_output(self):
-        print json.dumps({'events': self._events, 'values': self._values}, sort_keys=True, indent=4)
-        sys.stdout.flush()
+        key = "%s%s%s_%s" % (ds0.zOVirtUrl,
+                             ds0.zOVirtUser,
+                             ds0.zOVirtDomain,
+                             ds0.zOVirtPassword)
 
-    def _process_events(self, response):
-        response = response[0]
-        events = []
+        if not self.last_event:
+            self.last_event = self._saved(config, 'events')
+        if key in self.last_event.keys():
+            return client.request('events;from=%s' % str(self.last_event[key]))
+        else:
+            return client.request('events')
 
-        last_events = self._saved(key='events')
-        last_event_ids = set()
-        if last_events:
-            for event in last_events:
-                last_event_ids.add(event['id'])
-
-        new_events = elementtree_to_dict(response)['event']
-        new_event_ids = set()
-
-        #Update the saved events cache
-        self._save(new_events, key='events')
-
-        for event in new_events:
-            # Use for generating clears later.
-            new_event_ids.add(event['id'])
-
-            if event['id'] in last_event_ids:
-                continue
-
-            rcvtime = xml.utils.iso8601.parse(event['time'])
+    def onSuccess(self, results, config):
+        data = self.new_data()
+        event_tree = etree.parse(StringIO(results))
+        for event in event_tree.xpath('/events/*'):
+            id = event.xpath('@id')[0]
+            description = event.xpath('description/text()')[0]
 
             # Dont send alerts for logins and logouts
-            if 'logged in' in event['description']:
+            if 'logged in' in description:
                 continue
-            if 'logged out' in event['description']:
+            if 'logged out' in description:
                 continue
-            event_type = EVENT_TYPE_MAP.get(int(event['code']), 'Unknown (%s)' % event['code'])
+
+            code = event.xpath('code/text()')[0]
+            severity = event.xpath('severity/text()')[0]
+            origin = event.xpath('origin/text()')[0]
+            custom_id = event.xpath('custom_id/text()')[0]
+            flood_rate = event.xpath('flood_rate/text()')[0]
+            try:
+                correlation_id = event.xpath('correlation_id/text()')[0]
+            except:
+                correlation_id = ""
+
+            rcvtime = xml.utils.iso8601.parse(event.xpath('time/text()')[0])
 
             #Process severity
-            severity = SEVERITY_MAP.get(event.get('severity',3), 3)
+            if not severity:
+                severity = 3
+            severity = SEVERITY_MAP.get(severity, 3)
+
+            event_type = EVENT_TYPE_MAP.get(int(code), 'Unknown (%s)' % code)
 
             # if the component type is in the event_type use that to set the component for the event.
+
             component = None
-            for key in [key for key in event.keys() if key not in ['code', 'description', 'time', 'text', 'href', 'user', 'time', 'id', 'severity']]:
+            #for key in [key for key in event.keys() if key not in ['code', 'description', 'time', 'text', 'href', 'user', 'time', 'id', 'severity']]:
+            for key in [e.tag for e in event.getchildren()
+                        if e.tag not in ['code',
+                                         'description',
+                                         'time',
+                                         'text',
+                                         'href',
+                                         'user',
+                                         'time',
+                                         'correlation_id',
+                                         'origin',
+                                         'custom_id',
+                                         'flood_rate',
+                                         'id',
+                                         'severity']]:
                 if key.lower() in event_type.lower():
-                    component = event[key]['id']
+                    component = event.xpath('%s/@id' % key)[0]
                     continue
 
             # If we dont have a component at this point try and map it out to known component types.
             # vm -> cluster -> host
 
-
+            event_keys = [e.tag for e in event.getchildren()]
             if not component:
-                if 'vm' in event.keys():
-                    component = event['vm']['id']
-                elif 'cluster' in event.keys():
-                    component = event['cluster']['id']
-                elif 'host' in event.keys():
-                    component = event['host']['id']
-                elif 'data_center' in event.keys():
-                    component = event['data_center']['id']
-                elif 'storage_domain' in event.keys():
-                    component = event['storage_domain']['id']
+                if 'vm' in event_keys:
+                    component = event.xpath('%s/@id' % 'vm')[0]
+                elif 'cluster' in event_keys:
+                    component = event.xpath('%s/@id' % 'cluster')[0]
+                elif 'host' in event_keys:
+                    component = event.xpath('%s/@id' % 'host')[0]
+                elif 'data_center' in event_keys:
+                    component = event.xpath('%s/@id' % 'data_center')[0]
+                elif 'storage_domain' in event_keys:
+                    component = event.xpath('%s/@id' % 'storage_domain')[0]
                 #else:
                     # No component set this will be a device level event.
                     #print event_type
                     #print [key for key in event.keys() if key not in ['code', 'description', 'time', 'text', 'href', 'user', 'time', 'id', 'severity']]
 
-            evt=dict(
-                severity=severity,
-                summary=event['description'],
-                message='%s: %s' % (event_type, event['description']),
-                eventKey='event_%s' % event['id'],
+            evt = dict(
+                severity=int(severity),
+                summary=str(description),
+                message='%s: %s' % (str(event_type), str(description)),
+                eventKey='event_%s' % str(id),
                 eventClassKey='ovirt_alert',
                 rcvtime=rcvtime,
-                component=component,
-                ovirt_type=event_type
-                )
+                component=str(component),
+                ovirt_type=str(event_type),
+                correlation_id=str(correlation_id),
+                device=str(config.id),
+            )
 
             # Don't add null components
             if not component:
-               del evt['component']
+                del evt['component']
 
-            events.append(evt)
+            # Use for generating clears later.
+            #new_event_ids.add(event['id'])
 
-        # Send clear events for events that no longer exist.
-        # If ovirt had event lifecycle management we could send clears here.
+            #if event['id'] in last_event_ids:
+            #    continue
 
-        self._save(new_events, key='events')
-        return events
+            data['events'].append(evt)
 
-    @inlineCallbacks
-    def _callback(self, results):
-        data = {}
-        for success, result in results:
-            if not success:
-                error = result.getErrorMessage()
-                self._events.append(dict(
-                    severity=4,
-                    summary='oVirt error: %s' % error,
-                    eventKey='ovirt_failure',
-                    eventClassKey='ovirt_error',
-                    ))
+        ids = event_tree.xpath('*/@id')
+        if ids:
+            id = max(ids)
+        if id:
+            ds0 = config.datasources[0]
+            key = "%s%s%s_%s" % (ds0.zOVirtUrl,
+                                 ds0.zOVirtUser,
+                                 ds0.zOVirtDomain,
+                                 ds0.zOVirtPassword)
+            self.last_event[key] = id
+            self._save(config, self.last_event, key='events')
 
-                self._print_output()
-                os._exit(1)
+        data['events'].append({
+            'eventClassKey': 'oVirtEventCollectionSuccess',
+            'eventKey': eventKey(config),
+            'summary': 'ovirt: event successful collection',
+            'eventClass': '/Status/',
+            'device': config.id,
+            'severity': 0,
+        })
+        return data
 
-            data.setdefault(result.tag, []).append(result)
+    def onError(self, results, config):
+        ds0 = config.datasources[0]
+        client = txovirt.getClient(ds0.zOVirtUrl,
+                                   ds0.zOVirtUser,
+                                   ds0.zOVirtDomain,
+                                   ds0.zOVirtPassword)
 
-        if 'events' in data.keys():
-            self._events.extend(
-                self._process_events(data['events']))
+        # Try to reset the login connection on an error.
+        client.login()
 
-        if 'storage_domains' in data.keys():
-            processed_results = {}
-            for storage_domain in elementtree_to_dict(data['storage_domains'][0])['storage_domain']:
-                id = storage_domain['id']
-                processed_results.setdefault(id, {})
-                for key in ['committed', 'used', 'available']:
-                    processed_results[id][key] = storage_domain[key]
-            self._values.update(processed_results)
-
-        deferred_statistics = []
-
-        # Gather the Host Statistics and send them to a DeferredList to be processed later.
-        if 'hosts' in data:
-            hosts = data['hosts'][0].findall('host')
-            for host in hosts:
-                host = elementtree_to_dict(host)
-                # Host statistics to be processed later.
-                deferred_statistics.append(self.client.request(host['link'][4]['href'].split('/api/')[1]))
-
-                # Grab Nic statistics for the Host
-                try:
-                    # Find the nic and scrape the page.
-                    nic = yield self.client.request(host['link'][1]['href'].split('/api/')[1])
-                except Exception, e:
-                    self._events.append(dict(
-                        severity=4,
-                        summary='oVirt error: %s' % e,
-                        eventKey='ovirt_failure',
-                        eventClassKey='ovirt_error',
-                        ))
-
-                    self._print_output()
-                    # Use os._exit to immediately exit and not raise any further exceptions.
-                    os._exit(1)
-
-                # Nic statistics to be processed later.
-                try:
-                    deferred_statistics.append(self.client.request(elementtree_to_dict(nic.getchildren()[0])['link']['href'].split('/api/')[1]))
-                except (TypeError, IndexError):
-                    # There may be 0 nic's attached.  
-                    pass
-
-        # Gather the VM statistics and its disk/network component statistics.
-        if 'vms' in data:
-            vms = data['vms'][0].findall('vm')
-            for vm in vms:
-                vm = elementtree_to_dict(vm)
-                # VM statistics to be processed later.
-                deferred_statistics.append(self.client.request(vm['link'][6]['href'].split('/api/')[1]))
-
-                # Grab Disk Statistics
-                try:
-                    # Find the disk and scrape the page.
-                    disk = yield self.client.request(vm['link'][0]['href'].split('/api/')[1])
-                except Exception, e:
-                    self._events.append(dict(
-                        severity=4,
-                        summary='oVirt error: %s' % e,
-                        eventKey='ovirt_failure',
-                        eventClassKey='ovirt_error',
-                        ))
-
-                    self._print_output()
-                    # Use os._exit to immediately exit and not raise any further exceptions.
-                    os._exit(1)
-
-                # Disk statistics to be processed later.
-                try:
-                    deferred_statistics.append(self.client.request(elementtree_to_dict(disk.getchildren()[0])['link']['href'].split('/api/')[1]))
-                except (TypeError, IndexError):
-                    # There may be 0 disks attached.
-                    pass
-
-                # Grab Nic statistics
-                try:
-                    # Find the nic and scrape the page.
-                    nic = yield self.client.request(vm['link'][1]['href'].split('/api/')[1])
-                except Exception, e:
-                    self._events.append(dict(
-                        severity=4,
-                        summary='oVirt error: %s' % e,
-                        eventKey='ovirt_failure',
-                        eventClassKey='ovirt_error',
-                        ))
-
-                    self._print_output()
-                    # Use os._exit to immediately exit and not raise any further exceptions.
-                    os._exit(1)
-
-                # Nic statistics to be processed later.
-                try:
-                    deferred_statistics.append(self.client.request(elementtree_to_dict(nic.getchildren()[0])['link']['href'].split('/api/')[1]))
-                except (TypeError, IndexError):
-                    # There may be 0 nic's attached.
-                    pass
-
-        """DeferredLists do NOT need try/except handling when consumeErrors are True
-           We check its results for problems later.
-           We are now processing all of the statistics requests."""
-        statistics_results = yield DeferredList(deferred_statistics, consumeErrors=True)
-
-        processed_results = {}
-        for success, result in statistics_results:
-
-            if not success:
-                # Create an error if the processing has failed.
-                error = result.getErrorMessage()
-                self._events.append(dict(
-                    severity=4,
-                    summary='oVirt error: %s' % error,
-                    eventKey='ovirt_failure',
-                    eventClassKey='ovirt_error',
-                    ))
-
-                self._print_output()
-                # Use os._exit to immediately exit and not raise any more exceptions.
-                os._exit(1)
-
-            for data in result.getchildren():
-                key = None
-                # Find the component id in the results.
-                for component in ('host', 'vm', 'disk', 'nic', 'host_nic'):
-                    try:
-                        key = data.find(component).attrib['id']
-                    except Exception:
-                        pass
-
-                def mName(metric):
-                    """given a metric return a CamelCase Datapoint name."""
-                    return CamelCase(metric.find('name').text)
-
-                def mValue(metric):
-                        try:
-                            return metric.find('values').find('value').find('datum').text
-                        except Exception:
-                            return None
-
-                if mValue(data) is not None:
-                    processed_results.setdefault(key, {})
-                    processed_results[key][mName(data)] = abs(float(mValue(data)))
-
-        for key in processed_results.keys():
-            item = processed_results[key]
-            if 'swapTotal' in item  and 'swapUsed' in item:
-                try:
-                    percentSwapUsed = (float(item['swapUsed'])/float(item['swapTotal'])) * 100.0
-                    processed_results[key]['percentSwapUsed'] = "%.2f" % percentSwapUsed
-                except Exception:
-                    processed_results[key]['percentSwapUsed'] = "0"
-
-            if 'memoryTotal' in item  and 'memoryUsed' in item:
-                try:
-                    percentMemoryUsed = (float(item['memoryUsed'])/float(item['memoryTotal'])) * 100.0
-                    processed_results[key]['percentMemoryUsed'] = "%.2f" % percentMemoryUsed
-                except Exception:
-                    processed_results[key]['percentMemoryUsed'] = "0"
-
-        self._values.update(processed_results)
-
-        if len(self._values.keys()) > 0:
-            self._save(self._values, key='values')
-
-        self._events.append(dict(
-            severity=0,
-            summary='oVirt polled successfully',
-            eventKey='ovirt_failure',
-            eventClassKey='ovirt_success',
-            ))
-
-        self._print_output()
-        # We are not needing any more data, stop the reactor.
-        if reactor.running:
-            reactor.stop()
-
-    def run(self):
-        deferreds = []
-
-        # Only process events if this is true.
-        if self._collect_events:
-            deferreds.extend((
-                    self.client.listEvents(),
-                    ))
-        else:
-            # Try the cache if its available
-            saved_values = self._saved_values()
-            if saved_values is not None:
-                self._values = saved_values
-                # Send success that we read from the cache.
-                self._events.append(dict(
-                    severity=0,
-                    summary='oVirt polled successfully',
-                    eventKey='ovirt_failure',
-                    eventClassKey='ovirt_success',
-                    ))
-
-                #Print the results for the parser to read.
-                self._print_output()
-                return
-
-            deferreds.extend((
-                self.client.request('hosts'),
-                self.client.request('vms'),
-                self.client.request('storagedomains'),
-                ))
-
-        # Now start processing our tasks with the results going to the self._callback method.
-        DeferredList(deferreds, consumeErrors=True).addCallback(self._callback)
-
-        reactor.run()
-        #Nothing will run after this line, unless the reactor is stopped.
-
-if __name__ == '__main__':
-    usage = "Usage: %s <url> <username> <domain> <password>"
-    url = username = domain = password = None
-
-    try:
-        url, username, domain, password = sys.argv[1:5]
-    except ValueError:
-        print >> sys.stderr, usage % sys.argv[0]
-        sys.exit(1)
-
-    events = False
-    if len(sys.argv) > 5 and sys.argv[5] == 'events':
-        events = True
-
-    #time.sleep(random.randint(1, 5))
-    try:
-        poller = oVirtPoller(url, username, domain, password, collect_events=events)
-        poller.run()
-    except Exception, e:
-        print json.dumps({
-            'events': [{
-                'severity': 4,
-                'summary': 'oVirt error: %s' % e,
-                'eventKey': 'ovirt_failure',
-                'eventClassKey': 'ovirt_error',
-                }],
-            'values': {},
-            }, sort_keys=True, indent=4)
+        errmsg = "ovirt: %s" % results.getErrorMessage()
+        log.error('%s %s', config.id, errmsg)
+        data = self.new_data()
+        data['events'].append({
+            'eventClassKey': 'oVirtEventCollectionError',
+            'eventKey': eventKey(config),
+            'eventClass': '/Status/',
+            'summary': errmsg,
+            'device': config.id,
+            'severity': 4,
+        })
+        return data

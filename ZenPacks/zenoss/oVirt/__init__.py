@@ -82,36 +82,3 @@ class ZenPack(ZenPackBase):
         ('zOVirtPassword', '', 'password'),
         ('zOVirtDomain', 'internal', 'string'),
     ]
-
-    # Placeholder for future plugin installation
-    _plugins = (
-         'poll_ovirt.py',
-         'poll_ovirtcounts.py',
-         )
-
-    def install(self, app):
-        super(ZenPack, self).install(app)
-        self.symlink_plugins()
-
-    def remove(self, app, leaveObjects=False):
-        if not leaveObjects:
-            self.remove_plugin_symlinks()
-
-        super(ZenPack, self).remove(app, leaveObjects=leaveObjects)
-
-    def symlink_plugins(self):
-        libexec = os.path.join(os.environ.get('ZENHOME'), 'libexec')
-        if not os.path.isdir(libexec):
-            # Stack installs might not have a $ZENHOME/libexec directory.
-            os.mkdir(libexec)
-
-        for plugin in self._plugins:
-            LOG.info('Linking %s plugin into $ZENHOME/libexec/', plugin)
-            plugin_path = zenPath('libexec', plugin)
-            os.system('ln -sf "%s" "%s"' % (self.path(plugin), plugin_path))
-            os.system('chmod 0755 %s' % plugin_path)
-
-    def remove_plugin_symlinks(self):
-        for plugin in self._plugins:
-            LOG.info('Removing %s link from $ZENHOME/libexec/', plugin)
-            os.system('rm -f "%s"' % zenPath('libexec', plugin))
