@@ -17,12 +17,8 @@ from ZenPacks.zenoss.oVirt.utils import add_local_lib_path, eventKey
 add_local_lib_path()
 import txovirt
 
-from Products.ZenUtils.ZenTales import talesEvalStr
-from Products.ZenModel.MinMaxThreshold import rpneval
-from Products.ZenUtils.Utils import prepId
 from cStringIO import StringIO
 from lxml import etree
-from twisted.internet.defer import DeferredList, inlineCallbacks, returnValue
 import xml.utils.iso8601
 import md5
 import os
@@ -36,7 +32,7 @@ SEVERITY_MAP = {
     'warning': 3,
     'alert': 4,
     'error': 5,
-    }
+}
 
 #Map of ErrorCodes response parameter to textual description.
 EVENT_TYPE_MAP = {
@@ -500,8 +496,8 @@ EVENT_TYPE_MAP = {
 class oVirtDataSourceEventsPlugin(PythonDataSourcePlugin):
     proxy_attributes = ('zOVirtUrl', 'zOVirtUser', 'zOVirtDomain', 'zOVirtPassword')
     last_event = {}
-    request_map = [] 
-    stats_request_map = [] 
+    request_map = []
+    stats_request_map = []
 
     @classmethod
     def config_key(cls, datasource, context):
@@ -509,7 +505,6 @@ class oVirtDataSourceEventsPlugin(PythonDataSourcePlugin):
                 context.device().id,
                 datasource.getCycleTime(context),
                 datasource.plugin_classname)
-
 
     @classmethod
     def params(cls, datasource, context):
@@ -560,8 +555,8 @@ class oVirtDataSourceEventsPlugin(PythonDataSourcePlugin):
             tempfile.gettempdir(),
             '.zenoss_ovirt_%s_%s' % (key, target_hash))
 
-    def _save(self, config,data, key):
-        tmpfile = self._temp_filename(config=config,key=key)
+    def _save(self, config, data, key):
+        tmpfile = self._temp_filename(config=config, key=key)
         tmp = open(tmpfile, 'w')
         json.dump(data, tmp)
         tmp.close()
@@ -593,24 +588,20 @@ class oVirtDataSourceEventsPlugin(PythonDataSourcePlugin):
 
         return values
 
-
     def collect(self, config):
         ds0 = config.datasources[0]
         client = txovirt.getClient(ds0.zOVirtUrl,
                                    ds0.zOVirtUser,
                                    ds0.zOVirtDomain,
                                    ds0.zOVirtPassword)
-        request_map = []
-        stats_request_map = []
-        deferreds = []
-        stats_deferreds = []
+
         key = "%s%s%s_%s" % (ds0.zOVirtUrl,
                              ds0.zOVirtUser,
                              ds0.zOVirtDomain,
                              ds0.zOVirtPassword)
 
         if not self.last_event:
-            self.last_event = self._saved(config,'events')
+            self.last_event = self._saved(config, 'events')
         if key in self.last_event.keys():
             return client.request('events;from=%s' % str(self.last_event[key]))
         else:
@@ -619,7 +610,6 @@ class oVirtDataSourceEventsPlugin(PythonDataSourcePlugin):
     def onSuccess(self, results, config):
         data = self.new_data()
         event_tree = etree.parse(StringIO(results))
-        events = []
         for event in event_tree.xpath('/events/*'):
             id = event.xpath('@id')[0]
             description = event.xpath('description/text()')[0]
@@ -641,7 +631,7 @@ class oVirtDataSourceEventsPlugin(PythonDataSourcePlugin):
                 correlation_id = ""
 
             rcvtime = xml.utils.iso8601.parse(event.xpath('time/text()')[0])
-            
+
             #Process severity
             if not severity:
                 severity = 3
@@ -653,20 +643,20 @@ class oVirtDataSourceEventsPlugin(PythonDataSourcePlugin):
 
             component = None
             #for key in [key for key in event.keys() if key not in ['code', 'description', 'time', 'text', 'href', 'user', 'time', 'id', 'severity']]:
-            for key in [e.tag for e in event.getchildren() 
-                              if e.tag not in ['code', 
-                                               'description',
-                                               'time', 
-                                               'text',
-                                               'href',
-                                               'user',
-                                               'time',
-                                               'correlation_id',
-                                               'origin',
-                                               'custom_id',
-                                               'flood_rate',
-                                               'id',
-                                               'severity']]:
+            for key in [e.tag for e in event.getchildren()
+                        if e.tag not in ['code',
+                                         'description',
+                                         'time',
+                                         'text',
+                                         'href',
+                                         'user',
+                                         'time',
+                                         'correlation_id',
+                                         'origin',
+                                         'custom_id',
+                                         'flood_rate',
+                                         'id',
+                                         'severity']]:
                 if key.lower() in event_type.lower():
                     component = event.xpath('%s/@id' % key)[0]
                     continue
@@ -691,7 +681,7 @@ class oVirtDataSourceEventsPlugin(PythonDataSourcePlugin):
                     #print event_type
                     #print [key for key in event.keys() if key not in ['code', 'description', 'time', 'text', 'href', 'user', 'time', 'id', 'severity']]
 
-            evt=dict(
+            evt = dict(
                 severity=int(severity),
                 summary=str(description),
                 message='%s: %s' % (str(event_type), str(description)),
@@ -702,11 +692,11 @@ class oVirtDataSourceEventsPlugin(PythonDataSourcePlugin):
                 ovirt_type=str(event_type),
                 correlation_id=str(correlation_id),
                 device=str(config.id),
-                )
+            )
 
             # Don't add null components
             if not component:
-               del evt['component']
+                del evt['component']
 
             # Use for generating clears later.
             #new_event_ids.add(event['id'])
@@ -715,7 +705,7 @@ class oVirtDataSourceEventsPlugin(PythonDataSourcePlugin):
             #    continue
 
             data['events'].append(evt)
-      
+
         ids = event_tree.xpath('*/@id')
         if ids:
             id = max(ids)
@@ -728,7 +718,6 @@ class oVirtDataSourceEventsPlugin(PythonDataSourcePlugin):
             self.last_event[key] = id
             self._save(config, self.last_event, key='events')
 
-            
         data['events'].append({
             'eventClassKey': 'oVirtEventCollectionSuccess',
             'eventKey': eventKey(config),

@@ -24,6 +24,7 @@ from cStringIO import StringIO
 from lxml import etree
 from twisted.internet.defer import DeferredList, inlineCallbacks, returnValue
 
+
 def string_to_lines(string):
     if isinstance(string, (list, tuple)):
         return string
@@ -32,38 +33,40 @@ def string_to_lines(string):
 
     return None
 
-def addCount(xml,ids,arg,increment=1):
+
+def addCount(xml, ids, arg, increment=1):
     statistics = xml.xpath('//statistics')
     if not statistics:
-        statistics = etree.SubElement(xml,'statistics')
+        statistics = etree.SubElement(xml, 'statistics')
     else:
         statistics = statistics[0]
- 
+
     for id in ids:
-        statistic = statistics.xpath("/statistic[@id='%s' and @name='%s']" % (id,arg))
+        statistic = statistics.xpath("/statistic[@id='%s' and @name='%s']" % (id, arg))
         if not statistic:
-            statistic = etree.SubElement(statistics,'statistic',id=id,name=arg)
+            statistic = etree.SubElement(statistics, 'statistic', id=id, name=arg)
         name = statistic.xpath('/name')
         if not name:
-            name = etree.SubElement(statistic,'name')
+            name = etree.SubElement(statistic, 'name')
             name.text = arg
         values = statistic.xpath('/values')
         if not values:
-            values = etree.SubElement(statistic,'values')
+            values = etree.SubElement(statistic, 'values')
         value = values.xpath('/value')
         if not value:
-            value = etree.SubElement(values,'value')
+            value = etree.SubElement(values, 'value')
         datum = value.xpath('/datum')
         if not datum:
-            datum = etree.SubElement(value,'datum')
+            datum = etree.SubElement(value, 'datum')
             datum.text = str(increment)
         else:
             datum.text = str(int(datum.text)+increment)
 
+
 class oVirtDataSourcePlugin(PythonDataSourcePlugin):
     proxy_attributes = ('zOVirtUrl', 'zOVirtUser', 'zOVirtDomain', 'zOVirtPassword')
-    request_map = [] 
-    stats_request_map = [] 
+    request_map = []
+    stats_request_map = []
 
     @classmethod
     def config_key(cls, datasource, context):
@@ -71,7 +74,6 @@ class oVirtDataSourcePlugin(PythonDataSourcePlugin):
                 context.device().id,
                 datasource.getCycleTime(context),
                 datasource.plugin_classname)
-
 
     @classmethod
     def params(cls, datasource, context):
@@ -117,11 +119,10 @@ class oVirtDataSourcePlugin(PythonDataSourcePlugin):
                                    ds0.zOVirtUser,
                                    ds0.zOVirtDomain,
                                    ds0.zOVirtPassword)
-        request_map = []
-        stats_request_map = []
+
         deferreds = []
         stats_deferreds = []
-        for call in ['hosts','vms','storagedomains','datacenters','clusters']:
+        for call in ['hosts', 'vms', 'storagedomains', 'datacenters', 'clusters']:
             self.request_map.append(call)
             deferreds.append(client.request(call))
 
@@ -132,12 +133,12 @@ class oVirtDataSourcePlugin(PythonDataSourcePlugin):
                 returnValue(None)
 
         host_tree = etree.parse(StringIO(results[0][1]))
-       
-        # get the nic from a host 
+
+        # get the nic from a host
         deferreds = []
         host_tree = etree.parse(StringIO(results[0][1]))
         for nic in host_tree.xpath("//link[@rel='nics']"):
-            call = nic.get('href').split('/api/')[1] 
+            call = nic.get('href').split('/api/')[1]
             self.request_map.append(call)
             deferreds.append(client.request(call))
         nic_results = yield DeferredList(deferreds, consumeErrors=True)
@@ -147,81 +148,80 @@ class oVirtDataSourcePlugin(PythonDataSourcePlugin):
         for success, nic_result in nic_results:
             if success:
                 nic_tree = etree.parse(StringIO(nic_result))
-                for nic_statistic in nic_tree.xpath("//link[@rel='statistics']"):   
-                    call = nic_statistic.get('href').split('/api/')[1] 
+                for nic_statistic in nic_tree.xpath("//link[@rel='statistics']"):
+                    call = nic_statistic.get('href').split('/api/')[1]
                     self.stats_request_map.append(call)
                     stats_deferreds.append(client.request(call))
                 del(nic_tree)
             else:
-                log.error("%s: %s", device.id, result.getErrorMessage())
+                log.error("%s: %s", config.id, result.getErrorMessage())
                 returnValue(None)
- 
+
         # host statistics
         for host_statistic in host_tree.xpath("//link[@rel='statistics']"):
-            call = host_statistic.get('href').split('/api/')[1] 
+            call = host_statistic.get('href').split('/api/')[1]
             self.stats_request_map.append(call)
             stats_deferreds.append(client.request(call))
 
         del(host_tree)
-        
 
         vm_tree = etree.parse(StringIO(results[1][1]))
         # vm statistics
         for vm_statistic in vm_tree.xpath("//link[@rel='statistics']"):
-            call = vm_statistic.get('href').split('/api/')[1] 
+            call = vm_statistic.get('href').split('/api/')[1]
             self.stats_request_map.append(call)
             stats_deferreds.append(client.request(call))
 
         # get the nic from a vm
         deferreds = []
         for nic in vm_tree.xpath("//link[@rel='nics']"):
-            call = nic.get('href').split('/api/')[1] 
+            call = nic.get('href').split('/api/')[1]
             self.request_map.append(call)
             deferreds.append(client.request(call))
         vm_nic_results = yield DeferredList(deferreds, consumeErrors=True)
         results = results + vm_nic_results
-        
+
         # vm nic statistics
         for success, vm_nic_result in vm_nic_results:
             if success:
                 vm_nic_tree = etree.parse(StringIO(vm_nic_result))
-                for vm_nic_statistic in vm_nic_tree.xpath("//link[@rel='statistics']"):   
-                    call = vm_nic_statistic.get('href').split('/api/')[1] 
+                for vm_nic_statistic in vm_nic_tree.xpath("//link[@rel='statistics']"):
+                    call = vm_nic_statistic.get('href').split('/api/')[1]
                     self.stats_request_map.append(call)
                     stats_deferreds.append(client.request(call))
                 del(vm_nic_tree)
             else:
-                log.error("%s: %s", device.id, result.getErrorMessage())
+                log.error("%s: %s", config.id, result.getErrorMessage())
                 returnValue(None)
-        
+
         # get the disk from a vm
         deferreds = []
         for disk in vm_tree.xpath("//link[@rel='disks']"):
-            call = disk.get('href').split('/api/')[1] 
+            call = disk.get('href').split('/api/')[1]
             self.request_map.append(call)
             deferreds.append(client.request(call))
         vm_disk_results = yield DeferredList(deferreds, consumeErrors=True)
         results = results + vm_disk_results
-        
+
         # vm disk statistics
         for success, vm_disk_result in vm_disk_results:
             if success:
                 vm_disk_tree = etree.parse(StringIO(vm_disk_result))
-                for vm_disk_statistic in vm_disk_tree.xpath("//link[@rel='statistics']"):   
-                    call = vm_disk_statistic.get('href').split('/api/')[1] 
+                for vm_disk_statistic in vm_disk_tree.xpath("//link[@rel='statistics']"):
+                    call = vm_disk_statistic.get('href').split('/api/')[1]
                     self.stats_request_map.append(call)
                     stats_deferreds.append(client.request(call))
                 del(vm_disk_tree)
             else:
-                log.error("%s: %s", device.id, result.getErrorMessage())
+                log.error("%s: %s", config.id, result.getErrorMessage())
                 returnValue(None)
 
         del(vm_tree)
         stats_results = yield DeferredList(stats_deferreds, consumeErrors=True)
-      
-        results = [r[1] for r in results] 
-        stats_results = [r[1] for r in stats_results] 
-        returnValue([results,stats_results])
+
+        results = [r[1] for r in results]
+        stats_results = [r[1] for r in stats_results]
+        returnValue([results, stats_results])
 
     def onSuccess(self, results, config):
         data = self.new_data()
@@ -238,38 +238,38 @@ class oVirtDataSourcePlugin(PythonDataSourcePlugin):
             result_tree = etree.parse(StringIO(result))
             if result_tree.getroot().tag == 'storage_domains':
                 count = len(result_tree.getroot().getchildren())
-                addCount(root,[config.id],'storagedomainCount',count)
+                addCount(root, [config.id], 'storagedomainCount', count)
             elif result_tree.getroot().tag == 'clusters':
                 count = len(result_tree.getroot().getchildren())
-                addCount(root,[config.id],'clusterCount',count)
+                addCount(root, [config.id], 'clusterCount', count)
                 data_centers = result_tree.xpath('//data_center/@id')
-                addCount(root,data_centers,'clusterCount')
+                addCount(root, data_centers, 'clusterCount')
             elif result_tree.getroot().tag == 'data_centers':
                 count = len(result_tree.getroot().getchildren())
-                addCount(root,[config.id],'datacenterCount',count)
+                addCount(root, [config.id], 'datacenterCount', count)
             elif result_tree.getroot().tag == 'hosts':
                 count = len(result_tree.getroot().getchildren())
-                addCount(root,[config.id],'hostCount',count)
+                addCount(root, [config.id], 'hostCount', count)
                 clusters = result_tree.xpath('//cluster/@id')
-                addCount(root,clusters,'hostCount')
-               
+                addCount(root, clusters, 'hostCount')
+
                 for cluster in clusters:
-                     datacenter = cluster_tree.xpath('//cluster[@id="%s"]/data_center/@id' % cluster)
-                     addCount(root,datacenter,'hostCount',1)
-                    
+                    datacenter = cluster_tree.xpath('//cluster[@id="%s"]/data_center/@id' % cluster)
+                    addCount(root, datacenter, 'hostCount', 1)
+
             elif result_tree.getroot().tag == 'vms':
                 count = len(result_tree.getroot().getchildren())
-                addCount(root,[config.id],'vmCount',count)
+                addCount(root, [config.id], 'vmCount', count)
                 clusters = result_tree.xpath('//cluster/@id')
-                addCount(root,clusters,'vmCount')
+                addCount(root, clusters, 'vmCount')
 
                 hosts = result_tree.xpath('//host/@id')
-                addCount(root,hosts,'vmCount')
-                
+                addCount(root, hosts, 'vmCount')
+
                 for cluster in clusters:
-                     datacenter = cluster_tree.xpath('//cluster[@id="%s"]/data_center/@id' % cluster)
-                     addCount(root,datacenter,'vmCount',1)
-  
+                    datacenter = cluster_tree.xpath('//cluster[@id="%s"]/data_center/@id' % cluster)
+                    addCount(root, datacenter, 'vmCount', 1)
+
         for result_stat in results[1]:
             root.append(etree.parse(StringIO(result_stat)).getroot())
             # This is the general format ...
@@ -283,29 +283,30 @@ class oVirtDataSourcePlugin(PythonDataSourcePlugin):
 
             for point in ds.points:
                 # Handle percentage custom datapoints
-                if "ovirt:" in point.xpath and point.rpn:
+                if "ovirt:" in point.xpath and point.rpn and 'xpath' in ds.params:
                     resultsDict = {}
                     try:
-                        statdata = [(x.xpath('name/text()'),x.xpath('values/value/datum/text()')) for x in root.xpath(xpath) if x.tag == 'statistic']
-                        for item,val in statdata:
+                        xpath = talesEvalStr(ds.params['xpath'], context=None, extra=ds.params['context'])
+                        statdata = [(x.xpath('name/text()'), x.xpath('values/value/datum/text()')) for x in root.xpath(xpath) if x.tag == 'statistic']
+                        for item, val in statdata:
                             resultsDict[item[0]] = val[0]
-                        rpnstring = talesEvalStr(point.rpn,context=None, extra={'here':resultsDict})
-                        results = rpneval(rpnstring.split(',',1)[0],rpnstring.split(',',1)[1])
+                        rpnstring = talesEvalStr(point.rpn, context=None, extra={'here': resultsDict})
+                        results = rpneval(rpnstring.split(',', 1)[0], rpnstring.split(',', 1)[1])
                         data['values'][component_id][point.id] = (results, 'N')
                     except Exception:
-                       pass
+                        pass
 
                 # Do the rest using xpath
                 elif 'xpath' in ds.params:
                     try:
                         # Some points may not exist in the xml, skip those...
-                        xpath=talesEvalStr(ds.params['xpath'], context=None, extra=ds.params['context'])
+                        xpath = talesEvalStr(ds.params['xpath'], context=None, extra=ds.params['context'])
 
                         results = root.xpath(xpath+point.xpath)
                         if 'Count' in point.xpath and not results:
                             results = ['0']
                         results = results[0]
-                      
+
                         # If rpn is defined, lets calculate the new results.
                         if point.rpn:
                             results = rpneval(

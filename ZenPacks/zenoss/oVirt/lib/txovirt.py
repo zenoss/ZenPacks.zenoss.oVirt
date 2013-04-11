@@ -21,9 +21,11 @@ import twisted.web.client
 import sys
 from xml.etree import ElementTree
 
-import urllib2,cookielib
+import urllib2
+import cookielib
 
 txovirt_clients = {}
+
 
 def CamelCase(data, separator='.'):
     temp = [x.title() for x in data.split(separator)]
@@ -49,7 +51,8 @@ def getClient(url, user, domain, password):
         log.debug("Creating a new txovirt client for %s %s %s" % (url, user, domain))
         client = Client(url, user, domain, password)
         txovirt_clients[key] = client
-        return client 
+        return client
+
 
 class Client(object):
     """oVirt Client"""
@@ -73,22 +76,22 @@ class Client(object):
             'Authorization': 'Basic %s' % creds,
             'Accept': 'application/xml',
             'Prefer': 'persistent-auth'
-            }
+        }
         self.cookies = {}
 
     def login(self):
         self.reset()
         url = '%s/api' % (self.base_url)
-  
+
         # Use urllib2 here so the login is syncronous and all other calls will use the same cookie
         cookies = cookielib.LWPCookieJar()
-        handlers = [ urllib2.HTTPHandler(), urllib2.HTTPSHandler(), urllib2.HTTPCookieProcessor(cookies)]
+        handlers = [urllib2.HTTPHandler(), urllib2.HTTPSHandler(), urllib2.HTTPCookieProcessor(cookies)]
         opener = urllib2.build_opener(*handlers)
-        req = urllib2.Request(url,headers=self.headers)
-        log.debug("login: %s %s %s" % (url,self.headers,self.cookies))
+        req = urllib2.Request(url, headers=self.headers)
+        log.debug("login: %s %s %s" % (url, self.headers, self.cookies))
         opener.open(req)
         try:
-            self.cookies['JSESSIONID'] = [(c.name,c.value) for c in cookies if c.name == 'JSESSIONID' ][0][1]
+            self.cookies['JSESSIONID'] = [(c.name, c.value) for c in cookies if c.name == 'JSESSIONID'][0][1]
         except:
             self.cookies = {}
 
@@ -103,15 +106,15 @@ class Client(object):
             return doc
 
         url = '%s/api/%s' % (self.base_url, command)
-        log.debug("request_elementtree: %s %s %s" % (url,self.headers,self.cookies))
+        log.debug("request_elementtree: %s %s %s" % (url, self.headers, self.cookies))
         result = twisted.web.client.getPage(url, headers=self.headers, cookies=self.cookies).addCallback(process_result)
         return result
 
     def request(self, command, **kwargs):
         ''' return raw results.'''
         url = '%s/api/%s' % (self.base_url, command)
-        log.debug("request: %s %s %s" % (url,self.headers,self.cookies))
-        result =  twisted.web.client.getPage(url, headers=self.headers, cookies=self.cookies)
+        log.debug("request: %s %s %s" % (url, self.headers, self.cookies))
+        result = twisted.web.client.getPage(url, headers=self.headers, cookies=self.cookies)
         return result
 
     def listEvents(self, last=None, **kwargs):
@@ -155,7 +158,7 @@ if __name__ == '__main__':
             client.request_elementtree('domains'),
             client.request_elementtree('vmpools'),
             client.request_elementtree('vms'),
-            ))
+        ))
     else:
         for command in sys.argv[1:]:
             deferreds.append(client.request_elementtree(command))
