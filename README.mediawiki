@@ -93,6 +93,10 @@ commit()
 </syntaxhighlight>
 
 == Change Log ==
+
+;1.2.1 - 2016-01-20
+* Licensing fixes. No functional changes.
+
 ;1.2.0 - 2013-04-11
 * Support for oVirt 3.2.
 * Introduced dependency on PythonCollector ZenPack.
